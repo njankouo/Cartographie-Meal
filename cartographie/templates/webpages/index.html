@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEAL Afrique - Journal & Communauté</title>
+<meta name="description" content="Le journal de la communauté panafricaine MEAL Afrique (Suivi, Évaluation, Redevabilité, Apprentissage), propulsé par OPERAPLUS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D2B5C; --navy-2:#1F3864; --navy-ink:#081C3D;
+  --gold:#C9A227; --gold-2:#B8860B; --gold-soft:#F4ECD3;
+  --green:#1B4B3A;
+  --paper:#FBF9F4; --card:#FFFFFF; --line:#E6E0D2; --ink:#14213D; --muted:#5E6676;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --wrap:1200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+::selection{background:var(--gold);color:var(--navy-ink)}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+@media(min-width:720px){.wrap{padding:0 32px}}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* Bilingue */
+html[lang="fr"] [lang="en"]:not(html){display:none!important}
+html[lang="en"] [lang="fr"]:not(html){display:none!important}
+
+/* Utilitaires */
+.kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2)}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:14px 22px;border:2px solid transparent;transition:.2s ease;cursor:pointer}
+.btn-gold{background:var(--gold);color:var(--navy-ink)}
+.btn-gold:hover{background:#d8b33a;transform:translateY(-1px)}
+.btn-ghost{border-color:currentColor}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-2)}
+
+/* Fil d'actualités */
+.ticker{background:var(--navy-ink);color:#E9EDF5;position:sticky;top:0;z-index:50;display:flex;align-items:stretch;font-family:var(--mono);font-size:12px;border-bottom:2px solid var(--gold)}
+.ticker-label{background:var(--gold);color:var(--navy-ink);font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:10px 16px;display:flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0}
+.ticker-label .dot{width:8px;height:8px;border-radius:50%;background:var(--navy-ink);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.ticker-track{overflow:hidden;flex:1;display:flex;align-items:center;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.ticker-move{display:flex;gap:48px;white-space:nowrap;padding-left:24px;animation:scroll 45s linear infinite}
+.ticker:hover .ticker-move{animation-play-state:paused}
+.ticker-move span b{color:var(--gold);margin-right:8px}
+@keyframes scroll{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.ticker-move{animation:none}.ticker-label .dot{animation:none}}
+
+/* En-tête */
+.masthead{background:var(--card);border-bottom:1px solid var(--line)}
+.masthead-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.lang-switch{display:flex;border:1px solid var(--line)}
+.lang-switch button{font:inherit;background:none;border:0;padding:4px 10px;cursor:pointer;color:var(--muted)}
+.lang-switch button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.brand-row{display:flex;flex-direction:column;gap:20px;padding:28px 0 22px}
+@media(min-width:900px){.brand-row{flex-direction:row;align-items:flex-end;justify-content:space-between}}
+.brand{display:flex;align-items:center;gap:16px}
+.mark{width:58px;height:58px;flex-shrink:0;background:var(--navy);color:var(--gold);display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:22px;letter-spacing:-.02em;position:relative}
+.mark::after{content:"";position:absolute;inset:5px;border:1px solid rgba(201,162,39,.5)}
+.brand h1{font-family:var(--serif);font-weight:900;font-size:clamp(34px,6vw,60px);line-height:1;letter-spacing:-.02em;color:var(--navy)}
+.brand h1 em{font-style:italic;font-weight:500;color:var(--gold-2)}
+.brand p{font-size:13px;color:var(--muted);margin-top:6px;max-width:440px}
+.brand-actions{display:flex;flex-wrap:wrap;gap:10px}
+.nav{display:flex;gap:4px;overflow-x:auto;border-top:1px solid var(--line);scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{padding:14px 14px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent}
+.nav a:hover,.nav a.on{color:var(--navy);border-bottom-color:var(--gold)}
+
+/* Une */
+main{padding:40px 0 64px}
+section{margin-bottom:56px}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:2px solid var(--navy);padding-bottom:10px;margin-bottom:24px}
+.section-head h2{font-family:var(--serif);font-size:clamp(24px,3vw,32px);color:var(--navy);font-weight:700}
+.section-head a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2)}
+.une{display:grid;gap:24px}
+@media(min-width:960px){.une{grid-template-columns:1.65fr 1fr}}
+.lead{background:var(--navy);color:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:440px}
+.lead::before{content:"N°13";position:absolute;right:-10px;bottom:-40px;font-family:var(--serif);font-weight:900;font-size:220px;line-height:1;color:rgba(201,162,39,.09);pointer-events:none}
+.lead-body{padding:32px;position:relative}
+@media(min-width:720px){.lead-body{padding:44px}}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;background:var(--gold);color:var(--navy-ink)}
+.meta{font-family:var(--mono);font-size:11px;color:#AEB9CF;letter-spacing:.06em;margin:18px 0 12px}
+.lead h3{font-family:var(--serif);font-weight:700;font-size:clamp(26px,3.4vw,42px);line-height:1.12;letter-spacing:-.01em}
+.lead h3 span{color:var(--gold)}
+.lead p{color:#D3DAE8;font-size:15px;margin-top:16px;max-width:600px}
+.versus{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:26px;max-width:560px}
+.versus div{border:1px solid rgba(255,255,255,.2);padding:12px 14px;font-size:13px;font-weight:600}
+.versus small{display:block;font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.versus .vs{border:0;font-family:var(--serif);font-style:italic;color:var(--gold);font-size:22px;padding:0}
+.lead-foot{border-top:1px solid rgba(255,255,255,.15);padding:18px 32px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;position:relative}
+@media(min-width:720px){.lead-foot{padding:18px 44px}}
+.lead-foot span{font-family:var(--mono);font-size:11px;color:#AEB9CF}
+
+.side{display:flex;flex-direction:column;gap:24px}
+.card{background:var(--card);border:1px solid var(--line)}
+.wire{padding:22px 24px}
+.wire h4{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--navy);padding-bottom:12px;border-bottom:1px solid var(--line)}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--green)}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#2E9E6B}
+.wire ol{list-style:none}
+.wire li{padding:16px 0;border-bottom:1px solid var(--line)}
+.wire li:last-child{border-bottom:0;padding-bottom:0}
+.wire time{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--gold-2);letter-spacing:.08em;text-transform:uppercase}
+.wire li a{display:block;font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.3;color:var(--navy);margin-top:4px}
+.wire li a:hover{color:var(--gold-2)}
+.wire li p{font-size:13px;color:var(--muted);margin-top:4px}
+
+.afrea{background:var(--gold-soft);border:1px solid #E6D6A3;padding:22px 24px;display:flex;gap:18px;align-items:center}
+.afrea .date{flex-shrink:0;text-align:center;background:var(--navy);color:#fff;padding:10px 12px;min-width:74px}
+.afrea .date b{display:block;font-family:var(--serif);font-size:26px;line-height:1;color:var(--gold)}
+.afrea .date small{font-family:var(--mono);font-size:10px;letter-spacing:.1em}
+.afrea h4{font-family:var(--serif);font-size:18px;color:var(--navy);line-height:1.25}
+.afrea p{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* Insights */
+.grid3{display:grid;gap:20px}
+@media(min-width:720px){.grid3{grid-template-columns:repeat(3,1fr)}}
+.issue{padding:24px;display:flex;flex-direction:column;gap:10px;transition:.2s ease;border-top:4px solid var(--navy)}
+.issue:hover{border-top-color:var(--gold);transform:translateY(-2px);box-shadow:0 10px 30px -18px rgba(13,43,92,.35)}
+.issue .num{font-family:var(--serif);font-weight:900;font-size:44px;line-height:1;color:var(--gold)}
+.issue h3{font-family:var(--serif);font-size:20px;line-height:1.25;color:var(--navy)}
+.issue p{font-size:13.5px;color:var(--muted);flex:1}
+.issue .more{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
+.issue:hover .more{color:var(--gold-2)}
+
+/* OPERAPLUS */
+.opera{background:var(--navy-ink);color:#fff;display:grid;gap:0}
+@media(min-width:960px){.opera{grid-template-columns:1fr 1.4fr}}
+.opera-intro{padding:36px 32px;border-bottom:1px solid rgba(255,255,255,.12)}
+@media(min-width:960px){.opera-intro{border-bottom:0;border-right:1px solid rgba(255,255,255,.12);padding:44px}}
+.opera-intro h2{font-family:var(--serif);font-size:clamp(26px,3vw,36px);line-height:1.15;margin:12px 0 14px}
+.opera-intro h2 span{color:var(--gold)}
+.opera-intro p{color:#C7D0E2;font-size:14.5px;margin-bottom:22px}
+.tools{display:grid;grid-template-columns:1fr}
+@media(min-width:600px){.tools{grid-template-columns:1fr 1fr}}
+.tool{padding:26px 28px;border-bottom:1px solid rgba(255,255,255,.1);transition:background .2s}
+@media(min-width:600px){.tool:nth-child(odd){border-right:1px solid rgba(255,255,255,.1)}.tool:nth-last-child(-n+2){border-bottom:0}}
+.tool:hover{background:rgba(201,162,39,.08)}
+.tool .ico{width:36px;height:36px;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold);margin-bottom:14px}
+.tool .ico svg{width:18px;height:18px}
+.tool h3{font-size:15px;font-weight:700}
+.tool p{font-size:13px;color:#AEB9CF;margin-top:4px}
+
+/* CTA */
+.cta{background:var(--card);border:1px solid var(--line);padding:40px 28px;display:grid;gap:28px;position:relative;overflow:hidden}
+@media(min-width:900px){.cta{grid-template-columns:1.4fr 1fr;padding:56px;align-items:center}}
+.cta::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(var(--gold),var(--navy))}
+.cta h2{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,46px);line-height:1.1;color:var(--navy);margin:10px 0 14px}
+.cta h2 em{color:var(--gold-2)}
+.cta p{color:var(--muted);font-size:15px;max-width:560px}
+.perks{list-style:none;display:grid;gap:12px}
+.perks li{display:flex;gap:12px;font-size:14px;align-items:flex-start}
+.perks li::before{content:"";flex-shrink:0;width:18px;height:18px;margin-top:2px;background:var(--gold);clip-path:polygon(14% 52%,0 66%,38% 100%,100% 22%,86% 8%,38% 72%)}
+.cta-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.cta-actions .note{font-family:var(--mono);font-size:11px;color:var(--muted);align-self:center}
+
+/* Footer */
+footer{background:var(--navy);color:#C7D0E2;padding:48px 0 24px;font-size:13px}
+.foot{display:grid;gap:32px}
+@media(min-width:800px){.foot{grid-template-columns:1.4fr 1fr 1fr 1.2fr}}
+footer h5{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+footer ul{list-style:none;display:grid;gap:8px}
+footer a:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.foot-brand strong{font-family:var(--serif);font-size:24px;color:#fff;display:block;margin-bottom:8px}
+.newsletter{display:flex;margin-top:4px}
+.newsletter a{flex:1;text-align:center}
+.legal{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-top:18px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:11px;color:#8E9AB3}
+</style>
+</head>
+<body>
+
+<!-- FIL D'ACTUALITÉS -->
+<div class="ticker" role="region" aria-label="Fil d'actualités">
+  <div class="ticker-label"><span class="dot"></span><span lang="fr">En direct</span><span lang="en">Live</span></div>
+  <div class="ticker-track">
+    <div class="ticker-move" aria-hidden="false">
+      <span><b>[DÉBAT N°13]</b><span lang="fr">Théorie du Changement ou chaîne des résultats ? Le débat est ouvert.</span><span lang="en">Theory of Change or results chain? The debate is open.</span></span>
+      <span><b>[DÉBAT N°12]</b><span lang="fr">Collecte en zone de faible connectivité : synthèse et webinaire en préparation.</span><span lang="en">Low-connectivity data collection: synthesis and webinar in preparation.</span></span>
+      <span><b>[AfrEA 2026]</b><span lang="fr">Marrakech, 23-27 novembre : MEAL Afrique présent avec ses sous-groupes thématiques.</span><span lang="en">Marrakech, 23-27 November: MEAL Afrique attends with its thematic sub-groups.</span></span>
+      <span><b>[OPERAPLUS]</b><span lang="fr">Outils de diagnostic PESTEL, Kast & Rosenzweig et SWOT disponibles.</span><span lang="en">PESTEL, Kast & Rosenzweig and SWOT diagnostic tools available.</span></span>
+      <span><b>[INSIGHTS]</b><span lang="fr">MEAL Afrique Insights N°011 disponible en boutique.</span><span lang="en">MEAL Afrique Insights No. 011 now in the shop.</span></span>
+      <!-- duplication pour boucle continue -->
+      <span aria-hidden="true"><b>[DÉBAT N°13]</b><span lang="fr">Théorie du Changement ou chaîne des résultats ? Le débat est ouvert.</span><span lang="en">Theory of Change or results chain? The debate is open.</span></span>
+      <span aria-hidden="true"><b>[DÉBAT N°12]</b><span lang="fr">Collecte en zone de faible connectivité : synthèse et webinaire en préparation.</span><span lang="en">Low-connectivity data collection: synthesis and webinar in preparation.</span></span>
+      <span aria-hidden="true"><b>[AfrEA 2026]</b><span lang="fr">Marrakech, 23-27 novembre : MEAL Afrique présent avec ses sous-groupes thématiques.</span><span lang="en">Marrakech, 23-27 November: MEAL Afrique attends with its thematic sub-groups.</span></span>
+      <span aria-hidden="true"><b>[OPERAPLUS]</b><span lang="fr">Outils de diagnostic PESTEL, Kast & Rosenzweig et SWOT disponibles.</span><span lang="en">PESTEL, Kast & Rosenzweig and SWOT diagnostic tools available.</span></span>
+      <span aria-hidden="true"><b>[INSIGHTS]</b><span lang="fr">MEAL Afrique Insights N°011 disponible en boutique.</span><span lang="en">MEAL Afrique Insights No. 011 now in the shop.</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- EN-TÊTE -->
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-top">
+      <span lang="fr">Communauté panafricaine de Suivi, Évaluation, Redevabilité & Apprentissage</span>
+      <span lang="en">Pan-African Monitoring, Evaluation, Accountability & Learning community</span>
+      <div class="lang-switch" role="group" aria-label="Langue / Language">
+        <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+
+    <div class="brand-row">
+      <div class="brand">
+        <!-- Remplacer par le logo MEAL Afrique (base64) si souhaité -->
+        <div class="mark" aria-hidden="true">MA</div>
+        <div>
+          <h1>MEAL Afrique <em>Journal</em></h1>
+          <p lang="fr">Débats structurés, publications et outils de la communauté MEAL, propulsés par OPERAPLUS.</p>
+          <p lang="en">Structured debates, publications and tools of the MEAL community, powered by OPERAPLUS.</p>
+        </div>
+      </div>
+      <div class="brand-actions">
+        <a href="{% url 'Inscription-meal-afrique' %}" class="btn btn-navy">
+          <span lang="fr">Rejoindre la communauté</span><span lang="en">Join the community</span><span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Rubriques">
+      <a href="#une" class="on"><span lang="fr">À la une</span><span lang="en">Headlines</span></a>
+      <a href="#insights">MEAL Afrique Insights</a>
+      <a href="#operaplus">OPERAPLUS</a>
+      <a href="#agenda"><span lang="fr">Agenda</span><span lang="en">Events</span></a>
+      <a href="#communaute"><span lang="fr">Communauté</span><span lang="en">Community</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- À LA UNE -->
+  <section id="une" class="une" aria-label="À la une">
+    <article class="lead">
+      <div class="lead-body">
+        <span class="tag"><span lang="fr">Débat structuré en cours</span><span lang="en">Live structured debate</span></span>
+        <div class="meta"><span lang="fr">OCTOBRE 2026 - DÉBAT N°13 - MODÉRATION MEAL AFRIQUE</span><span lang="en">OCTOBER 2026 - DEBATE No. 13 - MEAL AFRIQUE MODERATION</span></div>
+        <h3 lang="fr">Planifier le changement : <span>Théorie du Changement</span> ou chaîne des résultats ?</h3>
+        <h3 lang="en">Planning for change: <span>Theory of Change</span> or results chain?</h3>
+        <p lang="fr">Né d'un échange spontané au « Café MEAL », ce débat confronte deux logiques de planification et soumet le modèle de planification en 10 étapes d'OPERAPLUS à un crash-test collectif.</p>
+        <p lang="en">Born from a spontaneous "Café MEAL" exchange, this debate confronts two planning logics and puts OPERAPLUS's 10-step planning model through a collective crash-test.</p>
+        <div class="versus">
+          <div><small lang="fr">Approche A</small><small lang="en">Approach A</small><span lang="fr">Théorie du Changement</span><span lang="en">Theory of Change</span></div>
+          <div class="vs">vs</div>
+          <div><small lang="fr">Approche B</small><small lang="en">Approach B</small><span lang="fr">Chaîne des résultats / cadre logique</span><span lang="en">Results chain / logframe</span></div>
+        </div>
+      </div>
+      <div class="lead-foot">
+        <span lang="fr">Prochain thème : « Système MEAL : de la donnée à la décision »</span>
+        <span lang="en">Next theme: "MEAL system: from data to decision"</span>
+        <a href="{% url 'Inscription-meal-afrique' %}" class="btn btn-gold"><span lang="fr">Participer au débat</span><span lang="en">Join the debate</span> →</a>
+      </div>
+    </article>
+
+    <aside class="side">
+      <div class="card wire">
+        <h4><span lang="fr">Dernières dépêches</span><span lang="en">Latest news</span><span class="live"><span lang="fr">Actif</span><span lang="en">Active</span></span></h4>
+        <ol>
+          <li>
+            <time><span lang="fr">Débat N°12 - Clôturé</span><span lang="en">Debate No. 12 - Closed</span></time>
+            <a href="#"><span lang="fr">Collecte de données en zone de faible connectivité : place à la capitalisation</span><span lang="en">Data collection in low-connectivity areas: time to capitalise</span></a>
+            <p lang="fr">Synthèse, webinaire animé par les principaux contributeurs et atelier de renforcement de capacités.</p>
+            <p lang="en">Synthesis, webinar led by key contributors and a capacity-building workshop.</p>
+          </li>
+          <li>
+            <time><span lang="fr">Cartographie</span><span lang="en">Mapping</span></time>
+            <a href="#operaplus"><span lang="fr">Cartographie panafricaine des experts MEAL : 29 pays couverts</span><span lang="en">Pan-African MEAL expert mapping: 29 countries covered</span></a>
+            <p lang="fr">Formulaire bilingue et tableau de bord géolocalisé pour valoriser l'expertise des membres.</p>
+            <p lang="en">Bilingual form and geolocated dashboard showcasing members' expertise.</p>
+          </li>
+          <li>
+            <time><span lang="fr">Formation</span><span lang="en">Training</span></time>
+            <a href="#operaplus"><span lang="fr">MEAL Afrique Academy : module 9 sur la redevabilité en ligne</span><span lang="en">MEAL Afrique Academy: Module 9 on accountability now online</span></a>
+            <p lang="fr">11 chapitres pour ancrer la redevabilité dans la pratique du S&E.</p>
+            <p lang="en">11 chapters to embed accountability in M&E practice.</p>
+          </li>
+        </ol>
+      </div>
+
+      <div class="afrea" id="agenda">
+        <div class="date"><b>23</b><small>NOV 2026</small></div>
+        <div>
+          <h4 lang="fr">Conférence AfrEA 2026 - Marrakech</h4>
+          <h4 lang="en">AfrEA 2026 Conference - Marrakech</h4>
+          <p lang="fr">Du 23 au 27 novembre. Les sous-groupes thématiques MEAL Afrique y portent leurs contributions.</p>
+          <p lang="en">23-27 November. MEAL Afrique thematic sub-groups bring their contributions.</p>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section id="insights" aria-labelledby="insights-title">
+    <div class="section-head">
+      <h2 id="insights-title">MEAL Afrique Insights</h2>
+      <a href="https://xvaljaai.mychariow.shop" target="_blank" rel="noopener"><span lang="fr">Boutique</span><span lang="en">Shop</span> →</a>
+    </div>
+    <div class="grid3">
+      <a class="card issue" href="https://xvaljaai.mychariow.shop" target="_blank" rel="noopener">
+        <span class="num">010</span>
+        <h3 lang="fr">La redevabilité, au-delà du rapport</h3><h3 lang="en">Accountability, beyond reporting</h3>
+        <p lang="fr">Ce que la communauté a retenu de son débat sur la redevabilité envers les populations et les bailleurs.</p>
+        <p lang="en">What the community took from its debate on accountability to communities and donors.</p>
+        <span class="more"><span lang="fr">Lire</span><span lang="en">Read</span> →</span>
+      </a>
+      <a class="card issue" href="https://xvaljaai.mychariow.shop" target="_blank" rel="noopener">
+        <span class="num">009</span>
+        <h3 lang="fr">La Smart Triple Contrainte</h3><h3 lang="en">The Smart Triple Constraint</h3>
+        <p lang="fr">Coût, délai, qualité : relire le triangle de gestion de projet avec les lunettes du MEAL.</p>
+        <p lang="en">Cost, time, quality: rereading the project triangle through a MEAL lens.</p>
+        <span class="more"><span lang="fr">Lire</span><span lang="en">Read</span> →</span>
+      </a>
+      <a class="card issue" href="https://xvaljaai.mychariow.shop" target="_blank" rel="noopener">
+        <span class="num">008</span>
+        <h3 lang="fr">Indicateurs : mesurer ce qui compte</h3><h3 lang="en">Indicators: measuring what matters</h3>
+        <p lang="fr">Construction, pondération et usage des indicateurs dans les projets de développement.</p>
+        <p lang="en">Building, weighting and using indicators in development projects.</p>
+        <span class="more"><span lang="fr">Lire</span><span lang="en">Read</span> →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- OPERAPLUS -->
+  <section id="operaplus" class="opera" aria-labelledby="opera-title">
+    <div class="opera-intro">
+      <span class="kicker">OPERAPLUS</span>
+      <h2 id="opera-title" lang="fr">La plateforme <span>PMEAL</span> de la communauté</h2>
+      <h2 lang="en">The community's <span>PMEAL</span> platform</h2>
+      <p lang="fr">Inscription, badge de membre, outils de diagnostic et planification assistée : OPERAPLUS est la colonne vertébrale numérique de MEAL Afrique.</p>
+      <p lang="en">Registration, member badge, diagnostic tools and assisted planning: OPERAPLUS is MEAL Afrique's digital backbone.</p>
+      <a href="https://meal-afrique.operaplus.org" class="btn btn-gold" target="_blank" rel="noopener"><span lang="fr">Accéder à OPERAPLUS</span><span lang="en">Open OPERAPLUS</span> →</a>
+    </div>
+    <div class="tools">
+      <div class="tool">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="1"/><circle cx="9" cy="11" r="2.5"/><path d="M14 10h4M14 14h4M6 17h6"/></svg></div>
+        <h3 lang="fr">Badge de membre</h3><h3 lang="en">Member badge</h3>
+        <p lang="fr">Votre identité professionnelle MEAL, vérifiable.</p><p lang="en">Your verifiable MEAL professional identity.</p>
+      </div>
+      <div class="tool">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+        <h3 lang="fr">Diagnostic organisationnel</h3><h3 lang="en">Organisational diagnosis</h3>
+        <p lang="fr">PESTEL, Kast & Rosenzweig et SWOT générée automatiquement.</p><p lang="en">PESTEL, Kast & Rosenzweig and auto-generated SWOT.</p>
+      </div>
+      <div class="tool">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h6"/><circle cx="18" cy="17" r="3"/></svg></div>
+        <h3 lang="fr">Planification en 10 étapes</h3><h3 lang="en">10-step planning</h3>
+        <p lang="fr">Du diagnostic au plan de travail, avec assistance IA.</p><p lang="en">From diagnosis to workplan, AI-assisted.</p>
+      </div>
+      <div class="tool">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3 lang="fr">Cartographie des experts</h3><h3 lang="en">Expert mapping</h3>
+        <p lang="fr">Rendre visibles les compétences MEAL à travers le continent.</p><p lang="en">Making MEAL skills visible across the continent.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPEL À L'ACTION -->
+  <section id="communaute" class="cta" aria-labelledby="cta-title">
+    <div>
+      <span class="kicker"><span lang="fr">Réseau actif - Praticiens S&E, chercheurs, décideurs</span><span lang="en">Active network - M&E practitioners, researchers, decision-makers</span></span>
+      <h2 id="cta-title" lang="fr">Professionnalisons ensemble le <em>MEAL</em> en Afrique.</h2>
+      <h2 lang="en">Let's professionalise <em>MEAL</em> in Africa, together.</h2>
+      <p lang="fr">En rejoignant MEAL Afrique via OPERAPLUS, vous prenez part aux débats structurés, co-signez les publications et gagnez en visibilité auprès des acteurs du secteur.</p>
+      <p lang="en">By joining MEAL Afrique through OPERAPLUS, you take part in structured debates, co-author publications and gain visibility across the sector.</p>
+      <div class="cta-actions">
+        <a href="{% url 'Inscription-meal-afrique' %}" class="btn btn-navy"><span lang="fr">S'inscrire maintenant</span><span lang="en">Sign up now</span> →</a>
+        <span class="note"><span lang="fr">Adhésion gratuite - badge membre inclus</span><span lang="en">Free membership - member badge included</span></span>
+      </div>
+    </div>
+    <ul class="perks">
+      <li><span lang="fr">Participation aux débats structurés et co-signature des articles (seuil de contribution de 5 %)</span><span lang="en">Take part in structured debates and co-author articles (5% contribution threshold)</span></li>
+      <li><span lang="fr">60 % des revenus des publications reversés aux membres contributeurs</span><span lang="en">60% of publication revenue shared with contributing members</span></li>
+      <li><span lang="fr">Accès aux outils OPERAPLUS et à la MEAL Afrique Academy</span><span lang="en">Access to OPERAPLUS tools and the MEAL Afrique Academy</span></li>
+      <li><span lang="fr">Visibilité dans la cartographie panafricaine des experts</span><span lang="en">Visibility in the pan-African expert map</span></li>
+    </ul>
+  </section>
+
+</main>
+
+<!-- PIED DE PAGE -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <strong>MEAL Afrique</strong>
+        <p lang="fr">Communauté panafricaine de pratique en Suivi, Évaluation, Redevabilité et Apprentissage. Plateforme : OPERAPLUS.</p>
+        <p lang="en">Pan-African community of practice in Monitoring, Evaluation, Accountability and Learning. Platform: OPERAPLUS.</p>
+      </div>
+      <div>
+        <h5><span lang="fr">Rubriques</span><span lang="en">Sections</span></h5>
+        <ul>
+          <li><a href="#une"><span lang="fr">Débats</span><span lang="en">Debates</span></a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#operaplus">OPERAPLUS</a></li>
+          <li><a href="#communaute"><span lang="fr">Communauté</span><span lang="en">Community</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h5><span lang="fr">Assistance</span><span lang="en">Support</span></h5>
+        <ul>
+          <li><a href="https://wa.me/237699072561" target="_blank" rel="noopener">WhatsApp +237 699 072 561</a></li>
+          <li><a href="mailto:beininfoplus@operaplus.org">beininfoplus@operaplus.org</a></li>
+          <li><a href="https://operaplus.org" target="_blank" rel="noopener">operaplus.org</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Newsletter</h5>
+        <p lang="fr" style="margin-bottom:12px">Recevez chaque numéro de MEAL Afrique Insights sur LinkedIn.</p>
+        <p lang="en" style="margin-bottom:12px">Get every MEAL Afrique Insights issue on LinkedIn.</p>
+        <div class="newsletter">
+          <a class="btn btn-gold" href="https://www.linkedin.com/newsletters/meal-afrique-insights-7461239031906025472" target="_blank" rel="noopener"><span lang="fr">S'abonner</span><span lang="en">Subscribe</span> →</a>
+        </div>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 MEAL Afrique - OPERAPLUS / BeINfos+</span>
+      <span><span lang="fr">Transparence & données</span><span lang="en">Transparency & data</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, btns=document.querySelectorAll('.lang-switch button');
+  function setLang(l){
+    root.setAttribute('lang',l);
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.lang===l?'true':'false')});
+    try{localStorage.setItem('ma-lang',l)}catch(e){}
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang)})});
+  try{var s=localStorage.getItem('ma-lang'); if(s==='fr'||s==='en') setLang(s);}catch(e){}
+})();
+</script>
+</body>
+</html>

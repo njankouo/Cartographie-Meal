@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscription et cartographie - MEAL Afrique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/cartographie.css' %}">
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="back" href="/">← MEAL Afrique Journal</a>
+    <div class="links">
+      <a href="https://meal-afrique.operaplus.org" target="_blank" rel="noopener">OPERAPLUS</a>
+      <a href="https://wa.me/237699072561" target="_blank" rel="noopener">Assistance</a>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ═════════ Colonne gauche : badge en direct ═════════ -->
+  <aside class="side">
+    <div class="side-inner">
+      <div>
+        <span class="kicker">Cartographie des experts MEAL</span>
+        <h1 class="side-title">Votre fiche membre
+          <small>Elle se remplit au fil de votre saisie - <span lang="en">live preview</span></small>
+        </h1>
+      </div>
+
+      <div class="badge-scene">
+      <article class="badge" id="badge" aria-label="Aperçu de la fiche membre">
+        <div class="badge-top">
+          <span class="slot" aria-hidden="true"></span>
+          <div class="brand">
+            <div class="brand-logo">
+              <img id="mainLogo" src="https://meal-afrique.operaplus.org/wp-content/uploads/2022/03/logo-meal-afrique.png" alt="" onerror="this.replaceWith('MA')">
+            </div>
+            <div>
+              <div class="brand-name">MEAL Afrique</div>
+              <div class="brand-sub">Membre - OPERAPLUS</div>
+            </div>
+          </div>
+          <div class="weave" aria-hidden="true"></div>
+        </div>
+
+        <div class="badge-body">
+          <div class="identity">
+            <div class="avatar-wrap">
+              <div class="avatar" id="avatar">
+                {% if personnel.photo %}
+                  <img src="{{ personnel.photo.url }}" alt="Photo de {{ personnel.nom }}" id="avatarImg">
+                {% else %}
+                  <span id="initials">?</span>
+                {% endif %}
+              </div>
+
+              <!-- form="mealForm" : le champ reste rattaché au formulaire même s'il est placé hors de <form> -->
+              <input type="file" id="photoInput" name="photo" form="mealForm" accept="image/*" class="visually-hidden" onchange="previewImage(event)">
+
+              <label for="photoInput" class="photo-btn" title="Ajouter une photo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span class="visually-hidden">Ajouter une photo</span>
+              </label>
+            </div>
+            <div class="who">
+              <h3 id="previewNom" class="placeholder">Nom et prénom</h3>
+              <p id="previewFonction" class="placeholder">Fonction</p>
+              <p id="previewOrg" class="org" hidden></p>
+            </div>
+          </div>
+
+          <div class="meta">
+            <span class="tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span id="previewPays">Pays de résidence</span>
+            </span>
+            <span class="tag" id="previewBadge">Badge OPERAPLUS</span>
+          </div>
+
+          <div class="domains" id="previewDomaines" hidden></div>
+
+          <p class="bio placeholder" id="previewBio">Votre présentation apparaîtra ici : vos domaines d'expertise et votre rôle au sein du réseau panafricain.</p>
+        </div>
+
+        <div class="badge-foot">
+          <div class="id-block">
+            <svg id="barcode" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <span class="member-id" id="memberId">MBR-2026-99</span>
+          </div>
+          <div class="complete">
+            <strong id="pct">0%</strong>
+            <span>profil complété</span>
+          </div>
+        </div>
+        <div class="meter" aria-hidden="true"><i id="meterBar"></i></div>
+      </article>
+      </div>
+
+      <ul class="perks">
+        <li>Visibilité dans la cartographie panafricaine des experts</li>
+        <li>Participation aux débats structurés et co-signature des MEAL Afrique Insights</li>
+        <li>Accès aux outils OPERAPLUS et à la MEAL Afrique Academy</li>
+      </ul>
+    </div>
+
+    <footer class="side-foot">
+      <span><strong>MEAL Afrique</strong> - Communauté propulsée par OPERAPLUS</span>
+      <a href="mailto:beininfoplus@operaplus.org">beininfoplus@operaplus.org</a>
+      <a href="https://wa.me/237699072561" target="_blank" rel="noopener">WhatsApp +237 699 072 561</a>
+      <span class="secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Chaque étape est enregistrée en base de données
+      </span>
+    </footer>
+  </aside>
+
+  <!-- ═════════ Colonne droite : formulaire ═════════ -->
+  <main class="main">
+    <div class="sheet" id="sheet">
+
+      <ol class="stepper" id="stepper" aria-label="Progression de l'inscription">
+        <li><button type="button" class="step-btn" data-goto="1"><span class="dot">1</span><span class="step-label">Identité</span></button></li>
+        <li><button type="button" class="step-btn" data-goto="2"><span class="dot">2</span><span class="step-label">Badge</span></button></li>
+        <li><button type="button" class="step-btn" data-goto="3"><span class="dot">3</span><span class="step-label">Expertise</span></button></li>
+        <li><button type="button" class="step-btn" data-goto="4"><span class="dot">4</span><span class="step-label">Outils</span></button></li>
+        <li><button type="button" class="step-btn" data-goto="5"><span class="dot">5</span><span class="step-label">Validation</span></button></li>
+      </ol>
+
+      <form id="mealForm" novalidate onsubmit="return false;">
+
+        <!-- ÉTAPE 1 -->
+        <section class="step" data-step="1" aria-labelledby="h1">
+          <header class="step-head">
+            <span class="num">Étape 1 sur 5</span>
+            <h2 id="h1">Identification et organisation</h2>
+            <p class="en" lang="en">Identification and organization details</p>
+            <p class="lead">Vos coordonnées et votre organisation, telles qu'elles apparaîtront sur la cartographie.</p>
+          </header>
+
+          <div class="field">
+            <label for="nomComplet">Nom complet<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">full name</span></label>
+            <input type="text" id="nomComplet" autocomplete="name" required value="{{ personnel.nom }}">
+            <p class="error" id="err-nomComplet" role="alert"></p>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="pays">Pays de résidence<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">country</span></label>
+              <select id="pays" required onchange="onPaysChange()">
+                <option value="">Sélectionner un pays</option>
+               
+                 {% for code, name in countries %}
+                    <option value="{{ code }}" {% if personnel.country == code or personnel.pays == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+              </select>
+              <p class="error" id="err-pays" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="ville">Ville<span class="en-label" lang="en">city</span></label>
+              <select id="ville" disabled onchange="onVilleChange()">
+                <option value="">Choisissez d'abord un pays</option>
+              </select>
+              <input type="text" id="villeAutre" hidden placeholder="Précisez la ville" aria-label="Précisez la ville">
+              <p class="error" id="err-villeAutre" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="email">Adresse email<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">email</span></label>
+              <input type="email" id="email" autocomplete="email" required value="{{ personnel.mail }}">
+              <p class="error" id="err-email" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="telephone">Téléphone / WhatsApp<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">phone</span></label>
+              <input type="tel" id="telephone" autocomplete="tel" placeholder="+237 6XX XXX XXX" required value="{{ personnel.tel }}">
+              <p class="error" id="err-telephone" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <fieldset class="field">
+              <legend>Sexe<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">gender</span></legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="sexe" value="F" {% if personnel.sexe == 'F' %}checked{% endif %}><span>Féminin</span></label>
+                <label class="choice"><input type="radio" name="sexe" value="M" {% if personnel.sexe == 'M' %}checked{% endif %}><span>Masculin</span></label>
+                <label class="choice"><input type="radio" name="sexe" value="NP"><span>Non précisé</span></label>
+              </div>
+              <p class="error" id="err-sexe" role="alert"></p>
+            </fieldset>
+            <div class="field">
+              <label for="linkedin">Profil LinkedIn<span class="en-label" lang="en">optional</span></label>
+              <input type="text" id="linkedin" placeholder="linkedin.com/in/votre-nom" autocomplete="url">
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="typeOrg">Type d'organisation<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">organization type</span></label>
+              <select id="typeOrg" required onchange="onTypeOrgChange()">
+                <option value="">Sélectionner</option>
+                <option value="ONG">ONG internationale</option>
+                <option value="ONG-N">ONG nationale</option>
+                <option value="Gouvernement">Gouvernement</option>
+                <option value="ONU">Agence des Nations Unies</option>
+                <option value="Bailleur">Bailleur de fonds</option>
+                <option value="Recherche">Université / Recherche</option>
+                <option value="Prive">Cabinet / Secteur privé</option>
+                <option value="__autre">Autre</option>
+              </select>
+              <input type="text" id="typeOrgAutre" hidden placeholder="Précisez le type" aria-label="Précisez le type d'organisation">
+              <p class="error" id="err-typeOrg" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="fonctionOrg">Fonction occupée<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">position</span></label>
+              <select id="fonctionOrg" required onchange="onFonctionChange()">
+                <option value="">Sélectionner</option>
+                <option value="Responsable MEAL">Responsable MEAL</option>
+                <option value="Consultant">Consultant MEAL</option>
+                <option value="Charge SE">Chargé de suivi-évaluation</option>
+                <option value="Analyste">Analyste de données</option>
+                <option value="Chercheur">Chercheur / Enseignant</option>
+                <option value="__autre">Autre</option>
+              </select>
+              <input type="text" id="fonctionOrgAutre" hidden placeholder="Précisez la fonction" aria-label="Précisez la fonction">
+              <p class="error" id="err-fonctionOrg" role="alert"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ÉTAPE 2 -->
+        <section class="step" data-step="2" hidden aria-labelledby="h2">
+          <header class="step-head">
+            <span class="num">Étape 2 sur 5</span>
+            <h2 id="h2">Statut MEAL Afrique / OPERAPLUS</h2>
+            <p class="en" lang="en">MEAL Afrique / OPERAPLUS status</p>
+            <p class="lead">Le badge OPERAPLUS est votre identité de membre vérifiable au sein de la communauté.</p>
+          </header>
+
+          <fieldset class="field">
+            <legend>Disposez-vous déjà d'un badge MEAL Afrique (OPERAPLUS) ?<span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices stack" style="margin-top:6px">
+              <label class="choice"><input type="radio" name="badge" value="oui" onchange="toggleBadge()"><span><span class="choice-title">Oui<small>Yes</small></span></span></label>
+              <label class="choice"><input type="radio" name="badge" value="non" onchange="toggleBadge()"><span><span class="choice-title">Non<small>No</small></span></span></label>
+              <label class="choice"><input type="radio" name="badge" value="encours" onchange="toggleBadge()"><span><span class="choice-title">En cours<small>In progress</small></span></span></label>
+            </div>
+            <p class="error" id="err-badge" role="alert"></p>
+          </fieldset>
+
+          <div class="field" id="numBadgeField" hidden>
+            <label for="numBadge">Numéro du badge<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="numBadge" autocomplete="off">
+            <p class="error" id="err-numBadge" role="alert"></p>
+          </div>
+        </section>
+
+        <!-- ÉTAPE 3 -->
+        <section class="step" data-step="3" hidden aria-labelledby="h3">
+          <header class="step-head">
+            <span class="num">Étape 3 sur 5</span>
+            <h2 id="h3">Profil et domaines d'expertise MEAL</h2>
+            <p class="en" lang="en">MEAL profile and areas of expertise</p>
+            <p class="lead">Ces informations permettent de vous retrouver rapidement dans la cartographie.</p>
+          </header>
+
+          <div class="field">
+            <label for="expertiseMain">Expertise principale<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">main expertise</span></label>
+            <input type="text" id="expertiseMain" placeholder="Ex : évaluation d'impact" required>
+            <p class="error" id="err-expertiseMain" role="alert"></p>
+          </div>
+
+          <fieldset class="field">
+            <legend>Domaines MEAL maîtrisés<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">select all that apply</span></legend>
+            <div class="chips" style="margin-top:6px">
+              <label class="chip"><input type="checkbox" name="domaines" value="Suivi"><span>Suivi</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Évaluation"><span>Évaluation</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Redevabilité"><span>Redevabilité</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Apprentissage"><span>Apprentissage</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Évaluation d'impact"><span>Évaluation d'impact</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Théorie du changement"><span>Théorie du changement</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Cadre logique"><span>Cadre logique</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Qualité des données"><span>Qualité des données</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Recherche qualitative"><span>Recherche qualitative</span></label>
+              <label class="chip"><input type="checkbox" name="domaines" value="Genre et inclusion"><span>Genre et inclusion</span></label>
+            </div>
+            <p class="error" id="err-domaines" role="alert"></p>
+          </fieldset>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="experience">Années d'expérience<span class="en-label" lang="en">years of experience</span></label>
+              <select id="experience">
+                <option value="">Sélectionner</option>
+                <option value="0-2">Moins de 3 ans</option>
+                <option value="3-5">3 à 5 ans</option>
+                <option value="6-10">6 à 10 ans</option>
+                <option value="10+">Plus de 10 ans</option>
+              </select>
+            </div>
+            <fieldset class="field">
+              <legend>Langues de travail<span class="en-label" lang="en">languages</span></legend>
+              <div class="chips" style="margin-top:6px">
+                <label class="chip"><input type="checkbox" name="langues" value="Français"><span>Français</span></label>
+                <label class="chip"><input type="checkbox" name="langues" value="English"><span>English</span></label>
+                <label class="chip"><input type="checkbox" name="langues" value="Português"><span>Português</span></label>
+                <label class="chip"><input type="checkbox" name="langues" value="العربية"><span>العربية</span></label>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="field">
+            <label for="bio">Présentation courte<span class="en-label" lang="en">short bio</span></label>
+            <textarea id="bio" maxlength="280" placeholder="En quelques phrases : votre parcours, vos thématiques, votre apport au réseau."></textarea>
+            <div class="counter" aria-live="off"><span id="bioCount">0</span> / 280</div>
+          </div>
+        </section>
+
+        <!-- ÉTAPE 4 -->
+        <section class="step" data-step="4" hidden aria-labelledby="h4">
+          <header class="step-head">
+            <span class="num">Étape 4 sur 5</span>
+            <h2 id="h4">Outils digitaux MEAL maîtrisés</h2>
+            <p class="en" lang="en">Digital MEAL tools you master</p>
+            <p class="lead">Cochez les outils que vous utilisez dans votre travail.</p>
+          </header>
+
+          <fieldset class="field">
+            <legend class="visually-hidden">Outils</legend>
+            <div class="chips">
+              <label class="chip"><input type="checkbox" name="outils" value="KoboToolbox"><span>KoboToolbox</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="ODK"><span>ODK</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="SurveyCTO"><span>SurveyCTO</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="CommCare"><span>CommCare</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="DHIS2"><span>DHIS2</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="ActivityInfo"><span>ActivityInfo</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="Power BI"><span>Power BI</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="Tableau"><span>Tableau</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="Excel avancé"><span>Excel avancé</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="R"><span>R</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="Python"><span>Python</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="SPSS"><span>SPSS</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="Stata"><span>Stata</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="NVivo"><span>NVivo</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="QGIS"><span>QGIS</span></label>
+              <label class="chip"><input type="checkbox" name="outils" value="OPERAPLUS"><span>OPERAPLUS</span></label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="autresOutils">Autres outils<span class="en-label" lang="en">other tools</span></label>
+            <input type="text" id="autresOutils" placeholder="Séparez par des virgules">
+          </div>
+        </section>
+
+        <!-- ÉTAPE 5 -->
+        <section class="step" data-step="5" hidden aria-labelledby="h5">
+          <header class="step-head">
+            <span class="num">Étape 5 sur 5</span>
+            <h2 id="h5">Disponibilité et consentement</h2>
+            <p class="en" lang="en">Availability and consent</p>
+          </header>
+
+          <fieldset class="field">
+            <legend>Vous êtes disponible pour<span class="en-label" lang="en">available for</span></legend>
+            <div class="chips" style="margin-top:6px">
+              <label class="chip"><input type="checkbox" name="dispo" value="Missions de consultance"><span>Missions de consultance</span></label>
+              <label class="chip"><input type="checkbox" name="dispo" value="Mentorat"><span>Mentorat</span></label>
+              <label class="chip"><input type="checkbox" name="dispo" value="Formations"><span>Formations</span></label>
+              <label class="chip"><input type="checkbox" name="dispo" value="Partage d'expérience"><span>Partage d'expérience</span></label>
+              <label class="chip"><input type="checkbox" name="dispo" value="Débats structurés"><span>Débats structurés</span></label>
+            </div>
+          </fieldset>
+
+          <div>
+            <p class="legend" style="margin:0 0 8px;font-weight:600;font-size:.9rem">Récapitulatif</p>
+            <dl class="recap" id="recap"></dl>
+          </div>
+
+          <div class="field">
+            <div class="consent">
+              <input type="checkbox" id="consentement" required>
+              <label for="consentement">J'autorise MEAL Afrique et OPERAPLUS à publier ma fiche membre.
+                <span class="en-label" lang="en">I authorize MEAL Afrique and OPERAPLUS to publish my member profile.</span>
+              </label>
+            </div>
+            <p class="error" id="err-consentement" role="alert"></p>
+          </div>
+        </section>
+
+        <div class="nav">
+          <button type="button" class="btn btn-ghost" id="btnPrev" onclick="processAndSaveStep(-1)">← Précédent</button>
+          <div class="nav-right">
+            <span class="status" id="saveStatus" role="status" aria-live="polite"></span>
+            <button type="button" class="btn btn-primary" id="btnNext" onclick="processAndSaveStep(1)">Enregistrer et continuer →</button>
+            <button type="button" class="btn btn-gold" id="btnSubmit" hidden onclick="submitFinalForm()">Valider ma fiche</button>
+          </div>
+        </div>
+      </form>
+
+      <section class="success" id="success" hidden>
+        <div class="success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>Bienvenue dans la communauté</h2>
+        <p>Votre fiche est enregistrée dans la cartographie des experts MEAL Afrique. Vous pouvez la modifier à tout moment.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" onclick="reopenForm()">Modifier ma fiche</button>
+          <a class="btn btn-primary" href="/" style="text-decoration:none">Retour au journal →</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const TOTAL = 5;
+  const OTHER = "__autre";
+  let currentStep = 1;
+  let maxReached = 1;
+  let photoData = null;
+  // Photo déjà présente côté serveur (Django) : elle compte dans la complétude
+  const hasServerPhoto = !!document.getElementById("avatarImg");
+
+  const CITIES = {
+    "Cameroun": ["Yaoundé", "Douala", "Bafoussam", "Garoua", "Maroua", "Ngaoundéré", "Bertoua", "Bamenda", "Buea", "Ebolowa"],
+    "Sénégal": ["Dakar", "Thiès", "Saint-Louis", "Kaolack", "Ziguinchor", "Touba"],
+    "Côte d'Ivoire": ["Abidjan", "Yamoussoukro", "Bouaké", "San-Pédro", "Korhogo", "Daloa"]
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const val = (id) => ($(id)?.value || "").trim();
+  const radio = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+  const checks = (name) => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
+  const selText = (id) => { const s = $(id); return s && s.selectedIndex > 0 ? s.options[s.selectedIndex].text : ""; };
+
+  function onPaysChange() {
+    const pays = $("pays").value;
+    const ville = $("ville");
+    ville.innerHTML = "";
+    if (!pays) {
+      ville.add(new Option("Choisissez d'abord un pays", ""));
+      ville.disabled = true;
+    } else {
+      ville.add(new Option("Sélectionner une ville", ""));
+      (CITIES[pays] || []).forEach(v => ville.add(new Option(v, v)));
+      ville.add(new Option("Autre ville", OTHER));
+      ville.disabled = false;
+    }
+    onVilleChange();
+  }
+  function toggleOther(selectId, inputId) {
+    const show = $(selectId).value === OTHER;
+    $(inputId).hidden = !show;
+    if (!show) $(inputId).value = "";
+  }
+  function onVilleChange() { toggleOther("ville", "villeAutre"); updatePreview(); }
+  function onTypeOrgChange() { toggleOther("typeOrg", "typeOrgAutre"); updatePreview(); }
+  function onFonctionChange() { toggleOther("fonctionOrg", "fonctionOrgAutre"); updatePreview(); }
+  function toggleBadge() {
+    $("numBadgeField").hidden = radio("badge") !== "oui";
+    if (radio("badge") !== "oui") $("numBadge").value = "";
+    updatePreview();
+  }
+
+  function collectAll() {
+    const ville = $("ville").value === OTHER ? val("villeAutre") : $("ville").value;
+    const typeOrg = $("typeOrg").value === OTHER ? val("typeOrgAutre") : selText("typeOrg");
+    const fonction = $("fonctionOrg").value === OTHER ? val("fonctionOrgAutre") : selText("fonctionOrg");
+    return {
+      nomComplet: val("nomComplet"),
+      pays: $("pays").value,
+      ville,
+      email: val("email"),
+      telephone: val("telephone"),
+      sexe: radio("sexe"),
+      linkedin: val("linkedin"),
+      typeOrg: $("typeOrg").value,
+      typeOrgLabel: typeOrg,
+      fonctionOrg: $("fonctionOrg").value,
+      fonctionLabel: fonction,
+      badge: radio("badge"),
+      numBadge: val("numBadge"),
+      expertiseMain: val("expertiseMain"),
+      domaines: checks("domaines"),
+      experience: $("experience").value,
+      langues: checks("langues"),
+      bio: val("bio"),
+      outils: checks("outils"),
+      autresOutils: val("autresOutils"),
+      dispo: checks("dispo"),
+      consentement: $("consentement").checked,
+      hasPhoto: !!photoData || hasServerPhoto
+    };
+  }
+
+  function collectStepData(step) {
+    return { member_id: $("memberId").textContent, step_number: step, ...collectAll(), updated_at: new Date().toISOString() };
+  }
+
+  // À remplacer par votre appel API Django (penser au jeton CSRF), par exemple :
+  // return fetch("/api/members/draft", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify(data) }).then(r => r.json());
+  // Pour envoyer la photo, utiliser FormData(document.getElementById("mealForm")) plutôt que JSON.
+  function simulateDatabaseSave(step, data) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log(`[BD OK] Étape ${step} sauvegardée :`, data);
+        resolve({ success: true, status: 200 });
+      }, 500);
+    });
+  }
+
+  function setError(id, msg) {
+    const err = $("err-" + id);
+    if (err) err.textContent = msg || "";
+    const el = $(id);
+    if (el) {
+      if (msg) el.setAttribute("aria-invalid", "true"); else el.removeAttribute("aria-invalid");
+      if (msg) el.setAttribute("aria-describedby", "err-" + id); else el.removeAttribute("aria-describedby");
+    }
+  }
+
+  const VALIDATORS = {
+    1: () => {
+      const d = collectAll();
+      return [
+        ["nomComplet", d.nomComplet.length < 3 ? "Indiquez votre nom complet." : ""],
+        ["pays", !d.pays ? "Sélectionnez votre pays de résidence." : ""],
+        ["villeAutre", $("ville").value === OTHER && !d.ville ? "Précisez votre ville." : ""],
+        ["email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email) ? "Saisissez une adresse email valide, par exemple nom@organisation.org." : ""],
+        ["telephone", d.telephone.replace(/\D/g, "").length < 8 ? "Saisissez un numéro valide, avec l'indicatif du pays." : ""],
+        ["sexe", !d.sexe ? "Choisissez une option." : ""],
+        ["typeOrg", !$("typeOrg").value ? "Sélectionnez le type d'organisation." : ($("typeOrg").value === OTHER && !d.typeOrgLabel ? "Précisez le type d'organisation." : "")],
+        ["fonctionOrg", !$("fonctionOrg").value ? "Sélectionnez votre fonction." : ($("fonctionOrg").value === OTHER && !d.fonctionLabel ? "Précisez votre fonction." : "")]
+      ];
+    },
+    2: () => {
+      const d = collectAll();
+      return [
+        ["badge", !d.badge ? "Indiquez si vous avez un badge." : ""],
+        ["numBadge", d.badge === "oui" && !d.numBadge ? "Saisissez le numéro de votre badge." : ""]
+      ];
+    },
+    3: () => {
+      const d = collectAll();
+      return [
+        ["expertiseMain", d.expertiseMain.length < 3 ? "Indiquez votre expertise principale." : ""],
+        ["domaines", d.domaines.length === 0 ? "Choisissez au moins un domaine." : ""]
+      ];
+    },
+    4: () => [],
+    5: () => [["consentement", !$("consentement").checked ? "Votre accord est nécessaire pour publier votre fiche." : ""]]
+  };
+
+  const FOCUS_TARGET = { sexe: 'input[name="sexe"]', badge: 'input[name="badge"]', domaines: 'input[name="domaines"]' };
+
+  function validateStep(step) {
+    const results = VALIDATORS[step]();
+    let firstBad = null;
+    results.forEach(([id, msg]) => {
+      setError(id, msg);
+      if (msg && !firstBad) firstBad = id;
+    });
+    if (firstBad) {
+      const target = FOCUS_TARGET[firstBad] ? document.querySelector(FOCUS_TARGET[firstBad]) : $(firstBad);
+      target?.focus();
+      return false;
+    }
+    return true;
+  }
+
+  async function processAndSaveStep(direction) {
+    if (direction < 0) { jumpToStep(currentStep - 1); return; }
+    if (!validateStep(currentStep)) return;
+
+    const btn = $("btnNext");
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin" aria-hidden="true"></span> Enregistrement…';
+    try {
+      const res = await simulateDatabaseSave(currentStep, collectStepData(currentStep));
+      if (!res.success) throw new Error("save failed");
+      const t = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      $("saveStatus").textContent = `Étape ${currentStep} enregistrée à ${t}`;
+      maxReached = Math.max(maxReached, currentStep + 1);
+      jumpToStep(currentStep + 1);
+    } catch (e) {
+      console.error("BD Error:", e);
+      $("saveStatus").textContent = "L'enregistrement a échoué. Vérifiez votre connexion et réessayez.";
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = label;
+    }
+  }
+
+  function jumpToStep(target) {
+    if (target < 1 || target > TOTAL || target > maxReached) return;
+    document.querySelectorAll(".step").forEach(s => s.hidden = true);
+    document.querySelector(`.step[data-step="${target}"]`).hidden = false;
+    currentStep = target;
+    if (target === 5) renderRecap();
+    updateUI();
+    const top = $("sheet").getBoundingClientRect().top + window.scrollY - 16;
+    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
+  }
+
+  function updateUI() {
+    document.querySelectorAll("#stepper li").forEach((li, i) => {
+      const n = i + 1;
+      const btn = li.querySelector("button");
+      const dot = li.querySelector(".dot");
+      li.classList.toggle("done", n < currentStep);
+      li.classList.toggle("current", n === currentStep);
+      btn.disabled = n > maxReached;
+      if (n === currentStep) btn.setAttribute("aria-current", "step"); else btn.removeAttribute("aria-current");
+      dot.innerHTML = n < currentStep
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+        : String(n);
+    });
+    $("btnPrev").style.visibility = currentStep === 1 ? "hidden" : "visible";
+    $("btnNext").hidden = currentStep === TOTAL;
+    $("btnSubmit").hidden = currentStep !== TOTAL;
+  }
+
+  async function submitFinalForm() {
+    for (let s = 1; s <= TOTAL; s++) {
+      if (!validateStep(s)) { maxReached = TOTAL; jumpToStep(s); validateStep(s); return; }
+    }
+    const btn = $("btnSubmit");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin" aria-hidden="true"></span> Validation…';
+    try {
+      await simulateDatabaseSave(TOTAL, { ...collectStepData(TOTAL), final: true });
+      $("mealForm").hidden = true;
+      $("stepper").hidden = true;
+      $("success").hidden = false;
+      const h = $("success").querySelector("h2");
+      h.tabIndex = -1; h.focus();
+    } catch (e) {
+      $("saveStatus").textContent = "La validation a échoué. Réessayez.";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Valider ma fiche";
+    }
+  }
+
+  function reopenForm() {
+    $("success").hidden = true;
+    $("mealForm").hidden = false;
+    $("stepper").hidden = false;
+    jumpToStep(1);
+  }
+
+  function renderRecap() {
+    const d = collectAll();
+    const badgeText = { oui: "Oui" + (d.numBadge ? ` (n° ${d.numBadge})` : ""), non: "Non", encours: "En cours" }[d.badge] || "-";
+    const rows = [
+      ["Nom", d.nomComplet, 1],
+      ["Localisation", [d.ville, d.pays].filter(Boolean).join(", "), 1],
+      ["Contact", [d.email, d.telephone].filter(Boolean).join(" · "), 1],
+      ["Organisation", [d.fonctionLabel, d.typeOrgLabel].filter(Boolean).join(" · "), 1],
+      ["Badge OPERAPLUS", badgeText, 2],
+      ["Expertise", [d.expertiseMain, ...d.domaines].filter(Boolean).join(", "), 3],
+      ["Outils", [...d.outils, d.autresOutils].filter(Boolean).join(", ") || "Aucun renseigné", 4]
+    ];
+    const dl = $("recap");
+    dl.innerHTML = "";
+    rows.forEach(([k, v, step]) => {
+      const div = document.createElement("div");
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd");
+      const span = document.createElement("span"); span.textContent = v || "-";
+      const edit = document.createElement("button");
+      edit.type = "button"; edit.textContent = "Modifier";
+      edit.addEventListener("click", () => jumpToStep(step));
+      dd.append(span, edit);
+      div.append(dt, dd);
+      dl.append(div);
+    });
+  }
+
+  function initialsOf(name) {
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (!parts.length) return "?";
+    const first = parts[0][0];
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+    return (first + last).toUpperCase();
+  }
+
+  function setText(id, text, fallback) {
+    const el = $(id);
+    const next = text || fallback;
+    if (el.textContent !== next) { el.textContent = next; flash(el); }
+    el.classList.toggle("placeholder", !text);
+  }
+  function flash(el) { el.classList.remove("ink"); void el.offsetWidth; el.classList.add("ink"); }
+
+  function updatePreview() {
+    const d = collectAll();
+    setText("previewNom", d.nomComplet, "Nom et prénom");
+    setText("previewFonction", d.fonctionLabel, "Fonction");
+    const org = $("previewOrg");
+    org.hidden = !d.typeOrgLabel;
+    org.textContent = d.typeOrgLabel;
+    $("previewPays").textContent = [d.ville, d.pays].filter(Boolean).join(", ") || "Pays de résidence";
+
+    // Corrigé : #initials n'existe pas quand une photo est déjà enregistrée côté serveur
+    const ini = $("initials");
+    if (ini && !photoData) ini.textContent = initialsOf(d.nomComplet);
+
+    const b = $("previewBadge");
+    b.className = "tag";
+    if (d.badge === "oui") { b.classList.add("status-oui"); b.textContent = "Badge OPERAPLUS" + (d.numBadge ? " · " + d.numBadge : ""); }
+    else if (d.badge === "encours") { b.classList.add("status-encours"); b.textContent = "Badge en cours"; }
+    else if (d.badge === "non") { b.textContent = "Sans badge"; }
+    else { b.textContent = "Badge OPERAPLUS"; }
+
+    const dom = $("previewDomaines");
+    dom.innerHTML = "";
+    const list = [d.expertiseMain, ...d.domaines].filter(Boolean);
+    dom.hidden = list.length === 0;
+    list.slice(0, 4).forEach(t => { const s = document.createElement("span"); s.textContent = t; dom.append(s); });
+    if (list.length > 4) { const s = document.createElement("span"); s.textContent = "+" + (list.length - 4); dom.append(s); }
+
+    const bio = $("previewBio");
+    bio.textContent = d.bio || "Votre présentation apparaîtra ici : vos domaines d'expertise et votre rôle au sein du réseau panafricain.";
+    bio.classList.toggle("placeholder", !d.bio);
+    $("bioCount").textContent = d.bio.length;
+    updateBadgeExtras(d);
+  }
+
+  function previewImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      photoData = e.target.result;
+      $("avatar").innerHTML = "";
+      const img = document.createElement("img");
+      img.src = photoData; img.alt = "";
+      $("avatar").append(img);
+      updatePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  let lastSeed = null;
+  function drawBarcode(seed) {
+    if (seed === lastSeed) return;
+    lastSeed = seed;
+    let h = 2166136261;
+    for (const c of (seed || "MEAL")) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+    h = h || 1;
+    const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return (h >>> 0) / 4294967295; };
+    let x = 0, bars = "";
+    while (x < 118) {
+      const w = 1 + Math.floor(rnd() * 3), gap = 1 + Math.floor(rnd() * 2);
+      if (x + w > 120) break;
+      bars += `<rect x="${x}" y="0" width="${w}" height="28"/>`;
+      x += w + gap;
+    }
+    $("barcode").innerHTML = bars;
+    flash($("barcode"));
+  }
+
+  function completeness(d) {
+    const ok = [
+      d.nomComplet.length >= 3, !!d.pays,
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email),
+      d.telephone.replace(/\D/g, "").length >= 8,
+      !!d.sexe, !!d.typeOrg, !!d.fonctionOrg, !!d.badge,
+      d.expertiseMain.length >= 3, d.domaines.length > 0, d.bio.length > 0,
+      d.outils.length > 0 || !!d.autresOutils, d.hasPhoto, d.consentement
+    ];
+    return Math.round(ok.filter(Boolean).length / ok.length * 100);
+  }
+
+  let shownPct = 0, pctRaf = null;
+  function tweenPct(target) {
+    cancelAnimationFrame(pctRaf);
+    const from = shownPct, start = performance.now();
+    const step = (t) => {
+      const k = Math.min(1, (t - start) / 450);
+      shownPct = Math.round(from + (target - from) * (1 - Math.pow(1 - k, 3)));
+      $("pct").textContent = shownPct + "%";
+      if (k < 1) pctRaf = requestAnimationFrame(step);
+    };
+    pctRaf = requestAnimationFrame(step);
+  }
+
+  function updateBadgeExtras(d) {
+    drawBarcode((d.nomComplet + "|" + d.email).trim());
+    const p = completeness(d);
+    $("meterBar").style.setProperty("--p", p + "%");
+    if (p !== shownPct) tweenPct(p);
+  }
+
+  function initBadgeTilt() {
+    const badge = $("badge");
+    if (!badge || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const MAX = 9;
+    let raf = null;
+    badge.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse") return;
+      const r = badge.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        badge.classList.add("is-active");
+        badge.style.setProperty("--ry", ((px - .5) * 2 * MAX).toFixed(2) + "deg");
+        badge.style.setProperty("--rx", ((.5 - py) * 2 * MAX).toFixed(2) + "deg");
+        badge.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+        badge.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+      });
+    });
+    badge.addEventListener("pointerleave", () => {
+      cancelAnimationFrame(raf);
+      badge.classList.remove("is-active");
+      badge.style.setProperty("--rx", "0deg");
+      badge.style.setProperty("--ry", "0deg");
+    });
+  }
+
+  function initScroll() {
+    const bar = $("scrollProgress"), stepper = $("stepper");
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+      stepper.classList.toggle("stuck", stepper.getBoundingClientRect().top <= 0.5);
+    };
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = $("mealForm");
+    form.addEventListener("input", (e) => {
+      updatePreview();
+      if (e.target.id && $("err-" + e.target.id)?.textContent) setError(e.target.id, "");
+    });
+    form.addEventListener("change", (e) => {
+      updatePreview();
+      const n = e.target.name;
+      if (n && $("err-" + n)?.textContent) setError(n, "");
+    });
+    document.querySelectorAll("#stepper [data-goto]").forEach(b =>
+      b.addEventListener("click", () => jumpToStep(Number(b.dataset.goto)))
+    );
+    updatePreview();
+    updateUI();
+    initBadgeTilt();
+    initScroll();
+  });
+</script>
+</body>
+</html>
