@@ -8,7 +8,23 @@ class ProfilMeal(models.Model):
     intitule = models.CharField(max_length=255)
     description_fr = models.TextField()
     description_en = models.TextField()
+class DomaineExpertise(models.Model):
+    intitule = models.CharField(max_length=255)
+    description= models.TextField()
+class SecteurIntervention(models.Model):
+    intitule = models.CharField(max_length=255)
+    description= models.TextField()
+class OutilsMeal(models.Model):
+    code = models.CharField(max_length=255, null=True, blank=True)
+    intitule = models.CharField(max_length=255)
+    description_fr = models.TextField(null=True, blank=True)
+    description_en = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return self.intitule
+class DisponibilityType(models.Model):
+    intitule = models.CharField(max_length=255)
+    description= models.TextField()
 class Personnel(models.Model):
     nom	= models.CharField(max_length=128,blank=True,null=True)
     prenom = models.CharField(max_length=128,blank=True,null=True)
@@ -54,6 +70,11 @@ class Personnel(models.Model):
     
     
     fonction_organization = models.CharField(max_length=255, null=True)
+    
+    
+    cartographie_is_valid = models.BooleanField(default=False)
+
+    consentement = models.BooleanField(default=False)
 
     def __str__(self):
         return self.code or f"{self.nom} {self.prenom}"
@@ -65,38 +86,23 @@ class ProfilPersonnel(models.Model):
     year_experience= models.IntegerField(null=True)
 
 
-class DomaineExpertise(models.Model):
-    intitule = models.CharField(max_length=255)
-    description= models.TextField()
 
 class PersonnelDomaine(models.Model):
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE, null=True)
     domaine = models.ForeignKey(DomaineExpertise, on_delete=models.CASCADE, null=True)
 
-class SecteurIntervention(models.Model):
-    intitule = models.CharField(max_length=255)
-    description= models.TextField()
+
 
 class PersonnelSecteurIntervention(models.Model):
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE, null=True)
     secteur_intervention = models.ForeignKey(SecteurIntervention, on_delete=models.CASCADE, null=True)
 
-class OutilsMeal(models.Model):
-    code = models.CharField(max_length=255, null=True, blank=True)
-    intitule = models.CharField(max_length=255)
-    description_fr = models.TextField(null=True, blank=True)
-    description_en = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return self.intitule
 
 class PersonnelOutilMeal(models.Model):
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE, null=True)
     outil_meal = models.ForeignKey(OutilsMeal, on_delete=models.CASCADE, null=True)
 
-class DisponibilityType(models.Model):
-    intitule = models.CharField(max_length=255)
-    description= models.TextField()
+
 
 class PersonnelDisponibilityType(models.Model):
 

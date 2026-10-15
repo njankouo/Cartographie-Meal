@@ -16,6 +16,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from cities_light.models import City
 from django.core.exceptions import ObjectDoesNotExist
 import pycountry
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email, URLValidator
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import transaction
+
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     return render(request, 'webpages/index.html')
@@ -179,29 +186,49 @@ def Cartographie(request, code):
     context = {
         'countries': countries,
         'personnel': personnel,
+        'domaine_expertise':DomaineExpertise.objects.all(),
+        'profils':ProfilMeal.objects.all(),
+        'secteurs':SecteurIntervention.objects.all(),
+        'outils':OutilsMeal.objects.all(),
+        'types_disponibilite':DisponibilityType.objects.all()
     }
+    chec_verification_cartographie = personnel.cartographie_is_valid
+
+    if chec_verification_cartographie:
+        return  render(request, 'webpages/profil_expert.html', context)
     return render(request, 'webpages/cartographie.html', context)
 def get_cities_by_country(request):
     """
-    API endpoint pour récupérer les villes selon le code ISO du pays envoyé par le front-end
+    API endpoint pour récupérer les villes selon le NOM du pays (ou son ID/Code)
     """
-    country_code = request.GET.get('country')
+    country_val = request.GET.get('country')
     
-    if not country_code:
-        return JsonResponse({'cities': []}, safe=False)
+    if not country_val:
+        return JsonResponse({'cities': []})
 
     try:
-        # cities-light relie City à Country via le champ 'country'
-        # et stocke le code ISO dans 'country.code' ou 'country.code2'
-        cities = City.objects.filter(country__code__iexact=country_code).values('id', 'name')
-        
-        if not cities.exists():
-            cities = City.objects.filter(country__code2__iexact=country_code).values('id', 'name')
+        # 1. Si c'est un ID numérique
+        if country_val.isdigit():
+            cities = City.objects.filter(country_id=country_val)
+        else:
+            # 2. Recherche par NOM du pays (exact ou insensible à la casse avec __iexact)
+            cities = City.objects.filter(country__name__iexact=country_val)
+            
+            # Si aucune ville n'est trouvée par le nom complet, tente de chercher par code ISO (code2 / code3)
+            if not cities.exists():
+                cities = City.objects.filter(
+                    country__code2__iexact=country_val
+                ) | City.objects.filter(
+                    country__code3__iexact=country_val
+                )
+
+        # Extraction des champs 'id' et 'name' triés par ordre alphabétique
+        cities_list = list(cities.order_by('name').values('id', 'name'))
 
     except Exception as e:
-        cities = []
+        cities_list = []
 
-    return JsonResponse({'cities': list(cities)}, safe=False)
+    return JsonResponse({'cities': cities_list})
 
 def EditProfil(request, code):
     template = 'webpages/edit-profil.html'
@@ -341,5 +368,119 @@ def memberscountry(request, country):
     return render(request, template, context)
 
 
-def ProfilExpert(request):
-    return render(request, 'webpages/profil_expert.html')
+def ProfilExpert(request, code):
+    personnel = Personnel.objects.get(code=code)
+    context ={
+        'personnel':personnel
+    }
+    return render(request, 'webpages/profil_expert.html', context)
+
+
+
+
+def secure_create_or_update_personnel(data: dict, unique_field='code'):
+ 
+    
+    # 1. EXTRACTION ET NETTOYAGE DES RELATIONS
+    domaines_ids = data.pop('domaines', None)
+    secteurs_ids = data.pop('secteurs_intervention', None)
+    outils_ids = data.pop('outils_meal', None)
+    disponibilites_ids = data.pop('types_disponibilite', None)
+    year_experience_profil = data.pop('year_experience_profil', None)
+
+    # Vérification du champ unique de recherche
+    lookup_value = data.get(unique_field)
+    if not lookup_value:
+        raise ValidationError({unique_field: f"Le champ de recherche '{unique_field}' est obligatoire."})
+
+    # 2. VALIDATION STRICTE DES DONNÉES (DATA INTEGRITY & FORMATS)
+    
+    # Validation de l'e-mail si présent
+    if data.get('mail'):
+        try:
+            validate_email(data['mail'])
+        except DjangoValidationError:
+            raise ValidationError({'mail': "Format d'adresse e-mail invalide."})
+
+    # Validation du profil LinkedIn si présent
+    if data.get('profil_linkedin'):
+        validator = URLValidator()
+        try:
+            validator(data['profil_linkedin'])
+        except DjangoValidationError:
+            raise ValidationError({'profil_linkedin': "L'URL du profil LinkedIn est invalide."})
+
+    # Nettoyage de base des chaînes textuelles (protection contre les espaces superflus)
+    for field in ['nom', 'prenom', 'fonction', 'code']:
+        if data.get(field):
+            data[field] = str(data[field]).strip()
+
+    # 3. VÉRIFICATION DE L'EXISTENCE DES CLÉS ÉTRANGÈRES (Empêche l'injection d'IDs corrompus ou orphelins)
+    if data.get('current_profil'):
+        profil_id = data['current_profil'].id if hasattr(data['current_profil'], 'id') else data['current_profil']
+        if not ProfilMeal.objects.filter(id=profil_id).exists():
+            raise ValidationError({'current_profil': "Le profil MEAL spécifié n'existe pas en base de données."})
+
+    def verify_existence(model_class, ids_list, field_name):
+        if ids_list:
+            # S'assure que tous les IDs fournis existent réellement et gère les doublons potentiels
+            existing_count = model_class.objects.filter(id__in=ids_list).count()
+            if existing_count != len(set(ids_list)):
+                raise ValidationError({field_name: "Un ou plusieurs identifiants fournis n'existent pas."})
+
+    verify_existence(DomaineExpertise, domaines_ids, 'domaines')
+    verify_existence(SecteurIntervention, secteurs_ids, 'secteurs_intervention')
+    verify_existence(OutilsMeal, outils_ids, 'outils_meal')
+    verify_existence(DisponibilityType, disponibilites_ids, 'types_disponibilite')
+
+    # 4. EXÉCUTION SÉCURISÉE EN TRANSACTION ATOMIQUE (Règle ACID)
+    try:
+        with transaction.atomic():
+            lookup_kwargs = {unique_field: lookup_value}
+            personnel, created = Personnel.update_or_create(
+                **lookup_kwargs,
+                defaults=data
+            )
+
+            # Gestion de la table ProfilPersonnel
+            if personnel.current_profil:
+                ProfilPersonnel.objects.update_or_create(
+                    personnel=personnel,
+                    profil=personnel.current_profil,
+                    defaults={'year_experience': year_experience_profil}
+                )
+
+            # Synchronisation sécurisée des relations Many-to-Many / Intermédiaires
+            if domaines_ids is not None:
+                PersonnelDomaine.objects.filter(personnel=personnel).delete()
+                PersonnelDomaine.objects.bulk_create([
+                    PersonnelDomaine(personnel=personnel, domaine_id=d_id) for d_id in domaines_ids
+                ])
+
+            if secteurs_ids is not None:
+                PersonnelSecteurIntervention.objects.filter(personnel=personnel).delete()
+                PersonnelSecteurIntervention.objects.bulk_create([
+                    PersonnelSecteurIntervention(personnel=personnel, secteur_intervention_id=s_id) for s_id in secteurs_ids
+                ])
+
+            if outils_ids is not None:
+                PersonnelOutilMeal.objects.filter(personnel=personnel).delete()
+                PersonnelOutilMeal.objects.bulk_create([
+                    PersonnelOutilMeal(personnel=personnel, outil_meal_id=o_id) for o_id in outils_ids
+                ])
+
+            if disponibilites_ids is not None:
+                PersonnelDisponibilityType.objects.filter(personnel=personnel).delete()
+                PersonnelDisponibilityType.objects.bulk_create([
+                    PersonnelDisponibilityType(personnel=personnel, type_disponibilite_id=dt_id) for dt_id in disponibilites_ids
+                ])
+
+        # 5. TRAÇABILITÉ (AUDIT LOG SYSTÈME)
+        action_type = "Création" if created else "Mise à jour"
+        logger.info(f"Sécurité - {action_type} réussie du personnel (Code: {personnel.code}) par le processus système.")
+
+        return personnel, created
+
+    except Exception as e:
+        logger.error(f"Erreur critique lors du create_update sécurisé du personnel : {str(e)}")
+        raise e

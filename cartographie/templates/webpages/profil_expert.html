@@ -6,7 +6,7 @@
 {% load static %}
 <title>Dr Aminata Diallo - Évaluatrice senior MEAL | Expert MEAL Afrique</title>
 <meta name="description" content="Dr Aminata Diallo, évaluatrice senior MEAL basée à Dakar. 12 ans d'expérience, 40+ évaluations, 9 pays. Profil d'expert de la communauté MEAL Afrique - OPERAPLUS.">
-<meta name="theme-color" content="#081C3D">
+<meta name="theme-color" content="#0D2B5C">
 
 <!-- Aperçu de partage : remplacez l'URL et l'image par les vraies avant diffusion -->
 <meta property="og:type" content="profile">
@@ -27,379 +27,399 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --navy:#0D2B5C; --navy-2:#1F3864; --ink:#081C3D; --deep:#040D22;
-  --gold:#C9A227; --gold-2:#B8860B; --gold-hi:#F1D88A; --gold-soft:#F4ECD3;
-  --paper:#FBF9F4; --line:#E6E0D2; --text:#14213D; --muted:#5E6676;
-  --serif:"Fraunces",Georgia,"Times New Roman",serif;
-  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
-  --ease:cubic-bezier(.2,.8,.2,1);
+  --navy:#0D2B5C; --navy-2:#1F3864; --ink:#0B1A33;
+  --gold:#A8842A; --gold-line:#D9C38A; --gold-soft:#F6F0E1;
+  --paper:#FAF8F4; --white:#FFFFFF; --line:#E4E0D7; --line-2:#EFECE5;
+  --text:#1B2333; --muted:#5B6474; --ok:#2E7D5B;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --radius:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{font-family:var(--sans);background:var(--paper);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:80px}
+body{font-family:var(--sans);background:var(--paper);color:var(--text);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
-::selection{background:var(--gold);color:var(--ink)}
-:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+::selection{background:var(--gold-line);color:var(--ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 @media(min-width:768px){.wrap{padding:0 40px}}
-.mono{font-family:var(--mono)}
-.kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-2)}
-.dark .kicker{color:var(--gold)}
 
-/* ───────────── Barre de progression de lecture ───────────── */
-.progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--gold-2),var(--gold-hi));z-index:100}
+.label{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.label::before{content:"";display:inline-block;width:22px;height:1px;background:var(--gold);vertical-align:middle;margin-right:10px}
+.on-dark .label{color:var(--gold-line)}.on-dark .label::before{background:var(--gold-line)}
 
-/* ───────────── Navigation ───────────── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:60;transition:background .35s,box-shadow .35s,backdrop-filter .35s}
-.nav.solid{background:rgba(4,13,34,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(201,162,39,.35)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:68px;gap:12px}
-.brand{display:flex;align-items:center;gap:12px;color:#fff}
-.brand img,.brand .mk{width:38px;height:38px;border-radius:10px;background:#fff;object-fit:cover;box-shadow:0 0 0 2px var(--gold)}
-.brand b{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.01em}
-.brand b i{color:var(--gold);font-weight:500}
-.nav-links{display:none;gap:4px}
-@media(min-width:900px){.nav-links{display:flex}}
-.nav-links a{font-size:13px;font-weight:600;color:#C9D3E6;padding:10px 14px;border-radius:999px;transition:.2s}
-.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
-.pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:12px 18px;border-radius:999px;transition:transform .25s var(--ease),background .2s,box-shadow .25s}
-.pill-gold{background:var(--gold);color:var(--ink);box-shadow:0 10px 30px -10px rgba(201,162,39,.7)}
-.pill-gold:hover{background:#D8B33A;transform:translateY(-2px);box-shadow:0 16px 36px -12px rgba(201,162,39,.85)}
-.pill-ghost{color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3)}
-.pill-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--gold);color:var(--gold-hi)}
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;padding:12px 20px;border-radius:8px;transition:background .2s,color .2s,border-color .2s;border:1px solid transparent;white-space:nowrap}
+.btn svg{width:16px;height:16px;flex:none}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--ink)}
+.btn-outline{border-color:var(--line);background:var(--white);color:var(--navy)}
+.btn-outline:hover{border-color:var(--navy)}
+.on-dark .btn-light{background:#fff;color:var(--navy)}
+.on-dark .btn-light:hover{background:var(--gold-soft)}
+.on-dark .btn-ghost{border-color:rgba(255,255,255,.28);color:#fff}
+.on-dark .btn-ghost:hover{border-color:#fff}
 
-/* ───────────── HERO ───────────── */
-.hero{position:relative;min-height:100svh;background:var(--deep);color:#fff;overflow:hidden;display:flex;align-items:center;padding:110px 0 70px}
-/* maillage de lumière animé */
-.mesh{position:absolute;inset:-20%;filter:blur(70px);opacity:.9;pointer-events:none}
-.mesh span{position:absolute;border-radius:50%;mix-blend-mode:screen}
-.mesh .a{width:46vmax;height:46vmax;left:52%;top:-6%;background:radial-gradient(circle,rgba(201,162,39,.55),transparent 62%);animation:drift1 18s ease-in-out infinite}
-.mesh .b{width:52vmax;height:52vmax;left:-12%;top:30%;background:radial-gradient(circle,rgba(31,56,100,.95),transparent 65%);animation:drift2 22s ease-in-out infinite}
-.mesh .c{width:34vmax;height:34vmax;left:30%;top:55%;background:radial-gradient(circle,rgba(184,134,11,.35),transparent 65%);animation:drift3 16s ease-in-out infinite}
-@keyframes drift1{50%{transform:translate(-12%,14%) scale(1.12)}}
-@keyframes drift2{50%{transform:translate(16%,-10%) scale(.92)}}
-@keyframes drift3{50%{transform:translate(-18%,-16%) scale(1.18)}}
-/* grain + grille */
-.grid-bg{position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
-  background-size:64px 64px;mask-image:radial-gradient(ellipse at 60% 40%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 60% 40%,#000 20%,transparent 75%)}
-#particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* ───────── Navigation ───────── */
+.nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid transparent;transition:border-color .2s}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img,.brand .mk{width:36px;height:36px;border-radius:8px;object-fit:cover;background:var(--navy);border:1px solid var(--line)}
+.brand span{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);letter-spacing:-.01em}
+.brand small{display:block;font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.nav-links{display:none;gap:28px}
+@media(min-width:920px){.nav-links{display:flex}}
+.nav-links a{position:relative;font-size:14px;font-weight:500;color:var(--muted);padding:6px 0;transition:color .2s}
+.nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.nav-links a:hover,.nav-links a.active{color:var(--navy)}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+.nav .btn{padding:10px 16px}
 
-.hero-grid{position:relative;display:grid;gap:56px;align-items:center;width:100%}
-@media(min-width:960px){.hero-grid{grid-template-columns:1.25fr 1fr;gap:40px}}
+/* ───────── En-tête profil ───────── */
+.hero{padding:56px 0 64px}
+@media(min-width:960px){.hero{padding:80px 0 88px}}
+.hero-grid{display:grid;gap:48px;align-items:center}
+@media(min-width:960px){.hero-grid{grid-template-columns:1.35fr 1fr;gap:72px}}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,6vw,64px);line-height:1.05;letter-spacing:-.02em;color:var(--navy);margin:18px 0 12px}
+.hero .title{font-size:clamp(18px,2vw,21px);color:var(--text);font-weight:500}
+.hero .title span{color:var(--muted);font-weight:400}
+.hero .summary{margin-top:20px;max-width:560px;color:var(--muted);font-size:17px}
+.meta{display:grid;gap:10px;margin:28px 0 32px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media(min-width:560px){.meta{grid-template-columns:1fr 1fr}}
+.meta div{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)}
+.meta svg{width:16px;height:16px;color:var(--gold);flex:none}
+.avail{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ok);background:#EAF4EE;border:1px solid #CFE6D9;padding:6px 12px;border-radius:999px}
+.avail i{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
 
-.status{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:999px;background:rgba(46,158,107,.12);box-shadow:inset 0 0 0 1px rgba(52,211,153,.35);font-size:12.5px;font-weight:700;color:#7FE3B6}
-.status i{position:relative;width:9px;height:9px;border-radius:50%;background:#34D399}
-.status i::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid #34D399;animation:ping 1.8s var(--ease) infinite}
-@keyframes ping{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:0}}
+.portrait{position:relative;justify-self:center;width:min(380px,100%)}
+.portrait figure{position:relative;z-index:1;aspect-ratio:4/5;border-radius:var(--radius);overflow:hidden;background:var(--navy-2)}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.portrait::before{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--gold-line);border-radius:var(--radius);z-index:0}
+.portrait figcaption{position:relative;z-index:2;margin:-1px 0 0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:var(--white);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);font-size:13px;color:var(--muted)}
+.portrait figure{border-radius:var(--radius) var(--radius) 0 0}
+.portrait figcaption b{color:var(--navy);font-weight:600}
 
-.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(46px,8.2vw,108px);line-height:.92;letter-spacing:-.035em;margin:22px 0 18px}
-.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
-.hero h1 .ln span{display:inline-block;animation:rise 1.1s var(--ease) both}
-.hero h1 .ln:nth-child(2) span{animation-delay:.12s}
-.hero h1 em{font-style:italic;font-weight:400;background:linear-gradient(100deg,var(--gold-hi),var(--gold) 40%,#FFF3C4 50%,var(--gold) 60%,var(--gold-2));background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rise 1.1s .12s var(--ease) both,shine 6s 1.4s linear infinite}
-@keyframes rise{from{transform:translateY(105%)}to{transform:none}}
-@keyframes shine{to{background-position:-250% 0}}
-.role{font-size:clamp(17px,2vw,21px);color:#D3DAE8;max-width:560px;animation:fadeUp .9s .35s var(--ease) both}
-.role b{color:#fff;font-weight:700}
-.typed{color:var(--gold-hi);font-weight:700;border-right:2px solid var(--gold);padding-right:3px;white-space:nowrap}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.facts{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 34px;animation:fadeUp .9s .5s var(--ease) both}
-.facts span{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);font-size:13px;font-weight:600;color:#E6EBF5}
-.facts svg{width:15px;height:15px;color:var(--gold)}
-.ctas{display:flex;flex-wrap:wrap;gap:12px;animation:fadeUp .9s .62s var(--ease) both}
-.ctas .pill{padding:16px 24px;font-size:12px}
+/* ───────── Chiffres clés ───────── */
+.figures{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fig-grid{display:grid;grid-template-columns:repeat(2,1fr)}
+@media(min-width:860px){.fig-grid{grid-template-columns:repeat(4,1fr)}}
+.fig{padding:30px 24px}
+.fig:not(:last-child){border-right:1px solid var(--line-2)}
+@media(max-width:859px){.fig:nth-child(2){border-right:0}.fig:nth-child(-n+2){border-bottom:1px solid var(--line-2)}}
+.fig b{display:block;font-family:var(--serif);font-weight:600;font-size:clamp(34px,4vw,44px);line-height:1;color:var(--navy)}
+.fig b small{font-size:.5em;color:var(--gold);font-weight:600;margin-left:3px}
+.fig span{display:block;margin-top:8px;font-size:14px;color:var(--muted)}
 
-/* portrait */
-.portrait-wrap{position:relative;justify-self:center;width:min(420px,84vw);aspect-ratio:4/5;animation:fadeUp 1.1s .2s var(--ease) both}
-.ring{position:absolute;left:-34px;right:-34px;top:-34px;aspect-ratio:1;border-radius:50%;pointer-events:none;z-index:0}
-.ring::before{content:"";position:absolute;inset:14%;border-radius:50%;border:1px dashed rgba(201,162,39,.35)}
-.ring svg{width:100%;height:100%;animation:spin 40s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.portrait{position:relative;z-index:1;background:var(--ink);width:100%;height:100%;border-radius:200px 200px 28px 28px;overflow:hidden;transform-style:preserve-3d;transition:transform .5s var(--ease);
-  box-shadow:0 0 0 1.5px rgba(201,162,39,.8),0 0 0 10px rgba(201,162,39,.08),0 50px 90px -30px rgba(0,0,0,.8)}
-.portrait img{width:100%;height:100%;object-fit:cover;transform:scale(1.04);transition:transform .8s var(--ease)}
-.portrait:hover img{transform:scale(1.09)}
-.portrait::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(4,13,34,.75));pointer-events:none}
-.portrait .glare{position:absolute;inset:0;background:radial-gradient(500px circle at var(--gx,30%) var(--gy,20%),rgba(255,255,255,.22),transparent 45%);mix-blend-mode:soft-light;pointer-events:none;z-index:2}
-.badge-float{position:absolute;z-index:3;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:16px;background:rgba(8,28,61,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 0 0 1px rgba(201,162,39,.4),0 20px 40px -18px rgba(0,0,0,.7)}
-.badge-float b{font-family:var(--serif);font-size:26px;line-height:1;color:var(--gold-hi)}
-.badge-float small{font-size:11px;line-height:1.25;color:#C9D3E6;font-weight:600}
-.bf1{left:-34px;top:16%;animation:float 6s ease-in-out infinite}
-.bf2{right:-28px;bottom:20%;animation:float 7s 1s ease-in-out infinite}
-.bf3{left:50%;bottom:-20px;transform:translateX(-50%);padding:10px 16px;background:var(--gold);box-shadow:0 18px 40px -14px rgba(201,162,39,.8)}
-.bf3 span{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.16em;color:var(--ink);text-transform:uppercase;white-space:nowrap}
-@keyframes float{50%{transform:translateY(-12px)}}
-@media(max-width:520px){.bf1{left:-8px}.bf2{right:-8px}}
+/* ───────── Sections ───────── */
+section.block{padding:80px 0}
+@media(min-width:960px){section.block{padding:104px 0}}
+.alt{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.head{display:grid;gap:12px;margin-bottom:44px}
+@media(min-width:900px){.head{grid-template-columns:1fr 1fr;align-items:end;gap:48px}}
+.head h2{font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,42px);line-height:1.12;letter-spacing:-.015em;color:var(--navy);margin-top:12px}
+.head p{color:var(--muted);max-width:480px}
+.on-dark{background:var(--navy);color:#fff}
+.on-dark .head h2{color:#fff}
+.on-dark .head p{color:#BBC6DA}
 
-.scroll-cue{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#8E9AB3;text-transform:uppercase}
-.scroll-cue i{width:22px;height:34px;border-radius:12px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3);position:relative}
-.scroll-cue i::after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;background:var(--gold);transform:translateX(-50%);animation:wheel 1.8s ease-in-out infinite}
-@keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
-@media(max-height:720px),(max-width:959px){.scroll-cue{display:none}}
-
-/* ───────────── Bande chiffres ───────────── */
-.stats{position:relative;z-index:5;margin-top:-56px}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);background:#fff;border-radius:24px;box-shadow:0 40px 80px -40px rgba(8,28,61,.45),0 0 0 1px var(--line);overflow:hidden}
-@media(min-width:860px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
-.stat{padding:28px 26px;position:relative;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:background .3s}
-.stat:hover{background:var(--gold-soft)}
-.stat:nth-child(2n){border-right:0}
-@media(min-width:860px){.stat{border-bottom:0}.stat:nth-child(2n){border-right:1px solid var(--line)}.stat:last-child{border-right:0}}
-.stat b{display:block;font-family:var(--serif);font-weight:900;font-size:clamp(40px,5vw,58px);line-height:1;color:var(--navy);letter-spacing:-.03em}
-.stat b sup{font-size:.45em;color:var(--gold-2);vertical-align:top;margin-left:2px}
-.stat>span{display:block;margin-top:8px;font-size:13px;font-weight:600;color:var(--muted)}
-
-/* ───────────── Sections ───────────── */
-section.block{padding:96px 0}
-.head{display:grid;gap:14px;margin-bottom:46px}
-@media(min-width:900px){.head{grid-template-columns:1fr 1fr;align-items:end;gap:40px}}
-.head h2{font-family:var(--serif);font-weight:700;font-size:clamp(34px,4.6vw,56px);line-height:1.02;letter-spacing:-.025em;color:var(--navy)}
-.head h2 em{font-style:italic;font-weight:400;color:var(--gold-2)}
-.head p{color:var(--muted);font-size:16px;max-width:520px}
-.dark{background:var(--ink);color:#fff;position:relative;overflow:hidden}
-.dark .head h2{color:#fff}.dark .head h2 em{color:var(--gold)}
-.dark .head p{color:#AEB9CF}
-
-/* reveal : visible par défaut, animé seulement si JS + mouvement autorisé */
-.js .rv{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+/* Apparition discrète */
+.js .rv{opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
 .js .rv.in{opacity:1;transform:none}
 
-/* À propos */
-.about{display:grid;gap:40px}
-@media(min-width:960px){.about{grid-template-columns:1.3fr 1fr;gap:64px}}
-.lede{font-family:var(--serif);font-size:clamp(22px,2.6vw,30px);line-height:1.35;color:var(--navy);font-weight:500;letter-spacing:-.01em}
-.lede mark{background:linear-gradient(transparent 62%,rgba(201,162,39,.38) 62%);color:inherit;padding:0 2px}
-.about-body p:not(.lede){color:var(--muted);margin-top:18px;font-size:16px}
-.quick{display:grid;gap:12px;align-content:start}
-.q{display:flex;align-items:center;gap:16px;padding:18px 20px;background:#fff;border-radius:18px;box-shadow:0 0 0 1px var(--line);transition:transform .3s var(--ease),box-shadow .3s}
-.q:hover{transform:translateX(6px);box-shadow:0 0 0 1px var(--gold),0 18px 40px -24px rgba(8,28,61,.4)}
-.q .ic{width:46px;height:46px;flex:none;border-radius:14px;background:var(--navy);color:var(--gold);display:grid;place-items:center}
-.q .ic svg{width:21px;height:21px}
-.q small{display:block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2)}
-.q strong{font-size:15.5px;color:var(--text)}
+/* Profil */
+.about{display:grid;gap:48px}
+@media(min-width:960px){.about{grid-template-columns:1.4fr 1fr;gap:80px}}
+.lede{font-family:var(--serif);font-size:clamp(22px,2.4vw,27px);line-height:1.45;color:var(--navy);font-weight:500;margin:16px 0 22px}
+.about-body p:not(.lede){color:var(--muted);margin-top:14px}
+.brief{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:8px 24px}
+.brief h3{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:18px 0 6px}
+.brief dl{display:grid}
+.brief div{padding:14px 0;border-top:1px solid var(--line-2)}
+.brief div:first-of-type{border-top:0}
+.brief dt{font-size:12.5px;color:var(--muted)}
+.brief dd{font-weight:600;color:var(--text);margin-top:2px}
 
 /* Expertises */
-.skills{display:grid;gap:18px}
-@media(min-width:860px){.skills{grid-template-columns:1fr 1fr;gap:20px 48px}}
-.sk{padding:20px 0;border-bottom:1px solid rgba(255,255,255,.1)}
-.sk-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
-.sk-top h3{font-size:17px;font-weight:700}
-.sk-top span{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gold)}
-.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
-.bar i{display:block;height:100%;width:var(--w);border-radius:99px;background:linear-gradient(90deg,var(--gold-2),var(--gold-hi));position:relative}
-.js .bar i{width:0;transition:width 1.6s var(--ease)}
-.js .in .bar i,.js .bar.in i{width:var(--w)}
-.bar i::after{content:"";position:absolute;right:0;top:50%;width:12px;height:12px;border-radius:50%;background:#fff;transform:translate(50%,-50%);box-shadow:0 0 0 4px rgba(201,162,39,.35),0 0 18px var(--gold)}
-.sk p{font-size:13.5px;color:#AEB9CF;margin-top:10px}
-.dark .glow{position:absolute;width:60vmax;height:60vmax;border-radius:50%;right:-25vmax;top:-20vmax;background:radial-gradient(circle,rgba(201,162,39,.16),transparent 60%);pointer-events:none}
-
-/* Outils (défilement) */
-.marquee{margin-top:56px;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.mq{display:flex;gap:14px;width:max-content;animation:mq 34s linear infinite}
-.marquee:hover .mq{animation-play-state:paused}
-@keyframes mq{to{transform:translateX(-50%)}}
-.tool{display:inline-flex;align-items:center;gap:10px;padding:14px 20px;border-radius:14px;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);font-weight:700;font-size:15px;white-space:nowrap;transition:.25s}
-.tool:hover{background:rgba(201,162,39,.14);box-shadow:inset 0 0 0 1px var(--gold)}
-.tool i{width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+.areas{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+@media(min-width:700px){.areas{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.areas{grid-template-columns:repeat(3,1fr)}}
+.area{background:var(--white);padding:28px 26px;transition:background .2s}
+.area:hover{background:var(--gold-soft)}
+.area .n{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--gold)}
+.area h3{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--navy);line-height:1.25;margin:10px 0 8px}
+.area p{font-size:14.5px;color:var(--muted)}
+.tools{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tools strong{font-size:13px;font-weight:600;color:var(--muted);margin-right:8px}
+.tools span{font-size:13px;font-weight:500;padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--text)}
 
 /* Parcours */
-.timeline{position:relative;display:grid;gap:22px;padding-left:34px}
-.timeline::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--gold),var(--navy) 70%,transparent)}
-.tl{position:relative;background:#fff;border-radius:22px;padding:26px 28px;box-shadow:0 0 0 1px var(--line);transition:transform .35s var(--ease),box-shadow .35s}
-.tl:hover{transform:translateY(-4px);box-shadow:0 0 0 1px var(--gold),0 28px 60px -34px rgba(8,28,61,.55)}
-.tl::before{content:"";position:absolute;left:-32px;top:30px;width:16px;height:16px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 3px var(--gold)}
-.tl.now::before{background:var(--gold);box-shadow:0 0 0 3px var(--gold),0 0 0 9px rgba(201,162,39,.2)}
-.tl-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline}
-.tl h3{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--navy);letter-spacing:-.01em}
-.tl .when{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);background:var(--gold-soft);padding:5px 10px;border-radius:999px}
-.tl .org{font-weight:600;color:var(--text);margin-top:2px}
-.tl ul{list-style:none;margin-top:14px;display:grid;gap:8px}
-.tl li{position:relative;padding-left:20px;color:var(--muted);font-size:14.5px}
-.tl li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;background:var(--gold)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
-.chips span{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:5px 10px;border-radius:999px;background:#EEF2F9;color:var(--navy)}
+.timeline{display:grid}
+.tl{display:grid;gap:8px 40px;padding:32px 0;border-top:1px solid var(--line)}
+.tl:last-child{border-bottom:1px solid var(--line)}
+@media(min-width:860px){.tl{grid-template-columns:200px 1fr}}
+.tl .when{font-size:14px;font-weight:600;color:var(--gold)}
+.tl .when small{display:block;font-weight:400;color:var(--muted);margin-top:2px}
+.tl h3{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);line-height:1.25}
+.tl .org{color:var(--text);font-weight:500;margin-top:2px}
+.tl ul{list-style:none;margin-top:12px;display:grid;gap:6px}
+.tl li{position:relative;padding-left:18px;color:var(--muted);font-size:15px}
+.tl li::before{content:"";position:absolute;left:0;top:.75em;width:6px;height:1px;background:var(--gold)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tags span{font-size:12px;font-weight:500;padding:4px 10px;border-radius:4px;background:#EEF1F6;color:var(--navy-2)}
 
-/* Missions phares */
+/* Missions */
 .cases{display:grid;gap:20px}
 @media(min-width:860px){.cases{grid-template-columns:repeat(3,1fr)}}
-.case{position:relative;border-radius:24px;padding:28px;background:linear-gradient(160deg,#13366E,var(--ink));color:#fff;overflow:hidden;min-height:300px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .45s var(--ease),box-shadow .45s;transform-style:preserve-3d}
-.case:hover{box-shadow:0 40px 70px -35px rgba(8,28,61,.8)}
-.case::before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(201,162,39,.25),transparent 45%);opacity:0;transition:opacity .4s}
-.case:hover::before{opacity:1}
-.case .num{font-family:var(--serif);font-weight:900;font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(201,162,39,.55)}
-.case h3{font-family:var(--serif);font-size:22px;line-height:1.2;margin:14px 0 10px;position:relative}
-.case p{font-size:14px;color:#C2CCE0;position:relative}
-.case .res{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.14);display:flex;align-items:baseline;gap:10px;position:relative}
-.case .res b{white-space:nowrap;font-family:var(--serif);font-size:34px;color:var(--gold-hi);line-height:1}
-.case .res span{font-size:12.5px;color:#C2CCE0}
-.case .tag{position:relative;align-self:flex-start;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:rgba(201,162,39,.16);color:var(--gold-hi);box-shadow:inset 0 0 0 1px rgba(201,162,39,.4)}
+.case{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);border-top:3px solid var(--navy);border-radius:var(--radius);padding:28px 26px;transition:border-color .2s,box-shadow .2s}
+.case:hover{box-shadow:0 18px 40px -28px rgba(13,43,92,.35)}
+.case .type{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.case h3{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--navy);line-height:1.25;margin:12px 0 10px}
+.case p{font-size:14.5px;color:var(--muted);flex:1}
+.case .res{margin-top:22px;padding-top:18px;border-top:1px solid var(--line-2);display:flex;align-items:baseline;gap:12px}
+.case .res b{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--navy);line-height:1;white-space:nowrap}
+.case .res span{font-size:13.5px;color:var(--muted)}
 
-/* Pays */
-.countries{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-.country{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px var(--line);font-weight:700;font-size:14.5px;transition:.25s}
-.country:hover{box-shadow:0 0 0 1.5px var(--gold);transform:translateY(-2px)}
-.country em{font-style:normal;font-size:20px;line-height:1}
-.cert-grid{display:grid;gap:14px;margin-top:40px}
-@media(min-width:760px){.cert-grid{grid-template-columns:repeat(3,1fr)}}
-.cert{display:flex;gap:14px;padding:20px;border-radius:18px;background:var(--gold-soft);box-shadow:inset 0 0 0 1px #E6D6A3}
-.cert svg{width:28px;height:28px;color:var(--gold-2);flex:none}
-.cert strong{display:block;color:var(--navy);font-size:15px;line-height:1.3}
-.cert small{color:var(--muted);font-size:12.5px}
+/* Zones et diplômes */
+.two{display:grid;gap:48px}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr;gap:72px}}
+.two h3{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);margin:12px 0 20px}
+.countries{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));border-top:1px solid var(--line)}
+.countries li{list-style:none;padding:12px 0;border-bottom:1px solid var(--line);font-weight:500;display:flex;align-items:center;gap:10px}
+.countries li span{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;min-width:22px}
+.certs{display:grid;border-top:1px solid var(--line)}
+.cert{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.cert svg{width:22px;height:22px;color:var(--gold);flex:none;margin-top:2px}
+.cert strong{display:block;color:var(--text);font-weight:600}
+.cert small{color:var(--muted);font-size:14px}
 
-/* Témoignages */
-.quotes{display:grid;gap:20px}
-@media(min-width:860px){.quotes{grid-template-columns:1fr 1fr}}
-.quote{border-radius:24px;padding:34px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);position:relative}
-.quote::before{content:"\201C";position:absolute;top:-10px;right:26px;font-family:var(--serif);font-size:140px;line-height:1;color:rgba(201,162,39,.25)}
-.quote p{font-family:var(--serif);font-size:20px;line-height:1.5;font-style:italic;color:#EEF2F9;position:relative}
-.quote footer{margin-top:22px;display:flex;align-items:center;gap:12px}
-.quote footer i{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-2));display:grid;place-items:center;font-style:normal;font-weight:800;color:var(--ink)}
-.quote footer b{display:block;font-size:14px}
-.quote footer small{color:#AEB9CF;font-size:12.5px}
+/* Recommandations */
+.quotes{display:grid;gap:24px}
+@media(min-width:860px){.quotes{grid-template-columns:1fr 1fr;gap:32px}}
+.quote{padding:32px;border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);background:rgba(255,255,255,.03)}
+.quote svg{width:28px;height:28px;color:var(--gold-line);margin-bottom:16px}
+.quote p{font-family:var(--serif);font-size:19px;line-height:1.55;color:#EEF2F9}
+.quote footer{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:14px}
+.quote footer b{display:block;font-weight:600;color:#fff}
+.quote footer small{color:#AEB9CF}
 
-/* Solliciter */
-.hire{position:relative;border-radius:32px;overflow:hidden;background:var(--deep);color:#fff;padding:64px 28px;text-align:center}
-@media(min-width:768px){.hire{padding:88px 64px}}
-.hire .mesh{opacity:.7}
-.hire h2{position:relative;font-family:var(--serif);font-weight:900;font-size:clamp(36px,5.5vw,72px);line-height:1;letter-spacing:-.03em}
-.hire h2 em{font-style:italic;font-weight:400;color:var(--gold)}
-.hire p{position:relative;max-width:620px;margin:20px auto 0;color:#C9D3E6;font-size:17px}
-.offer{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:28px 0 36px}
-.offer span{padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font-size:13px;font-weight:600}
-.hire-ctas{position:relative;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.hire-ctas .pill{padding:18px 26px;font-size:12px}
-.pill-wa{background:#25D366;color:#fff}
-.pill-wa:hover{transform:translateY(-2px);filter:brightness(1.06)}
-.hire small{position:relative;display:block;margin-top:26px;color:#8E9AB3;font-size:12px}
+/* Contact */
+.contact{display:grid;gap:36px;background:var(--navy);color:#fff;border-radius:14px;padding:44px 28px}
+@media(min-width:900px){.contact{grid-template-columns:1.3fr 1fr;padding:64px;gap:64px;align-items:center}}
+.contact h2{font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,42px);line-height:1.12;margin-top:12px}
+.contact p{color:#C3CDE0;margin-top:14px;max-width:520px}
+.offer{list-style:none;display:grid;gap:10px;margin-top:24px}
+.offer li{display:flex;gap:10px;align-items:baseline;color:#E3E8F2;font-size:15px}
+.offer li::before{content:"";width:6px;height:6px;border:1px solid var(--gold-line);transform:rotate(45deg);flex:none;position:relative;top:-1px}
+.contact-box{display:grid;gap:10px}
+.contact-box .btn{width:100%;padding:14px 20px}
+.contact-box small{display:block;color:#8F9CB6;font-size:12.5px;margin-top:8px;line-height:1.5}
 
 /* Partager */
-.share-card{display:grid;gap:32px;background:#fff;border-radius:28px;padding:34px;box-shadow:0 0 0 1px var(--line),0 40px 80px -50px rgba(8,28,61,.5)}
-@media(min-width:900px){.share-card{grid-template-columns:1.5fr 1fr;align-items:center;padding:48px}}
-.share-card h2{font-family:var(--serif);font-size:clamp(28px,3.4vw,40px);line-height:1.05;color:var(--navy);letter-spacing:-.02em}
-.share-card h2 em{font-style:italic;font-weight:400;color:var(--gold-2)}
-.soc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}
-@media(min-width:560px){.soc{grid-template-columns:repeat(6,1fr)}}
-.soc a,.soc button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px 8px;border-radius:18px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);font-size:11.5px;font-weight:700;color:var(--text);transition:transform .3s var(--ease),background .25s,color .25s,box-shadow .25s}
-.soc a:hover,.soc button:hover{transform:translateY(-4px);color:#fff;background:var(--c);box-shadow:0 18px 36px -16px var(--c)}
-.soc svg{width:22px;height:22px;fill:currentColor}
-.copy{margin-top:14px;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 16px;border-radius:999px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}
-.copy input{flex:1;min-width:0;border:0;background:none;font-family:var(--mono);font-size:12.5px;color:var(--muted);outline:none}
-.copy button{padding:11px 18px;border-radius:999px;background:var(--navy);color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:background .2s}
-.copy button:hover{background:var(--gold);color:var(--ink)}
-.qr{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
-.qr-frame{position:relative;padding:16px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px var(--line),0 24px 50px -28px rgba(8,28,61,.5)}
-.qr-frame::before,.qr-frame::after{content:"";position:absolute;width:26px;height:26px;border:3px solid var(--gold)}
-.qr-frame::before{top:-3px;left:-3px;border-right:0;border-bottom:0;border-radius:12px 0 0 0}
-.qr-frame::after{bottom:-3px;right:-3px;border-left:0;border-top:0;border-radius:0 0 12px 0}
-.qr img{width:170px;height:170px}
-.qr a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);text-decoration:underline;text-underline-offset:4px}
+.share{display:grid;gap:40px;padding-top:56px;border-top:1px solid var(--line)}
+@media(min-width:900px){.share{grid-template-columns:1.5fr 1fr;align-items:center;gap:64px}}
+.share h2{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1.15;color:var(--navy);margin-top:12px}
+.soc{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.soc a{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);border-radius:8px;background:var(--white);font-size:13.5px;font-weight:500;color:var(--text);transition:border-color .2s,color .2s}
+.soc a:hover{border-color:var(--navy);color:var(--navy)}
+.soc svg{width:16px;height:16px;fill:currentColor}
+.copy{margin-top:14px;display:flex;align-items:center;gap:8px;padding:5px 5px 5px 14px;border:1px solid var(--line);border-radius:8px;background:var(--white);max-width:520px}
+.copy input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:13.5px;color:var(--muted);outline:none}
+.copy button{padding:9px 16px;border-radius:6px;background:var(--navy);color:#fff;font-size:13px;font-weight:600}
+.copy button:hover{background:var(--ink)}
+.qr{display:flex;gap:20px;align-items:center}
+@media(min-width:900px){.qr{justify-content:flex-end}}
+.qr-frame{padding:12px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);flex:none}
+.qr img{width:132px;height:132px}
+.qr p{font-size:13.5px;color:var(--muted);max-width:200px}
+.qr a{display:inline-block;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--navy);border-bottom:1px solid var(--gold-line)}
 
-/* Dock flottant */
-.dock{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);z-index:70;display:flex;align-items:center;gap:6px;padding:7px;border-radius:999px;background:rgba(4,13,34,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 0 0 1px rgba(201,162,39,.4),0 24px 50px -16px rgba(0,0,0,.6);transition:transform .5s var(--ease)}
-.dock.show{transform:translate(-50%,0)}
-.dock img{width:38px;height:38px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--gold)}
-.dock .who{color:#fff;font-size:12.5px;font-weight:700;line-height:1.2;padding:0 8px 0 4px;display:none}
-.dock .who small{display:block;color:#AEB9CF;font-weight:600;font-size:11px}
-@media(min-width:640px){.dock .who{display:block}}
-.dock a,.dock button{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.08);transition:.2s}
-.dock a:hover,.dock button:hover{background:var(--gold);color:var(--ink)}
-.dock svg{width:18px;height:18px;fill:currentColor}
-.dock .go{width:auto;padding:0 18px;border-radius:999px;background:var(--gold);color:var(--ink);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+/* Pied de page */
+.foot{border-top:1px solid var(--line);padding:32px 0;font-size:13.5px;color:var(--muted);background:var(--white)}
+.foot-in{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center}
+.foot b{font-family:var(--serif);color:var(--navy);font-size:16px;font-weight:700}
+.foot a:hover{color:var(--navy)}
 
-/* Footer */
-.foot{background:var(--deep);color:#AEB9CF;padding:44px 0 110px;font-size:13px}
-.foot-in{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
-.foot b{font-family:var(--serif);color:#fff;font-size:18px}
-.foot a:hover{color:var(--gold)}
+/* Barre mobile */
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .3s ease}
+.mbar.show{transform:none}
+.mbar .btn{flex:1;padding:12px}
+@media(min-width:920px){.mbar{display:none}}
 
-.toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-16px);opacity:0;z-index:90;pointer-events:none;padding:12px 20px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:800;font-size:13px;box-shadow:0 18px 40px -14px rgba(201,162,39,.8);transition:.3s var(--ease)}
+.toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-8px);opacity:0;z-index:90;pointer-events:none;padding:10px 18px;border-radius:8px;background:var(--ink);color:#fff;font-weight:500;font-size:14px;transition:.25s ease}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* Accessibilité mouvement */
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}.js .bar i{width:var(--w)}}
+/* ───────── Dynamisme ───────── */
+:root{--ease:cubic-bezier(.2,.7,.2,1)}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-line));transform-origin:0 50%;transform:scaleX(0);z-index:60;pointer-events:none}
 
-/* Impression / PDF */
-@page{size:A4;margin:12mm}
+/* Entrée de l'en-tête en cascade */
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes wipe{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes settle{from{transform:scale(1.14)}to{transform:scale(1)}}
+@keyframes frame{from{opacity:0;transform:translate(-18px,-18px)}to{opacity:1;transform:none}}
+.js .hero-text>*{animation:up .8s var(--ease) both}
+.js .hero-text>*:nth-child(2){animation-delay:.08s}
+.js .hero-text>*:nth-child(3){animation-delay:.16s}
+.js .hero-text>*:nth-child(4){animation-delay:.24s}
+.js .hero-text>*:nth-child(5){animation-delay:.32s}
+.js .hero-text>*:nth-child(6){animation-delay:.40s}
+.js .portrait figure{animation:wipe 1.1s .15s cubic-bezier(.7,0,.2,1) both}
+.js .portrait img{animation:settle 1.8s .15s var(--ease) both}
+.js .portrait::before{animation:frame 1s .8s var(--ease) both}
+.js .portrait figcaption{animation:up .7s 1s var(--ease) both}
+.portrait img{transition:transform .9s var(--ease)}
+.portrait:hover img{transform:scale(1.04)}
+.portrait::before{transition:inset .5s var(--ease)}
+.portrait:hover::before{inset:12px -12px -12px 12px}
+
+/* Pastille de disponibilité */
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,125,91,.45)}70%,100%{box-shadow:0 0 0 7px rgba(46,125,91,0)}}
+.avail i{animation:pulse 2.4s ease-out infinite}
+
+/* Boutons */
+.btn{transition:background .2s,color .2s,border-color .2s,transform .2s var(--ease),box-shadow .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary:hover{box-shadow:0 10px 22px -12px rgba(13,43,92,.6)}
+.btn .arrow{transition:transform .25s var(--ease)}
+.btn:hover .arrow{transform:translateX(4px)}
+
+/* Filet doré des libellés qui se déploie */
+.js .rv .label::before{width:0;transition:width .7s .25s var(--ease)}
+.js .rv.in .label::before{width:22px}
+
+/* Chiffres clés */
+.fig{position:relative;transition:background .25s}
+.fig:hover{background:var(--gold-soft)}
+.fig::after{content:"";position:absolute;left:24px;bottom:0;width:40px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .9s .2s var(--ease)}
+.fig.in::after{transform:scaleX(1)}
+
+/* Domaines d'expertise */
+.area{position:relative}
+.area::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
+.area:hover::before{transform:scaleX(1)}
+.area .n{display:inline-block;transition:transform .35s var(--ease)}
+.area:hover .n{transform:translateX(4px)}
+.tools span{transition:border-color .2s,color .2s,background .2s,transform .2s var(--ease)}
+.tools span:hover{border-color:var(--gold);color:var(--navy);background:var(--white);transform:translateY(-2px)}
+
+/* Parcours : rail qui se remplit au défilement */
+.timeline{position:relative;padding-left:30px}
+.timeline::before,.timeline .rail{content:"";position:absolute;left:4px;top:0;width:1px;height:100%;background:var(--line)}
+.timeline .rail{background:var(--gold);width:2px;left:3.5px;height:0;transition:height .15s linear}
+.tl{position:relative}
+.tl::before{content:"";position:absolute;left:-31px;top:37px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:2px solid var(--line);transition:background .4s,border-color .4s,box-shadow .4s;z-index:1}
+.tl.lit::before{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 5px rgba(168,132,42,.15)}
+.tl h3{transition:color .2s}
+.tl:hover h3{color:var(--gold)}
+
+/* Missions */
+.case{transition:transform .35s var(--ease),box-shadow .35s,border-top-color .35s}
+.case:hover{transform:translateY(-5px);border-top-color:var(--gold);box-shadow:0 24px 48px -30px rgba(13,43,92,.45)}
+
+/* Pays et diplômes */
+.countries li{transition:padding-left .25s var(--ease),color .2s}
+.countries li:hover{padding-left:6px;color:var(--navy)}
+.cert svg{transition:transform .35s var(--ease)}
+.cert:hover svg{transform:rotate(-8deg) scale(1.1)}
+
+/* Recommandations */
+.quote{transition:border-color .3s,background .3s,transform .35s var(--ease)}
+.quote:hover{border-color:rgba(217,195,138,.5);background:rgba(255,255,255,.06);transform:translateY(-3px)}
+
+/* Bloc contact : lumière lente */
+.contact{position:relative;overflow:hidden}
+.contact>*{position:relative;z-index:1}
+.contact::before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-200px;border-radius:50%;background:radial-gradient(circle,rgba(217,195,138,.18),transparent 65%);animation:drift 14s ease-in-out infinite alternate;z-index:0}
+@keyframes drift{to{transform:translate(-120px,140px)}}
+
+/* Partage */
+.soc a{transition:border-color .2s,color .2s,transform .2s var(--ease)}
+.soc a:hover{transform:translateY(-2px)}
+.qr-frame{transition:transform .35s var(--ease),box-shadow .35s}
+.qr-frame:hover{transform:scale(1.04);box-shadow:0 16px 34px -22px rgba(13,43,92,.5)}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}html{scroll-behavior:auto}.js .rv{opacity:1;transform:none}}
+
+/* Impression / fiche PDF */
+@page{size:A4;margin:14mm}
 @media print{
-  .nav,.dock,.progress,.scroll-cue,.ctas,.hire-ctas,.share-card .soc,.share-card .copy,#particles,.mesh,.marquee,.toast{display:none!important}
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important;transition:none!important}
-  .js .rv{opacity:1!important;transform:none!important}.js .bar i{width:var(--w)!important}
-  .hero{min-height:auto;padding:30px 0}
-  section.block{padding:36px 0;break-inside:avoid}
-  .stats{margin-top:16px}
+  .nav,.mbar,.actions,.contact-box,.share,.toast{display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:12.5px;background:#fff}
+  .js .rv{opacity:1!important;transform:none!important}
+  .hero{padding:0 0 20px}.hero-grid{grid-template-columns:1.6fr 1fr;gap:28px}
+  .portrait{width:200px}.portrait::before{display:none}
+  section.block{padding:24px 0;break-inside:avoid}
+  .contact{padding:20px;border-radius:8px}
+  .head{margin-bottom:18px}
 }
 </style>
 </head>
 <body>
 <script>document.documentElement.classList.add('js')</script>
-<div class="progress" id="progress"></div>
 
 <!-- ═══════════ NAVIGATION ═══════════ -->
 <nav class="nav" id="nav">
   <div class="wrap nav-in">
-    <a href="/" class="brand"><img src="{% static 'img/logoOfficiel.jpg' %}" alt="" onerror="this.outerHTML='<span class=&quot;mk&quot;></span>'"><b>MEAL <i>Afrique</i></b></a>
+    <a href="/" class="brand">
+      <img src="{% static 'img/logoOfficiel.jpg' %}" alt="" onerror="this.outerHTML='<span class=&quot;mk&quot;></span>'">
+      <span>MEAL Afrique<small>Réseau d'experts · OPERAPLUS</small></span>
+    </a>
     <div class="nav-links">
-      <a href="#profil">Profil</a><a href="#expertises">Expertises</a><a href="#parcours">Parcours</a><a href="#missions">Missions</a><a href="#partager">Partager</a>
+      <a href="#profil">Profil</a><a href="#expertises">Expertises</a><a href="#parcours">Parcours</a><a href="#missions">Missions</a><a href="#contact">Contact</a>
     </div>
-    <a href="#solliciter" class="pill pill-gold">Solliciter</a>
+    <a href="#contact" class="btn btn-primary">Solliciter</a>
   </div>
 </nav>
 
-<!-- ═══════════ HERO ═══════════ -->
+<!-- ═══════════ EN-TÊTE ═══════════ -->
 <header class="hero" id="top">
-  <div class="mesh" aria-hidden="true"><span class="a"></span><span class="b"></span><span class="c"></span></div>
-  <div class="grid-bg" aria-hidden="true"></div>
-  <canvas id="particles" aria-hidden="true"></canvas>
-
   <div class="wrap hero-grid">
-    <div>
-      <span class="status"><i></i>Disponible pour missions - novembre 2026</span>
-      <h1><span class="ln"><span>Dr Aminata</span></span><span class="ln"><em>Diallo</em></span></h1>
-      <p class="role"><b>Évaluatrice senior MEAL</b> spécialisée en <span class="typed" id="typed">évaluation d'impact</span></p>
-      <div class="facts">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Dakar, Sénégal</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2m1.05 9.5A18 18 0 0 1 6.4 9m6.6 11 5-10 5 10m-8.4-3h6.8M4 15c3.5-1.5 6-4.5 7-9"/></svg>Français - English - Wolof</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M14 10h4M14 14h4M6 17h6"/></svg>N° MA-00084</span>
+    <div class="rv">
+      <span class="label">Expert MEAL Afrique · N° MA-00084</span>
+      <h1>Dr Aminata Diallo</h1>
+      <p class="title">Évaluatrice senior MEAL <span>· Évaluation d'impact et méthodes mixtes</span></p>
+      <p class="summary">Douze ans d'accompagnement d'ONG internationales, d'agences onusiennes et de ministères, de la théorie du changement à l'évaluation finale.</p>
+      <div class="meta">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Dakar, Sénégal</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Français, anglais, wolof</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>Doctorat, économie du développement</div>
+        <div><span class="avail"><i></i>Disponible dès novembre 2026</span></div>
       </div>
-      <div class="ctas">
-        <a href="#solliciter" class="pill pill-gold">Proposer une mission
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <button type="button" class="pill pill-ghost" data-share-native>Partager le profil</button>
+      <div class="actions">
+        <a href="#contact" class="btn btn-primary">Proposer une mission
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <button type="button" class="btn btn-outline" data-share-native>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Partager</button>
+        <button type="button" class="btn btn-outline" onclick="window.print()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>Fiche PDF</button>
       </div>
     </div>
 
-    <div class="portrait-wrap">
-      <div class="ring" aria-hidden="true">
-        <svg viewBox="0 0 200 200"><defs><path id="circ" d="M100,100 m-92,0 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
-          <text font-family="JetBrains Mono, monospace" font-size="7.6" font-weight="700" letter-spacing="3.1" fill="#C9A227">
-            <textPath href="#circ">SUIVI • ÉVALUATION • REDEVABILITÉ • APPRENTISSAGE • EXPERT MEAL AFRIQUE • </textPath></text></svg>
-      </div>
-      <div class="portrait" id="portrait">
+    <div class="portrait rv">
+      <figure>
         <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=900" alt="Portrait de Dr Aminata Diallo">
-        <div class="glare"></div>
-      </div>
-      <div class="badge-float bf1"><b>12</b><small>années<br>d'expérience</small></div>
-      <div class="badge-float bf2"><b>9</b><small>pays<br>d'intervention</small></div>
-      <div class="badge-float bf3"><span>✦ Membre MEAL Afrique</span></div>
+      </figure>
+      <figcaption><span><b>Membre certifiée</b> MEAL Afrique</span><span>Depuis 2023</span></figcaption>
     </div>
   </div>
-  <div class="scroll-cue" aria-hidden="true"><i></i>Découvrir</div>
 </header>
 
-<!-- ═══════════ CHIFFRES ═══════════ -->
-<div class="stats wrap">
-  <div class="stats-grid rv">
-    <div class="stat"><b><span data-count="12">12</span><sup>ans</sup></b><span>d'expérience terrain en MEAL</span></div>
-    <div class="stat"><b><span data-count="42">42</span><sup>+</sup></b><span>évaluations conduites ou supervisées</span></div>
-    <div class="stat"><b><span data-count="9">9</span></b><span>pays d'Afrique de l'Ouest et du Centre</span></div>
-    <div class="stat"><b><span data-count="350">350</span><sup>+</sup></b><span>agents et partenaires formés</span></div>
+<!-- ═══════════ CHIFFRES CLÉS ═══════════ -->
+<div class="figures">
+  <div class="wrap fig-grid">
+    <div class="fig"><b>12<small>ans</small></b><span>d'expérience terrain en MEAL</span></div>
+    <div class="fig"><b>42<small>+</small></b><span>évaluations conduites ou supervisées</span></div>
+    <div class="fig"><b>9</b><span>pays d'Afrique de l'Ouest et du Centre</span></div>
+    <div class="fig"><b>350<small>+</small></b><span>agents et partenaires formés</span></div>
   </div>
 </div>
 
@@ -407,41 +427,41 @@ section.block{padding:96px 0}
 <section class="block" id="profil">
   <div class="wrap about">
     <div class="about-body rv">
-      <span class="kicker">Profil</span>
-      <p class="lede" style="margin-top:14px">Je transforme les données de terrain en <mark>décisions qui changent les programmes</mark>, en plaçant les communautés au cœur de l'évaluation.</p>
+      <span class="label">Profil</span>
+      <p class="lede">Transformer les données de terrain en décisions qui améliorent les programmes, en plaçant les communautés au cœur de l'évaluation.</p>
       <p>Docteure en économie du développement, j'accompagne depuis 12 ans ONG internationales, agences onusiennes et ministères dans la conception de dispositifs MEAL robustes, des théories du changement jusqu'aux évaluations d'impact finales.</p>
-      <p>Mon approche combine rigueur méthodologique (méthodes mixtes, quasi-expérimental), collecte digitale en zone de faible connectivité et redevabilité envers les populations.</p>
+      <p>Mon approche combine rigueur méthodologique (méthodes mixtes, designs quasi-expérimentaux), collecte digitale en zone de faible connectivité et redevabilité envers les populations.</p>
     </div>
-    <div class="quick rv">
-      <div class="q"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg></div><div><small>Formation</small><strong>Doctorat, économie du développement</strong></div></div>
-      <div class="q"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><div><small>Spécialité</small><strong>Évaluation d'impact et méthodes mixtes</strong></div></div>
-      <div class="q"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><div><small>Secteurs</small><strong>Sécurité alimentaire, nutrition, éducation</strong></div></div>
-      <div class="q"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><div><small>Disponibilité</small><strong>Missions courtes et longues - à partir de novembre 2026</strong></div></div>
-    </div>
+    <aside class="brief rv">
+      <h3>En bref</h3>
+      <dl>
+        <div><dt>Spécialité</dt><dd>Évaluation d'impact et méthodes mixtes</dd></div>
+        <div><dt>Secteurs</dt><dd>Sécurité alimentaire, nutrition, éducation</dd></div>
+        <div><dt>Types de mission</dt><dd>Courtes et longues, terrain ou à distance</dd></div>
+        <div><dt>Disponibilité</dt><dd>À partir de novembre 2026</dd></div>
+      </dl>
+    </aside>
   </div>
 </section>
 
 <!-- ═══════════ EXPERTISES ═══════════ -->
-<section class="block dark" id="expertises">
-  <div class="glow" aria-hidden="true"></div>
-  <div class="wrap" style="position:relative">
+<section class="block alt" id="expertises">
+  <div class="wrap">
     <div class="head rv">
-      <div><span class="kicker">Expertises</span><h2 style="margin-top:12px">Le cycle MEAL, <em>de bout en bout</em></h2></div>
-      <p>Niveau de maîtrise auto-évalué et confirmé par les missions réalisées.</p>
+      <div><span class="label">Expertises</span><h2>Le cycle MEAL, de la conception à l'apprentissage</h2></div>
+      <p>Six domaines d'intervention, chacun éprouvé sur des missions multi-pays.</p>
     </div>
-    <div class="skills">
-      <div class="sk rv"><div class="sk-top"><h3>Évaluation d'impact</h3><span>95 %</span></div><div class="bar"><i style="--w:95%"></i></div><p>Designs quasi-expérimentaux, différence de différences, appariement.</p></div>
-      <div class="sk rv"><div class="sk-top"><h3>Théorie du changement et cadre logique</h3><span>92 %</span></div><div class="bar"><i style="--w:92%"></i></div><p>Facilitation d'ateliers, hypothèses, chaîne de résultats.</p></div>
-      <div class="sk rv"><div class="sk-top"><h3>Systèmes de suivi et indicateurs</h3><span>90 %</span></div><div class="bar"><i style="--w:90%"></i></div><p>PMT, plans de suivi, indicateurs SMART pondérés.</p></div>
-      <div class="sk rv"><div class="sk-top"><h3>Redevabilité envers les populations</h3><span>88 %</span></div><div class="bar"><i style="--w:88%"></i></div><p>Mécanismes de plaintes et retours, CHS.</p></div>
-      <div class="sk rv"><div class="sk-top"><h3>Collecte digitale et qualité des données</h3><span>86 %</span></div><div class="bar"><i style="--w:86%"></i></div><p>Formulaires hors ligne, DQA, nettoyage et contrôle.</p></div>
-      <div class="sk rv"><div class="sk-top"><h3>Apprentissage et capitalisation</h3><span>84 %</span></div><div class="bar"><i style="--w:84%"></i></div><p>Revues après action, notes d'apprentissage, webinaires.</p></div>
+    <div class="areas rv">
+      <div class="area"><span class="n">01</span><h3>Évaluation d'impact</h3><p>Designs quasi-expérimentaux, différence de différences, appariement par score de propension.</p></div>
+      <div class="area"><span class="n">02</span><h3>Théorie du changement et cadre logique</h3><p>Facilitation d'ateliers, formulation des hypothèses, chaîne de résultats.</p></div>
+      <div class="area"><span class="n">03</span><h3>Systèmes de suivi et indicateurs</h3><p>Plans de suivi, tableaux de mesure de la performance, indicateurs SMART.</p></div>
+      <div class="area"><span class="n">04</span><h3>Redevabilité envers les populations</h3><p>Mécanismes de plaintes et de retours, alignement sur la norme humanitaire fondamentale (CHS).</p></div>
+      <div class="area"><span class="n">05</span><h3>Collecte digitale et qualité des données</h3><p>Formulaires hors ligne, audits de qualité des données, nettoyage et contrôle.</p></div>
+      <div class="area"><span class="n">06</span><h3>Apprentissage et capitalisation</h3><p>Revues après action, notes d'apprentissage, restitutions et webinaires.</p></div>
     </div>
-    <div class="marquee" aria-label="Outils maîtrisés">
-      <div class="mq">
-        <span class="tool"><i></i>KoboToolbox</span><span class="tool"><i></i>ODK</span><span class="tool"><i></i>SurveyCTO</span><span class="tool"><i></i>DHIS2</span><span class="tool"><i></i>Power BI</span><span class="tool"><i></i>Stata</span><span class="tool"><i></i>R</span><span class="tool"><i></i>NVivo</span><span class="tool"><i></i>QGIS</span><span class="tool"><i></i>ActivityInfo</span><span class="tool"><i></i>OPERAPLUS</span>
-        <span class="tool" aria-hidden="true"><i></i>KoboToolbox</span><span class="tool" aria-hidden="true"><i></i>ODK</span><span class="tool" aria-hidden="true"><i></i>SurveyCTO</span><span class="tool" aria-hidden="true"><i></i>DHIS2</span><span class="tool" aria-hidden="true"><i></i>Power BI</span><span class="tool" aria-hidden="true"><i></i>Stata</span><span class="tool" aria-hidden="true"><i></i>R</span><span class="tool" aria-hidden="true"><i></i>NVivo</span><span class="tool" aria-hidden="true"><i></i>QGIS</span><span class="tool" aria-hidden="true"><i></i>ActivityInfo</span><span class="tool" aria-hidden="true"><i></i>OPERAPLUS</span>
-      </div>
+    <div class="tools rv">
+      <strong>Outils maîtrisés</strong>
+      <span>KoboToolbox</span><span>ODK</span><span>SurveyCTO</span><span>DHIS2</span><span>ActivityInfo</span><span>Power BI</span><span>Stata</span><span>R</span><span>NVivo</span><span>QGIS</span><span>OPERAPLUS</span>
     </div>
   </div>
 </section>
@@ -450,133 +470,162 @@ section.block{padding:96px 0}
 <section class="block" id="parcours">
   <div class="wrap">
     <div class="head rv">
-      <div><span class="kicker">Parcours</span><h2 style="margin-top:12px">Douze ans <em>sur le terrain</em></h2></div>
+      <div><span class="label">Parcours</span><h2>Douze ans d'expérience de terrain</h2></div>
       <p>Des enquêtes de base aux évaluations finales multi-pays, au service d'acteurs humanitaires et de développement.</p>
     </div>
     <div class="timeline">
-      <article class="tl now rv">
-        <div class="tl-top"><h3>Coordinatrice MEAL régionale</h3><span class="when">2021 - aujourd'hui</span></div>
-        <p class="org">Consortium humanitaire - Sahel (4 pays)</p>
-        <ul><li>Pilotage du dispositif MEAL d'un programme de 18 M€ et d'une équipe de 22 personnes.</li><li>Évaluations à mi-parcours et finales, mécanismes de redevabilité communautaire.</li></ul>
-        <div class="chips"><span>Évaluation finale</span><span>Redevabilité</span><span>Multi-pays</span></div>
+      <article class="tl rv">
+        <div class="when">2021 - aujourd'hui<small>Poste actuel</small></div>
+        <div>
+          <h3>Coordinatrice MEAL régionale</h3>
+          <p class="org">Consortium humanitaire · Sahel (4 pays)</p>
+          <ul><li>Pilotage du dispositif MEAL d'un programme de 18 M€ et d'une équipe de 22 personnes.</li><li>Évaluations à mi-parcours et finales, mécanismes de redevabilité communautaire.</li></ul>
+          <div class="tags"><span>Évaluation finale</span><span>Redevabilité</span><span>Multi-pays</span></div>
+        </div>
       </article>
       <article class="tl rv">
-        <div class="tl-top"><h3>Responsable suivi-évaluation</h3><span class="when">2017 - 2021</span></div>
-        <p class="org">ONG internationale - Dakar</p>
-        <ul><li>Passage de la collecte papier à la collecte mobile (KoboToolbox) sur 6 projets.</li><li>Tableaux de bord Power BI pour la direction et les bailleurs.</li></ul>
-        <div class="chips"><span>Collecte digitale</span><span>Power BI</span><span>Formation</span></div>
+        <div class="when">2017 - 2021<small>4 ans</small></div>
+        <div>
+          <h3>Responsable suivi-évaluation</h3>
+          <p class="org">ONG internationale · Dakar</p>
+          <ul><li>Passage de la collecte papier à la collecte mobile (KoboToolbox) sur 6 projets.</li><li>Tableaux de bord Power BI pour la direction et les bailleurs.</li></ul>
+          <div class="tags"><span>Collecte digitale</span><span>Power BI</span><span>Formation</span></div>
+        </div>
       </article>
       <article class="tl rv">
-        <div class="tl-top"><h3>Chargée de suivi-évaluation</h3><span class="when">2014 - 2017</span></div>
-        <p class="org">Programme de sécurité alimentaire et nutritionnelle</p>
-        <ul><li>Enquêtes de base et de fin de projet auprès de 3 000 ménages.</li><li>Analyse des indicateurs nutritionnels et notes d'apprentissage.</li></ul>
-        <div class="chips"><span>Enquêtes ménages</span><span>Nutrition</span><span>Stata</span></div>
+        <div class="when">2014 - 2017<small>3 ans</small></div>
+        <div>
+          <h3>Chargée de suivi-évaluation</h3>
+          <p class="org">Programme de sécurité alimentaire et nutritionnelle</p>
+          <ul><li>Enquêtes de base et de fin de projet auprès de 3 000 ménages.</li><li>Analyse des indicateurs nutritionnels et notes d'apprentissage.</li></ul>
+          <div class="tags"><span>Enquêtes ménages</span><span>Nutrition</span><span>Stata</span></div>
+        </div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ MISSIONS PHARES ═══════════ -->
-<section class="block" id="missions" style="padding-top:0">
+<!-- ═══════════ MISSIONS ═══════════ -->
+<section class="block alt" id="missions">
   <div class="wrap">
     <div class="head rv">
-      <div><span class="kicker">Missions phares</span><h2 style="margin-top:12px">Des résultats <em>mesurables</em></h2></div>
+      <div><span class="label">Missions de référence</span><h2>Des résultats mesurables</h2></div>
       <p>Une sélection de missions récentes et de leur effet concret sur les programmes.</p>
     </div>
     <div class="cases">
-      <article class="case rv" data-tilt>
-        <div><span class="tag">Évaluation d'impact</span><div class="num" style="margin-top:18px">01</div>
-          <h3>Cantines scolaires, Sénégal et Mali</h3><p>Design quasi-expérimental sur 120 écoles pour mesurer l'effet sur l'assiduité et la nutrition.</p></div>
+      <article class="case rv">
+        <span class="type">Évaluation d'impact</span>
+        <h3>Cantines scolaires, Sénégal et Mali</h3>
+        <p>Design quasi-expérimental sur 120 écoles pour mesurer l'effet sur l'assiduité et la nutrition.</p>
         <div class="res"><b>+18 %</b><span>d'assiduité des filles mise en évidence</span></div>
       </article>
-      <article class="case rv" data-tilt>
-        <div><span class="tag">Système MEAL</span><div class="num" style="margin-top:18px">02</div>
-          <h3>Dispositif de suivi en zone de faible connectivité</h3><p>Collecte hybride papier et mobile hors ligne pour 4 pays du Sahel.</p></div>
+      <article class="case rv">
+        <span class="type">Système MEAL</span>
+        <h3>Suivi en zone de faible connectivité</h3>
+        <p>Collecte hybride papier et mobile hors ligne déployée dans 4 pays du Sahel.</p>
         <div class="res"><b>-60 %</b><span>de délai entre collecte et décision</span></div>
       </article>
-      <article class="case rv" data-tilt>
-        <div><span class="tag">Redevabilité</span><div class="num" style="margin-top:18px">03</div>
-          <h3>Mécanisme de plaintes et retours communautaires</h3><p>Conception, déploiement et formation des équipes sur 30 sites.</p></div>
+      <article class="case rv">
+        <span class="type">Redevabilité</span>
+        <h3>Mécanisme de plaintes et retours communautaires</h3>
+        <p>Conception, déploiement et formation des équipes sur 30 sites.</p>
         <div class="res"><b>94 %</b><span>des plaintes traitées sous 15 jours</span></div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ PAYS & CERTIFICATIONS ═══════════ -->
-<section class="block" style="padding-top:0">
-  <div class="wrap">
-    <div class="head rv" style="margin-bottom:24px">
-      <div><span class="kicker">Zones d'intervention</span><h2 style="margin-top:12px">Neuf pays, <em>un même standard</em></h2></div>
+<!-- ═══════════ ZONES ET QUALIFICATIONS ═══════════ -->
+<section class="block">
+  <div class="wrap two">
+    <div class="rv">
+      <span class="label">Zones d'intervention</span>
+      <h3>Neuf pays d'Afrique de l'Ouest et du Centre</h3>
+      <ul class="countries">
+        <li><span>SN</span>Sénégal</li><li><span>ML</span>Mali</li><li><span>BF</span>Burkina Faso</li>
+        <li><span>NE</span>Niger</li><li><span>TD</span>Tchad</li><li><span>CM</span>Cameroun</li>
+        <li><span>CI</span>Côte d'Ivoire</li><li><span>GN</span>Guinée</li><li><span>MR</span>Mauritanie</li>
+      </ul>
     </div>
-    <div class="countries rv">
-      <span class="country"><em>🇸🇳</em>Sénégal</span><span class="country"><em>🇲🇱</em>Mali</span><span class="country"><em>🇧🇫</em>Burkina Faso</span><span class="country"><em>🇳🇪</em>Niger</span><span class="country"><em>🇹🇩</em>Tchad</span><span class="country"><em>🇨🇲</em>Cameroun</span><span class="country"><em>🇨🇮</em>Côte d'Ivoire</span><span class="country"><em>🇬🇳</em>Guinée</span><span class="country"><em>🇲🇷</em>Mauritanie</span>
-    </div>
-    <div class="cert-grid">
-      <div class="cert rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.2 13 7 22l5-3 5 3-1.2-9"/></svg><div><strong>Doctorat en économie du développement</strong><small>Université Cheikh Anta Diop</small></div></div>
-      <div class="cert rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.2 13 7 22l5-3 5 3-1.2-9"/></svg><div><strong>Certification en évaluation d'impact</strong><small>Formation avancée, 2022</small></div></div>
-      <div class="cert rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.2 13 7 22l5-3 5 3-1.2-9"/></svg><div><strong>MEAL Afrique Academy</strong><small>Module 9 - Redevabilité</small></div></div>
+    <div class="rv">
+      <span class="label">Qualifications</span>
+      <h3>Diplômes et certifications</h3>
+      <div class="certs">
+        <div class="cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><div><strong>Doctorat en économie du développement</strong><small>Université Cheikh Anta Diop, Dakar</small></div></div>
+        <div class="cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M8.2 13 7 22l5-3 5 3-1.2-9"/></svg><div><strong>Certification en évaluation d'impact</strong><small>Formation avancée, 2022</small></div></div>
+        <div class="cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M8.2 13 7 22l5-3 5 3-1.2-9"/></svg><div><strong>MEAL Afrique Academy</strong><small>Module 9 · Redevabilité</small></div></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ TÉMOIGNAGES ═══════════ -->
-<section class="block dark">
-  <div class="glow" aria-hidden="true" style="left:-25vmax;right:auto"></div>
-  <div class="wrap" style="position:relative">
-    <div class="head rv"><div><span class="kicker">Recommandations</span><h2 style="margin-top:12px">Ils ont travaillé <em>avec elle</em></h2></div></div>
+<!-- ═══════════ RECOMMANDATIONS ═══════════ -->
+<section class="block on-dark">
+  <div class="wrap">
+    <div class="head rv"><div><span class="label">Recommandations</span><h2>Ce qu'en disent ses partenaires</h2></div></div>
     <div class="quotes">
-      <blockquote class="quote rv"><p>Une évaluatrice qui sait parler aux communautés autant qu'aux bailleurs. Ses recommandations ont directement réorienté notre deuxième phase.</p>
-        <footer><i>DP</i><div><b>Directeur pays</b><small>ONG internationale, Mali</small></div></footer></blockquote>
-      <blockquote class="quote rv"><p>Rigueur, pédagogie et sens du délai. Notre équipe MEAL a gagné en autonomie grâce à ses formations sur la collecte mobile.</p>
-        <footer><i>RM</i><div><b>Responsable MEAL</b><small>Agence onusienne, Sénégal</small></div></footer></blockquote>
+      <blockquote class="quote rv">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 7H6a3 3 0 0 0-3 3v7h7v-7H6a1 1 0 0 1 1-1h3V7Zm11 0h-4a3 3 0 0 0-3 3v7h7v-7h-4a1 1 0 0 1 1-1h3V7Z"/></svg>
+        <p>Une évaluatrice qui sait parler aux communautés autant qu'aux bailleurs. Ses recommandations ont directement réorienté notre deuxième phase.</p>
+        <footer><b>Directeur pays</b><small>ONG internationale, Mali</small></footer>
+      </blockquote>
+      <blockquote class="quote rv">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 7H6a3 3 0 0 0-3 3v7h7v-7H6a1 1 0 0 1 1-1h3V7Zm11 0h-4a3 3 0 0 0-3 3v7h7v-7h-4a1 1 0 0 1 1-1h3V7Z"/></svg>
+        <p>Rigueur, pédagogie et sens du délai. Notre équipe MEAL a gagné en autonomie grâce à ses formations sur la collecte mobile.</p>
+        <footer><b>Responsable MEAL</b><small>Agence onusienne, Sénégal</small></footer>
+      </blockquote>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ SOLLICITER ═══════════ -->
-<section class="block" id="solliciter">
+<!-- ═══════════ CONTACT ═══════════ -->
+<section class="block" id="contact">
   <div class="wrap">
-    <div class="hire rv">
-      <div class="mesh" aria-hidden="true"><span class="a"></span><span class="b"></span><span class="c"></span></div>
-      <span class="kicker" style="position:relative">Travaillons ensemble</span>
-      <h2 style="margin-top:16px">Une évaluation à <em>conduire</em> ?</h2>
-      <p>Évaluation de programme, mise en place d'un système MEAL, formation de vos équipes : décrivez votre besoin, réponse sous 48 heures.</p>
-      <div class="offer"><span>Évaluations mi-parcours et finales</span><span>Études de base</span><span>Systèmes MEAL</span><span>Formation et coaching</span><span>Théorie du changement</span></div>
-      <div class="hire-ctas">
-        <a id="mailBtn" href="mailto:aminata.diallo@exemple.org" class="pill pill-gold">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>Envoyer une proposition</a>
-        <a href="https://wa.me/221771234567?text=Bonjour%20Dr%20Diallo%2C%20j%27ai%20d%C3%A9couvert%20votre%20profil%20d%27expert%20MEAL%20sur%20MEAL%20Afrique%20et%20souhaiterais%20%C3%A9changer%20au%20sujet%20d%27une%20mission." target="_blank" rel="noopener" class="pill pill-wa">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Z"/></svg>WhatsApp</a>
-        <button type="button" id="vcardBtn" class="pill pill-ghost">Enregistrer le contact</button>
-        <button type="button" onclick="window.print()" class="pill pill-ghost">Fiche PDF</button>
-      </div>
-      <small>Coordonnées publiées avec l'accord de l'experte, pour des sollicitations professionnelles uniquement.</small>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════ PARTAGER ═══════════ -->
-<section class="block" id="partager" style="padding-top:0">
-  <div class="wrap">
-    <div class="share-card rv">
+    <div class="contact on-dark rv">
       <div>
-        <span class="kicker">Faire connaître ce profil</span>
-        <h2 style="margin-top:12px">Vous connaissez quelqu'un qui <em>cherche cette expertise</em> ?</h2>
-        <div class="soc">
-          <a href="#" data-share="linkedin" style="--c:#0A66C2" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.75a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 0 0 0-2.9Z"/></svg>LinkedIn</a>
-          <a href="#" data-share="whatsapp" style="--c:#25D366" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm5.8 14.16c-.24.67-1.38 1.28-1.93 1.36-.49.07-1.11.1-1.79-.12-.41-.13-.94-.3-1.62-.59-2.85-1.23-4.71-4.09-4.85-4.28-.14-.19-1.16-1.56-1.16-2.97s.74-2.1 1-2.39c.26-.29.57-.36.76-.36h.55c.17 0 .41-.07.64.49.24.57.81 1.97.88 2.12.07.15.12.32.02.51-.1.19-.15.31-.29.48-.14.17-.3.38-.43.51-.15.14-.3.3-.13.59.17.29.75 1.24 1.61 2.01 1.11.99 2.04 1.29 2.33 1.44.29.15.46.12.63-.07.17-.19.72-.83.9-1.12.19-.3.38-.25.64-.15.26.1 1.66.78 1.95.93.29.15.48.22.55.34.07.12.07.69-.17 1.36Z"/></svg>WhatsApp</a>
-          <a href="#" data-share="facebook" style="--c:#1877F2" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14A28 28 0 0 0 14.64 2C11.93 2 10 3.66 10 6.7v2.8H7v4h3V22h4v-8.5Z"/></svg>Facebook</a>
-          <a href="#" data-share="x" style="--c:#000" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.19L2 3h6.33l4.37 5.77L17.75 3Zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2Z"/></svg>X</a>
-          <a href="#" data-share="telegram" style="--c:#229ED9" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21.94 4.3 18.9 19.05c-.23 1.02-.83 1.27-1.69.79l-4.66-3.43-2.25 2.16c-.25.25-.46.46-.94.46l.34-4.76 8.65-7.82c.38-.34-.08-.52-.58-.19L7.08 13.01 2.48 11.57c-1-.31-1.02-1 .21-1.48L20.66 3.2c.83-.31 1.56.19 1.28 1.1Z"/></svg>Telegram</a>
-          <a href="#" data-share="email" style="--c:#0D2B5C"><svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7.1L4.4 7H4v.6l8 5.4 8-5.4V7h-.4L12 12.1Z"/></svg>Email</a>
-        </div>
-        <div class="copy"><input id="linkField" readonly aria-label="Lien du profil"><button type="button" id="copyBtn">Copier</button></div>
+        <span class="label">Travaillons ensemble</span>
+        <h2>Une évaluation à conduire ?</h2>
+        <p>Décrivez votre besoin : réponse sous 48 heures ouvrées.</p>
+        <ul class="offer">
+          <li>Évaluations à mi-parcours et finales</li>
+          <li>Études de base et enquêtes ménages</li>
+          <li>Conception de systèmes MEAL</li>
+          <li>Formation et coaching des équipes</li>
+          <li>Théorie du changement et cadre logique</li>
+        </ul>
       </div>
-      <div class="qr">
-        <div class="qr-frame"><img id="qrImg" alt="QR code du profil" width="170" height="170"></div>
-        <p style="font-size:13px;color:var(--muted);max-width:240px">Scannez pour ouvrir le profil. À ajouter sur un CV ou une carte de visite.</p>
-        <a id="qrDl" href="#" target="_blank" rel="noopener">Télécharger le QR code</a>
+      <div class="contact-box">
+        <a id="mailBtn" href="mailto:aminata.diallo@exemple.org" class="btn btn-light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>Envoyer une proposition</a>
+        <a href="https://wa.me/221771234567?text=Bonjour%20Dr%20Diallo%2C%20j%27ai%20d%C3%A9couvert%20votre%20profil%20d%27expert%20MEAL%20sur%20MEAL%20Afrique%20et%20souhaiterais%20%C3%A9changer%20au%20sujet%20d%27une%20mission." target="_blank" rel="noopener" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg>Échanger sur WhatsApp</a>
+        <button type="button" id="vcardBtn" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Enregistrer le contact</button>
+        <small>Coordonnées publiées avec l'accord de l'experte, pour des sollicitations professionnelles uniquement.</small>
+      </div>
+    </div>
+
+    <!-- Partager -->
+    <div class="share" id="partager" style="margin-top:72px">
+      <div class="rv">
+        <span class="label">Recommander ce profil</span>
+        <h2>Vous connaissez une organisation qui recherche cette expertise ?</h2>
+        <div class="soc">
+          <a href="#" data-share="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.75a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 0 0 0-2.9Z"/></svg>LinkedIn</a>
+          <a href="#" data-share="whatsapp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Z"/></svg>WhatsApp</a>
+          <a href="#" data-share="facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14A28 28 0 0 0 14.64 2C11.93 2 10 3.66 10 6.7v2.8H7v4h3V22h4v-8.5Z"/></svg>Facebook</a>
+          <a href="#" data-share="x" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.19L2 3h6.33l4.37 5.77L17.75 3Zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2Z"/></svg>X</a>
+          <a href="#" data-share="telegram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21.94 4.3 18.9 19.05c-.23 1.02-.83 1.27-1.69.79l-4.66-3.43-2.25 2.16c-.25.25-.46.46-.94.46l.34-4.76 8.65-7.82c.38-.34-.08-.52-.58-.19L7.08 13.01 2.48 11.57c-1-.31-1.02-1 .21-1.48L20.66 3.2c.83-.31 1.56.19 1.28 1.1Z"/></svg>Telegram</a>
+          <a href="#" data-share="email"><svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7.1L4.4 7H4v.6l8 5.4 8-5.4V7h-.4L12 12.1Z"/></svg>E-mail</a>
+        </div>
+        <div class="copy"><input id="linkField" readonly aria-label="Lien du profil"><button type="button" id="copyBtn">Copier le lien</button></div>
+      </div>
+      <div class="qr rv">
+        <div class="qr-frame"><img id="qrImg" alt="QR code du profil" width="132" height="132"></div>
+        <div>
+          <p>À scanner pour ouvrir le profil. Utilisable sur un CV ou une carte de visite.</p>
+          <a id="qrDl" href="#" target="_blank" rel="noopener">Télécharger le QR code</a>
+        </div>
       </div>
     </div>
   </div>
@@ -584,17 +633,15 @@ section.block{padding:96px 0}
 
 <footer class="foot">
   <div class="wrap foot-in">
-    <span><b>MEAL Afrique</b> <span class="mono" style="color:var(--gold);margin-left:8px;font-size:11px">© 2026 - OPERAPLUS / BeINfos+</span></span>
-    <span class="mono" style="font-size:12px"><a href="https://meal-afrique.operaplus.org" target="_blank" rel="noopener">meal-afrique.operaplus.org</a> · <a href="mailto:beininfoplus@operaplus.org">beininfoplus@operaplus.org</a></span>
+    <span><b>MEAL Afrique</b> &nbsp;·&nbsp; © 2026 OPERAPLUS / BeINfos+</span>
+    <span><a href="https://meal-afrique.operaplus.org" target="_blank" rel="noopener">meal-afrique.operaplus.org</a> &nbsp;·&nbsp; <a href="mailto:beininfoplus@operaplus.org">beininfoplus@operaplus.org</a></span>
   </div>
 </footer>
 
-<!-- Dock flottant -->
-<div class="dock" id="dock" aria-label="Actions rapides">
-  <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=120" alt="">
-  <span class="who">Dr Aminata Diallo<small>Évaluatrice senior MEAL</small></span>
-  <button type="button" data-share-native aria-label="Partager"><svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 0 0-2.4 1.2l-6.7-3.4a3 3 0 0 0 0-1.6l6.7-3.4A3 3 0 1 0 15 7l-6.7 3.4a3 3 0 1 0 0 3.2L15 17a3 3 0 1 0 3-1Z"/></svg></button>
-  <a href="#solliciter" class="go">Solliciter</a>
+<!-- Barre d'action mobile -->
+<div class="mbar" id="mbar">
+  <button type="button" class="btn btn-outline" data-share-native>Partager</button>
+  <a href="#contact" class="btn btn-primary">Solliciter</a>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -602,87 +649,49 @@ section.block{padding:96px 0}
 <script>
 (function(){
   const PROFILE={nom:"Dr Aminata Diallo",titre:"Évaluatrice senior MEAL",mail:"aminata.diallo@exemple.org",tel:"+221771234567",ville:"Dakar",pays:"Sénégal",url:location.href.split('#')[0]};
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-
   function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
 
-  /* ── Liens de partage, champ et QR construits sur l'URL réelle ── */
+  /* Partage, lien et QR construits sur l'URL réelle */
   const u=encodeURIComponent(PROFILE.url), t=encodeURIComponent(`${PROFILE.nom} - ${PROFILE.titre} | Expert MEAL Afrique`);
   const L={linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${u}`,whatsapp:`https://wa.me/?text=${t}%20${u}`,facebook:`https://www.facebook.com/sharer/sharer.php?u=${u}`,x:`https://twitter.com/intent/tweet?text=${t}&url=${u}`,telegram:`https://t.me/share/url?url=${u}&text=${t}`,email:`mailto:?subject=${encodeURIComponent('Profil expert MEAL : '+PROFILE.nom)}&body=${encodeURIComponent("Je vous recommande ce profil d'expert MEAL : ")}${u}`};
   $$('[data-share]').forEach(a=>a.href=L[a.dataset.share]);
   $('#linkField').value=PROFILE.url;
   const qr=(s,m)=>`https://api.qrserver.com/v1/create-qr-code/?size=${s}x${s}&margin=${m}&color=0D2B5C&data=${u}`;
-  $('#qrImg').src=qr(340,0); $('#qrDl').href=qr(800,16)+'&format=png';
+  $('#qrImg').src=qr(264,0); $('#qrDl').href=qr(800,16)+'&format=png';
 
-  /* ── Email de proposition pré-rempli ── */
+  /* E-mail de proposition pré-rempli */
   const body=`Bonjour ${PROFILE.nom},\n\nJ'ai consulté votre profil d'expert sur MEAL Afrique et souhaiterais vous proposer une mission.\n\nOrganisation :\nNature de la mission :\nPériode et durée :\nLieu :\nBudget indicatif :\n\nCordialement,`;
   $('#mailBtn').href=`mailto:${PROFILE.mail}?subject=${encodeURIComponent('Proposition de mission MEAL - via MEAL Afrique')}&body=${encodeURIComponent(body)}`;
 
-  /* ── Copier ── */
-  $('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(PROFILE.url)}catch(e){const f=$('#linkField');f.select();document.execCommand('copy')}toast('Lien copié ✓')});
+  /* Copier le lien */
+  $('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(PROFILE.url)}catch(e){const f=$('#linkField');f.select();document.execCommand('copy')}toast('Lien copié')});
 
-  /* ── Partage natif ── */
+  /* Partage natif, sinon section Partager */
   $$('[data-share-native]').forEach(b=>b.addEventListener('click',async()=>{
     if(navigator.share){try{await navigator.share({title:`${PROFILE.nom} - Expert MEAL Afrique`,text:`${PROFILE.nom}, ${PROFILE.titre}`,url:PROFILE.url});return}catch(e){if(e.name==='AbortError')return}}
     $('#partager').scrollIntoView({behavior:'smooth'});
   }));
 
-  /* ── vCard ── */
+  /* vCard */
   $('#vcardBtn').addEventListener('click',()=>{
     const v=['BEGIN:VCARD','VERSION:3.0',`FN:${PROFILE.nom}`,`TITLE:${PROFILE.titre}`,'ORG:MEAL Afrique',`EMAIL;TYPE=WORK:${PROFILE.mail}`,`TEL;TYPE=CELL:${PROFILE.tel}`,`ADR;TYPE=WORK:;;;${PROFILE.ville};;;${PROFILE.pays}`,`URL:${PROFILE.url}`,'NOTE:Expert MEAL - communauté MEAL Afrique (OPERAPLUS)','END:VCARD'].join('\r\n');
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([v],{type:'text/vcard;charset=utf-8'}));a.download='Aminata-Diallo-MEAL.vcf';document.body.appendChild(a);a.click();a.remove();toast('Contact téléchargé ✓');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([v],{type:'text/vcard;charset=utf-8'}));a.download='Aminata-Diallo-MEAL.vcf';document.body.appendChild(a);a.click();a.remove();toast('Contact téléchargé');
   });
 
-  /* ── Nav, progression, dock ── */
-  const nav=$('#nav'),prog=$('#progress'),dock=$('#dock'),hero=$('#top');
-  function onScroll(){const y=scrollY,max=document.documentElement.scrollHeight-innerHeight;nav.classList.toggle('solid',y>40);prog.style.transform=`scaleX(${max>0?y/max:0})`;dock.classList.toggle('show',y>hero.offsetHeight*.7)}
+  /* Navigation : bordure au défilement, lien actif, barre mobile */
+  const nav=$('#nav'),mbar=$('#mbar'),hero=$('#top');
+  function onScroll(){const y=scrollY;nav.classList.toggle('scrolled',y>8);mbar.classList.toggle('show',y>hero.offsetHeight*.6)}
   addEventListener('scroll',onScroll,{passive:true});onScroll();
+  const links=[...$$('.nav-links a')];
+  const sio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
+  links.forEach(l=>{const s=document.querySelector(l.getAttribute('href'));if(s)sio.observe(s)});
 
-  if(reduce){document.documentElement.classList.remove('js');return}
-
-  /* ── Apparition au défilement (le contenu reste visible sans JS) ── */
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.14,rootMargin:'0px 0px -40px 0px'});
-  $$('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%3)*90+'ms';io.observe(el)});
-  setTimeout(()=>$$('.rv').forEach(el=>el.classList.add('in')),4000); // filet de sécurité
-
-  /* ── Compteurs ── */
-  const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cio.unobserve(e.target);const el=e.target,end=+el.dataset.count,t0=performance.now();
-    (function f(t){const k=Math.min(1,(t-t0)/1600);el.textContent=Math.round(end*(1-Math.pow(1-k,4)));if(k<1)requestAnimationFrame(f)})(t0)}),{threshold:.6});
-  $$('[data-count]').forEach(el=>cio.observe(el));
-
-  /* ── Texte tapé ── */
-  const words=["évaluation d'impact","systèmes MEAL","redevabilité","théorie du changement","collecte digitale"],ty=$('#typed');let wi=0,ci=words[0].length,del=true;
-  setTimeout(function loop(){const w=words[wi];ci+=del?-1:1;ty.textContent=w.slice(0,ci);
-    if(!del&&ci===w.length){del=true;return setTimeout(loop,2200)} if(del&&ci===0){del=false;wi=(wi+1)%words.length}
-    setTimeout(loop,del?32:62)},2600);
-
-  /* ── Portrait 3D + reflet ── */
-  const pw=$('.portrait-wrap'),pt=$('#portrait');
-  if(matchMedia('(pointer:fine)').matches){
-    pw.addEventListener('pointermove',e=>{const r=pw.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
-      pt.style.transform=`perspective(900px) rotateY(${(x-.5)*12}deg) rotateX(${(.5-y)*12}deg)`;pt.style.setProperty('--gx',x*100+'%');pt.style.setProperty('--gy',y*100+'%')});
-    pw.addEventListener('pointerleave',()=>pt.style.transform='');
-    $$('[data-tilt]').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
-      c.style.transform=`perspective(900px) rotateY(${(x-.5)*8}deg) rotateX(${(.5-y)*8}deg) translateY(-4px)`;c.style.setProperty('--mx',x*100+'%');c.style.setProperty('--my',y*100+'%')});
-      c.addEventListener('pointerleave',()=>c.style.transform='')});
-    /* boutons magnétiques */
-    $$('.pill').forEach(b=>{b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.28}px)`});b.addEventListener('pointerleave',()=>b.style.transform='')});
-  }
-
-  /* ── Particules dorées reliées (réseau d'experts) ── */
-  const cv=$('#particles'),cx=cv.getContext('2d');let W,H,P=[],dpr=Math.min(devicePixelRatio,2),raf,mouse={x:-999,y:-999};
-  function size(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);const n=Math.round(Math.min(70,W*H/16000));P=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.6+.6}))}
-  function draw(){cx.clearRect(0,0,W,H);for(let i=0;i<P.length;i++){const p=P[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
-      const dm=Math.hypot(p.x-mouse.x,p.y-mouse.y);if(dm<140){p.x+=(p.x-mouse.x)/dm*.6;p.y+=(p.y-mouse.y)/dm*.6}
-      cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fillStyle='rgba(241,216,138,.75)';cx.fill();
-      for(let j=i+1;j<P.length;j++){const q=P[j],d=Math.hypot(p.x-q.x,p.y-q.y);if(d<130){cx.strokeStyle=`rgba(201,162,39,${.22*(1-d/130)})`;cx.lineWidth=1;cx.beginPath();cx.moveTo(p.x,p.y);cx.lineTo(q.x,q.y);cx.stroke()}}}
-    raf=requestAnimationFrame(draw)}
-  hero.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top});
-  hero.addEventListener('pointerleave',()=>{mouse.x=mouse.y=-999});
-  addEventListener('resize',size);size();
-  new IntersectionObserver(es=>{es[0].isIntersecting?(raf||draw()):(cancelAnimationFrame(raf),raf=null)}).observe(hero);
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=null}});
+  /* Apparition discrète (contenu visible sans JS ou mouvement réduit) */
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){document.documentElement.classList.remove('js');return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  $$('.rv').forEach(el=>io.observe(el));
+  setTimeout(()=>$$('.rv').forEach(el=>el.classList.add('in')),3000);
 })();
 </script>
 </body>

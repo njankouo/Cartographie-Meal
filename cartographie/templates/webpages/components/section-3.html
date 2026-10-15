@@ -1,0 +1,485 @@
+<style>
+/* ═════════ Étape 3 · Cartes de profils MEAL ═════════
+   Styles limités au bloc .profils : ils ne modifient pas
+   les classes globales du formulaire (.chip, .field, .error…). */
+.profils,.actuel{
+  --p-navy:#0D2B5C; --p-navy-soft:#EEF2F8;
+  --p-gold:#A8842A; --p-gold-soft:#F6F0E1;
+  --p-line:#E2DED5; --p-text:#1B2333; --p-muted:#5B6474;
+  --p-bg:#FFFFFF; --p-bg-alt:#FAF8F4;
+  --p-ease:cubic-bezier(.2,.7,.2,1);
+  border:0; padding:0; margin:0; min-width:0;
+}
+.profils legend{padding:0}
+
+.profils-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:6px 0 12px}
+.profils-hint{font-size:.85rem;color:var(--p-muted)}
+.profils-count{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;color:var(--p-muted);background:var(--p-bg-alt);border:1px solid var(--p-line);padding:4px 10px;border-radius:999px;transition:color .25s,background .25s,border-color .25s}
+.profils-count b{font-variant-numeric:tabular-nums}
+.profils-count.is-active{color:var(--p-navy);background:var(--p-navy-soft);border-color:#C9D4E6}
+
+.profils-container{display:grid;gap:10px;align-items:start}
+@media(min-width:720px){.profils-container{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Carte */
+.profil-card{position:relative;background:var(--p-bg);border:1px solid var(--p-line);border-radius:10px;overflow:hidden;transition:border-color .25s,box-shadow .25s,transform .25s var(--p-ease)}
+.profil-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--p-gold);transform:scaleY(0);transform-origin:top;transition:transform .35s var(--p-ease)}
+.profil-card:hover{border-color:#C9C3B6}
+.profil-card.is-open{border-color:var(--p-navy);box-shadow:0 10px 24px -18px rgba(13,43,92,.55)}
+.profil-card.is-open::before{transform:scaleY(1)}
+.profil-card.is-invalid{border-color:#C0392B}
+
+/* En-tête cliquable */
+.profil-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.profil-head input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.profil-box{flex:none;width:20px;height:20px;border-radius:5px;border:1.5px solid #B9B3A6;background:var(--p-bg);display:grid;place-items:center;transition:background .2s,border-color .2s}
+.profil-box svg{width:12px;height:12px;color:#fff;opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s var(--p-ease)}
+.profil-head input:checked + .profil-box{background:var(--p-navy);border-color:var(--p-navy)}
+.profil-head input:checked + .profil-box svg{opacity:1;transform:none}
+.profil-head input:focus-visible + .profil-box{outline:2px solid var(--p-gold);outline-offset:2px}
+.profil-name{flex:1;font-weight:600;color:var(--p-text);line-height:1.35}
+.profil-chev{flex:none;width:16px;height:16px;color:var(--p-muted);transition:transform .3s var(--p-ease),color .2s}
+.profil-card.is-open .profil-chev{transform:rotate(180deg);color:var(--p-navy)}
+
+/* Panneau dépliant (animation de hauteur sans calcul JS) */
+.profil-details{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--p-ease)}
+.profil-card.is-open .profil-details{grid-template-rows:1fr}
+.profil-details-in{overflow:hidden;min-height:0}
+.profil-details-body{margin:0 16px 16px 48px;padding-top:12px;border-top:1px dashed var(--p-line);opacity:0;transform:translateY(-4px);transition:opacity .25s,transform .3s var(--p-ease)}
+.profil-card.is-open .profil-details-body{opacity:1;transform:none;transition-delay:.08s}
+.profil-description{font-size:.875rem;color:var(--p-muted);line-height:1.5;margin:0 0 12px}
+
+/* Années d'expérience */
+.experience-field{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+.experience-field label{font-size:.82rem;font-weight:600;color:var(--p-text)}
+.exp-stepper{display:inline-flex;align-items:stretch;border:1px solid var(--p-line);border-radius:8px;background:var(--p-bg);overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.exp-stepper:focus-within{border-color:var(--p-navy);box-shadow:0 0 0 3px rgba(13,43,92,.12)}
+.exp-stepper button{width:34px;border:0;background:var(--p-bg-alt);color:var(--p-navy);font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.exp-stepper button:hover{background:var(--p-gold-soft)}
+.exp-stepper .input-experience{width:56px;border:0;padding:7px 4px;text-align:center;font:inherit;font-weight:600;color:var(--p-text);background:transparent;-moz-appearance:textfield;appearance:textfield}
+.exp-stepper .input-experience:focus{outline:none}
+.exp-stepper .input-experience::-webkit-outer-spin-button,.exp-stepper .input-experience::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.exp-unit{display:flex;align-items:center;padding:0 10px 0 2px;font-size:.8rem;color:var(--p-muted)}
+
+/* Niveau affiché sur chaque carte */
+.profil-lvl{flex:none;font-size:.72rem;font-weight:600;letter-spacing:.02em;padding:3px 9px;border-radius:999px;background:var(--p-gold-soft);color:#7A5F17;border:1px solid #E8D9AE}
+.profil-lvl[hidden]{display:none}
+
+/* ═════════ Profil actuel, niveau et années ═════════ */
+.actuel{border:0;padding:0;margin:0;min-width:0}
+.actuel legend{padding:0}
+.actuel-card{margin-top:8px;border:1px solid var(--p-line);border-radius:12px;background:var(--p-bg);overflow:hidden}
+.actuel-empty{display:flex;align-items:center;gap:10px;padding:18px 20px;font-size:.9rem;color:var(--p-muted);background:var(--p-bg-alt)}
+.actuel-empty svg{width:18px;height:18px;color:var(--p-gold);flex:none}
+.actuel-body{display:grid;gap:18px;padding:20px}
+.actuel-body[hidden],.actuel-empty[hidden]{display:none}
+@media(min-width:720px){.actuel-body{grid-template-columns:1.1fr 1fr;align-items:end;gap:20px 28px}}
+.actuel-select label{display:block;font-size:.82rem;font-weight:600;color:var(--p-text);margin-bottom:6px}
+.actuel-select select{width:100%;padding:10px 12px;border:1px solid var(--p-line);border-radius:8px;background:var(--p-bg);font:inherit;color:var(--p-text);transition:border-color .2s,box-shadow .2s}
+.actuel-select select:focus{outline:none;border-color:var(--p-navy);box-shadow:0 0 0 3px rgba(13,43,92,.12)}
+.actuel-stats{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--p-line);border-radius:10px;overflow:hidden}
+.actuel-stat{padding:12px 14px;background:var(--p-bg-alt)}
+.actuel-stat + .actuel-stat{border-left:1px solid var(--p-line)}
+.actuel-stat .k{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--p-muted)}
+.actuel-stat b{display:block;margin-top:4px;font-size:1.15rem;font-weight:700;color:var(--p-navy);transition:color .2s}
+.actuel-stat b.is-missing{font-size:.9rem;font-weight:600;color:#B0442F}
+
+/* Échelle des niveaux */
+.lvl-scale{grid-column:1/-1;list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0;padding:0}
+.lvl-scale li{position:relative;padding-top:12px;font-size:.78rem;color:var(--p-muted);line-height:1.3}
+.lvl-scale li::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:99px;background:var(--p-line);transition:background .35s var(--p-ease)}
+.lvl-scale li b{display:block;font-weight:600;color:var(--p-text)}
+.lvl-scale li.is-reached::before{background:var(--p-gold)}
+.lvl-scale li.is-current::before{background:var(--p-navy)}
+.lvl-scale li.is-current b{color:var(--p-navy)}
+.actuel-note{grid-column:1/-1;margin:0;font-size:.8rem;color:var(--p-muted)}
+.actuel-note a{color:var(--p-navy);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+/* ═════════ Habillage de l'étape 3 (ajout CSS uniquement) ═════════ */
+.step[data-step="3"]{
+  --s-navy:#0D2B5C; --s-navy-soft:#EEF2F8; --s-gold:#A8842A; --s-gold-soft:#F6F0E1;
+  --s-line:#E2DED5; --s-text:#1B2333; --s-muted:#5B6474; --s-bg-alt:#FAF8F4; --s-err:#B0442F;
+  --s-ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* En-tête : numéro d'étape et barre de progression (3/5) */
+.step[data-step="3"] .step-head{padding-bottom:22px;margin-bottom:8px;border-bottom:1px solid var(--s-line);
+  background:linear-gradient(var(--s-navy),var(--s-navy)) left bottom/60% 2px no-repeat}
+.step[data-step="3"] .step-head .num{display:inline-flex;align-items:center;gap:10px;font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--s-gold)}
+.step[data-step="3"] .step-head .num::before{content:"";width:22px;height:2px;background:var(--s-gold)}
+.step[data-step="3"] .step-head h2{margin:10px 0 2px;color:var(--s-navy);letter-spacing:-.01em;line-height:1.2}
+.step[data-step="3"] .step-head .en{margin:0;font-size:.9rem;font-style:italic;color:var(--s-muted)}
+.step[data-step="3"] .step-head .lead{margin:12px 0 0;color:var(--s-muted);max-width:620px}
+
+/* Blocs à cases : sans cadre gris par défaut du navigateur */
+.step[data-step="3"] fieldset.field{border:0;padding:0;margin-inline:0;min-width:0}
+.step[data-step="3"] fieldset.field > legend{padding:0}
+.step[data-step="3"] select,.step[data-step="3"] textarea{box-sizing:border-box}
+
+/* Rythme vertical entre les blocs */
+.step[data-step="3"] > .field,
+.step[data-step="3"] > .grid2{margin:30px 0 0}
+.step[data-step="3"] > .grid2 > .field{margin:0}
+
+/* Titres de champs homogènes */
+.step[data-step="3"] > .field > legend,
+.step[data-step="3"] > .field > label,
+.step[data-step="3"] > .grid2 > .field > legend,
+.step[data-step="3"] > .grid2 > .field > label{display:block;margin-bottom:6px;font-size:.95rem;font-weight:600;color:var(--s-text);line-height:1.35}
+.step[data-step="3"] .en-label{display:block;margin-top:2px;font-size:.78rem;font-weight:400;font-style:italic;color:var(--s-muted)}
+.step[data-step="3"] .req{margin-left:3px;color:var(--s-err)}
+
+/* Grilles : secteurs plus larges que les langues */
+.step[data-step="3"] .grid2{display:grid;gap:30px}
+@media(min-width:860px){
+  .step[data-step="3"] .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step[data-step="3"] .grid2:has(input[name="secteurs"]){grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+}
+
+/* Pastilles à cocher (domaines, secteurs, langues) */
+.step[data-step="3"] .chips{display:flex;flex-wrap:wrap;gap:8px}
+.step[data-step="3"] .chips .chip{position:relative;display:inline-flex;margin:0;cursor:pointer}
+.step[data-step="3"] .chips .chip input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.step[data-step="3"] .chips .chip span{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 11px;border:1px solid var(--s-line);border-radius:999px;background:#fff;font-size:.875rem;font-weight:500;color:var(--s-text);line-height:1.25;transition:border-color .2s,background .2s,color .2s,transform .2s var(--s-ease)}
+.step[data-step="3"] .chips .chip span::before{content:"";flex:none;width:15px;height:15px;border-radius:50%;border:1.5px solid #B9B3A6;background:#fff center/9px no-repeat;transition:background-color .2s,border-color .2s}
+.step[data-step="3"] .chips .chip:hover span{border-color:#C9C3B6;background:var(--s-bg-alt)}
+.step[data-step="3"] .chips .chip:active span{transform:scale(.97)}
+.step[data-step="3"] .chips .chip input:checked + span{border-color:var(--s-navy);background:var(--s-navy-soft);color:var(--s-navy);font-weight:600}
+.step[data-step="3"] .chips .chip input:checked + span::before{border-color:var(--s-navy);background-color:var(--s-navy);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+.step[data-step="3"] .chips .chip input:focus-visible + span{outline:2px solid var(--s-gold);outline-offset:2px}
+
+/* Menu déroulant et zone de texte */
+.step[data-step="3"] > .grid2 select{width:100%;max-width:380px;padding:11px 40px 11px 14px;border:1px solid var(--s-line);border-radius:8px;font:inherit;color:var(--s-text);-webkit-appearance:none;appearance:none;cursor:pointer;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6474' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 12px center/16px no-repeat;transition:border-color .2s,box-shadow .2s}
+.step[data-step="3"] > .field textarea{width:100%;min-height:118px;padding:12px 14px;border:1px solid var(--s-line);border-radius:10px;background:#fff;font:inherit;line-height:1.55;color:var(--s-text);resize:vertical;transition:border-color .2s,box-shadow .2s}
+.step[data-step="3"] > .grid2 select:hover,.step[data-step="3"] > .field textarea:hover{border-color:#C9C3B6}
+.step[data-step="3"] > .grid2 select:focus,.step[data-step="3"] > .field textarea:focus{outline:none;border-color:var(--s-navy);box-shadow:0 0 0 3px rgba(13,43,92,.12)}
+.step[data-step="3"] > .field textarea::placeholder{color:#9AA1AD}
+.step[data-step="3"] .counter{margin-top:6px;text-align:right;font-size:.78rem;color:var(--s-muted);font-variant-numeric:tabular-nums}
+
+/* Messages d'erreur */
+.step[data-step="3"] .error{margin:8px 0 0;font-size:.82rem;font-weight:500;color:var(--s-err)}
+.step[data-step="3"] .error:empty{display:none}
+
+/* Cartes de profils : finitions */
+.profil-card:hover{transform:translateY(-1px)}
+.profil-card.is-open .profil-head{background:linear-gradient(180deg,#F7F9FC,#fff)}
+.profil-card.is-open .profil-name{color:var(--p-navy)}
+.profil-card.is-invalid{box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+
+/* Bloc profil actuel : mis en valeur quand il est rempli */
+.actuel-card{transition:border-color .3s,box-shadow .3s}
+.actuel-card:has(.actuel-body:not([hidden])){border-color:#C9D4E6;box-shadow:0 14px 30px -24px rgba(13,43,92,.5)}
+.actuel-empty{border-left:3px solid var(--p-gold-soft)}
+.actuel-stat b{font-size:1.3rem;letter-spacing:-.01em}
+.actuel-stat:last-child{background:linear-gradient(180deg,var(--p-gold-soft),var(--p-bg-alt))}
+.lvl-scale li{transition:color .3s}
+.lvl-scale li.is-current{color:var(--p-navy)}
+
+@media(prefers-reduced-motion:reduce){
+  .step[data-step="3"] *,.step[data-step="3"] *::before{transition:none!important}
+  .profil-card:hover{transform:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .profils *,.profils *::before,.actuel *,.actuel *::before{transition:none!important}
+}
+</style>
+
+<section class="step" data-step="3" hidden aria-labelledby="h3">
+  <header class="step-head">
+    <span class="num">Étape 3 sur 5</span>
+    <h2 id="h3">Profil et domaines d'expertise MEAL</h2>
+    <p class="en" lang="en">MEAL profile and areas of expertise</p>
+    <p class="lead">Ces informations permettent de vous retrouver rapidement dans la cartographie.</p>
+  </header>
+
+  <fieldset class="field profils" id="expertiseMain" aria-describedby="err-expertiseMain">
+    <legend>
+      Profil(s) MEAL exercé(s)<span class="req" aria-hidden="true">*</span>
+      <span class="en-label" lang="en">MEAL profile(s) held</span>
+    </legend>
+
+    <div class="profils-top">
+      <span class="profils-hint">Cochez tout ce qui s'applique, puis indiquez vos années d'expérience pour chaque profil.</span>
+      <span class="profils-count" id="profilsCount" aria-live="polite"><b>0</b>&nbsp;sélectionné</span>
+    </div>
+
+    <div class="profils-container">
+      {% for profil in profils %}
+        <div class="profil-card">
+          <label class="profil-head">
+            <input type="checkbox" name="profils" value="{{ profil.id }}" class="profil-checkbox"
+                   aria-controls="details_{{ profil.id }}" aria-expanded="false">
+            <span class="profil-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            </span>
+            <span class="profil-name">{{ profil.intitule }}</span>
+            <span class="profil-lvl" hidden></span>
+            <svg class="profil-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </label>
+
+          <div class="profil-details" id="details_{{ profil.id }}">
+            <div class="profil-details-in">
+              <div class="profil-details-body">
+                {% if profil.description %}
+                  <p class="profil-description">{{ profil.description }}</p>
+                {% endif %}
+                <div class="experience-field">
+                  <label for="exp_{{ profil.id }}">Années d'expérience sur ce profil</label>
+                  <div class="exp-stepper">
+                    <button type="button" data-step="-1" aria-label="Retirer une année" tabindex="-1">−</button>
+                    <input type="number" id="exp_{{ profil.id }}" name="experience_{{ profil.id }}"
+                           min="0" max="50" step="1" inputmode="numeric" placeholder="0"
+                           class="input-experience" disabled>
+                    <span class="exp-unit">ans</span>
+                    <button type="button" data-step="1" aria-label="Ajouter une année" tabindex="-1">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <p class="error" id="err-expertiseMain" role="alert"></p>
+  </fieldset>
+
+  <!-- Profil actuel : niveau et années calculés à partir des cartes ci-dessus -->
+  <fieldset class="field actuel" id="profilActuel" aria-describedby="err-profilActuel">
+    <legend>
+      Profil MEAL actuel, niveau d'expertise et années d'expérience<span class="req" aria-hidden="true">*</span>
+      <span class="en-label" lang="en">Current MEAL profile, expertise level and years of experience *</span>
+    </legend>
+
+    <div class="actuel-card">
+      <div class="actuel-empty" id="actuelEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+        Cochez au moins un profil ci-dessus : votre profil actuel, son niveau et vos années d'expérience s'afficheront ici.
+      </div>
+
+      <div class="actuel-body" id="actuelBody" hidden>
+        <div class="actuel-select">
+          <label for="profil_actuel">Profil exercé actuellement</label>
+          <select id="profil_actuel" name="profil_actuel" disabled></select>
+        </div>
+
+        <div class="actuel-stats" aria-live="polite">
+          <div class="actuel-stat"><span class="k">Années d'expérience</span><b id="actuelYears">—</b></div>
+          <div class="actuel-stat"><span class="k">Niveau d'expertise</span><b id="actuelLevel">—</b></div>
+        </div>
+
+        <ol class="lvl-scale" id="lvlScale" aria-hidden="true">
+          <li data-lvl="junior"><b>Junior</b>0 à 2 ans</li>
+          <li data-lvl="intermediaire"><b>Intermédiaire</b>3 à 5 ans</li>
+          <li data-lvl="confirme"><b>Confirmé</b>6 à 10 ans</li>
+          <li data-lvl="senior"><b>Senior</b>plus de 10 ans</li>
+        </ol>
+
+        <p class="actuel-note" id="actuelNote">Calculé automatiquement à partir des années renseignées sur ce profil.</p>
+
+        <input type="hidden" name="niveau_expertise" id="niveauExpertise">
+        <input type="hidden" name="annees_profil_actuel" id="anneesActuel">
+      </div>
+    </div>
+
+    <p class="error" id="err-profilActuel" role="alert"></p>
+  </fieldset>
+
+  <fieldset class="field">
+    <legend>Domaines MEAL maîtrisés<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">select all that apply</span></legend>
+    <div class="chips" style="margin-top:6px">
+      {% for domaine_expertises in domaine_expertise %}
+        <label class="chip"><input type="checkbox" name="domaines" value="{{ domaine_expertises.id }}"><span>{{ domaine_expertises.intitule }}</span></label>
+      {% endfor %}
+    </div>
+    <p class="error" id="err-domaines" role="alert"></p>
+  </fieldset>
+     <div class="grid2">
+            <fieldset class="field">
+            <legend>Secteurs d'intervention<span class="en-label" lang="en">Sectors of intervention · select all that apply</span></legend>
+            <div class="chips" style="margin-top:6px">
+              {%for secteur in secteurs%}
+              <label class="chip"><input type="checkbox" name="secteurs" value="{{secteur.id}}"><span>{{secteur.intitule}}</span></label>
+              {%endfor%}
+            
+            </div>
+            <p class="error" id="err-secteurs" role="alert"></p>
+            </fieldset>
+            <fieldset class="field">
+            <legend>Langues de travail<span class="en-label" lang="en">languages</span></legend>
+            <div class="chips" style="margin-top:6px">
+              <label class="chip"><input type="checkbox" name="langues" value="Français"><span>Français</span></label>
+              <label class="chip"><input type="checkbox" name="langues" value="English"><span>English</span></label>
+              <label class="chip"><input type="checkbox" name="langues" value="Português"><span>Português</span></label>
+              <label class="chip"><input type="checkbox" name="langues" value="العربية"><span>العربية</span></label>
+            </div>
+            </fieldset>
+          </div>
+ 
+
+  <div class="field">
+    <label for="bio">Présentation courte<span class="en-label" lang="en">short bio</span></label>
+    <textarea id="bio" name="bio" maxlength="280" placeholder="En quelques phrases : votre parcours, vos thématiques, votre apport au réseau."></textarea>
+    <div class="counter" aria-live="off"><span id="bioCount">0</span> / 280</div>
+  </div>
+</section>
+
+<script>
+(function(){
+  const root = document.getElementById('expertiseMain');
+  if (!root) return;
+  const counter = document.getElementById('profilsCount');
+
+  function setOpen(checkbox, open){
+    const card  = checkbox.closest('.profil-card');
+    const input = card.querySelector('.input-experience');
+    card.classList.toggle('is-open', open);
+    card.classList.remove('is-invalid');
+    checkbox.setAttribute('aria-expanded', open);
+    input.disabled = !open;            // un champ fermé n'est ni requis ni envoyé
+    input.required = open;
+    if (!open) input.value = '';
+  }
+
+  function updateCount(){
+    const n = root.querySelectorAll('.profil-checkbox:checked').length;
+    counter.innerHTML = '<b>' + n + '</b>&nbsp;sélectionné' + (n > 1 ? 's' : '');
+    counter.classList.toggle('is-active', n > 0);
+  }
+
+  /* Cocher / décocher */
+  root.addEventListener('change', e => {
+    if (!e.target.classList.contains('profil-checkbox')) return;
+    setOpen(e.target, e.target.checked);
+    updateCount();
+    if (e.target.checked) {
+      const input = e.target.closest('.profil-card').querySelector('.input-experience');
+      setTimeout(() => input.focus({preventScroll:true}), 200);
+    }
+  });
+
+  /* Boutons − / + */
+  root.addEventListener('click', e => {
+    const btn = e.target.closest('.exp-stepper button');
+    if (!btn) return;
+    const input = btn.parentNode.querySelector('.input-experience');
+    if (input.disabled) return;
+    const v = Math.min(50, Math.max(0, (parseInt(input.value, 10) || 0) + +btn.dataset.step));
+    input.value = v;
+    input.dispatchEvent(new Event('input', {bubbles:true}));
+  });
+
+  /* Champ invalide : bordure de la carte en rouge */
+  root.addEventListener('invalid', e => {
+    const card = e.target.closest('.profil-card');
+    if (card) card.classList.add('is-invalid');
+  }, true);
+  root.addEventListener('input', e => {
+    const card = e.target.closest('.profil-card');
+    if (card && e.target.checkValidity()) card.classList.remove('is-invalid');
+  });
+
+  /* ───── Niveau d'expertise déduit des années ─────
+     Mêmes tranches que le menu « Années d'expérience » */
+  const LEVELS = [
+    {code:'junior',        label:'Junior',        max:2,        band:'0-2'},
+    {code:'intermediaire', label:'Intermédiaire', max:5,        band:'3-5'},
+    {code:'confirme',      label:'Confirmé',      max:10,       band:'6-10'},
+    {code:'senior',        label:'Senior',        max:Infinity, band:'10+'}
+  ];
+  const levelOf = y => LEVELS.find(l => y <= l.max);
+  const yearsOf = card => {
+    const v = card.querySelector('.input-experience').value;
+    return v === '' ? null : Math.min(50, Math.max(0, parseInt(v, 10)));
+  };
+  const plural = y => y + (y > 1 ? ' ans' : ' an');
+
+  const sel      = document.getElementById('profil_actuel');
+  const empty    = document.getElementById('actuelEmpty');
+  const body     = document.getElementById('actuelBody');
+  const outYears = document.getElementById('actuelYears');
+  const outLevel = document.getElementById('actuelLevel');
+  const note     = document.getElementById('actuelNote');
+  const hidLevel = document.getElementById('niveauExpertise');
+  const hidYears = document.getElementById('anneesActuel');
+  const scale    = [...document.querySelectorAll('#lvlScale li')];
+  const expSelect= document.getElementById('experience');
+  if (expSelect) expSelect.addEventListener('change', () => { expSelect.dataset.manual = '1'; });
+
+  function refresh(){
+    const checked = [...root.querySelectorAll('.profil-card.is-open')];
+
+    /* Badge de niveau sur chaque carte */
+    root.querySelectorAll('.profil-card').forEach(card => {
+      const badge = card.querySelector('.profil-lvl'), y = yearsOf(card);
+      const show = card.classList.contains('is-open') && y !== null;
+      badge.hidden = !show;
+      if (show) badge.textContent = levelOf(y).label + ' · ' + plural(y);
+    });
+
+    /* Liste du profil actuel = profils cochés */
+    const prev = sel.value || sel.dataset.initial || '';
+    delete sel.dataset.initial;
+    sel.innerHTML = '';
+    if (checked.length > 1) sel.add(new Option('Choisir parmi vos profils', ''));
+    checked.forEach(card => {
+      const cb = card.querySelector('.profil-checkbox');
+      sel.add(new Option(card.querySelector('.profil-name').textContent.trim(), cb.value));
+    });
+    if (checked.some(c => c.querySelector('.profil-checkbox').value === prev)) sel.value = prev;
+    else if (checked.length === 1) sel.value = checked[0].querySelector('.profil-checkbox').value;
+
+    const has = checked.length > 0;
+    empty.hidden = has; body.hidden = !has;
+    sel.disabled = !has; sel.required = has;
+
+    /* Années et niveau du profil actuel */
+    const card = checked.find(c => c.querySelector('.profil-checkbox').value === sel.value);
+    const y = card ? yearsOf(card) : null;
+    const lvl = y !== null ? levelOf(y) : null;
+
+    outYears.classList.toggle('is-missing', !!card && y === null);
+    outYears.textContent = !card ? '—' : (y === null ? 'À renseigner' : plural(y));
+    outLevel.textContent = lvl ? lvl.label : '—';
+    hidYears.value = y ?? '';
+    hidLevel.value = lvl ? lvl.code : '';
+
+    const idx = lvl ? LEVELS.indexOf(lvl) : -1;
+    scale.forEach((li, i) => {
+      li.classList.toggle('is-reached', i < idx);
+      li.classList.toggle('is-current', i === idx);
+    });
+
+    note.innerHTML = card && y === null
+      ? 'Indiquez vos années d\'expérience sur ce profil pour calculer votre niveau. <a data-goto>Renseigner</a>'
+      : 'Calculé automatiquement à partir des années renseignées sur ce profil.';
+
+    /* Menu « Années d'expérience » : pré-rempli avec le profil le plus long, tant qu'il n'a pas été modifié à la main */
+    if (expSelect && !expSelect.dataset.manual) {
+      const all = checked.map(yearsOf).filter(v => v !== null);
+      expSelect.value = all.length ? levelOf(Math.max(...all)).band : '';
+    }
+  }
+
+  sel.addEventListener('change', refresh);
+  root.addEventListener('input', refresh);
+  root.addEventListener('change', refresh);
+  note.addEventListener('click', e => {
+    if (!e.target.matches('[data-goto]')) return;
+    const card = [...root.querySelectorAll('.profil-card.is-open')]
+      .find(c => c.querySelector('.profil-checkbox').value === sel.value);
+    if (card) { card.scrollIntoView({behavior:'smooth', block:'center'}); card.querySelector('.input-experience').focus({preventScroll:true}); }
+  });
+
+  /* État initial (formulaire réaffiché après une erreur, retour à l'étape…) */
+  root.querySelectorAll('.profil-checkbox').forEach(cb => setOpen(cb, cb.checked));
+  updateCount();
+  refresh();
+
+  /* Compatibilité avec un éventuel appel existant */
+  window.toggleProfilDetails = cb => { setOpen(cb, cb.checked); updateCount(); refresh(); };
+})();
+</script>

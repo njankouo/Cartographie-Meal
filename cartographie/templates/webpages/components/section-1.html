@@ -1,0 +1,98 @@
+   <section class="step" data-step="1" aria-labelledby="h1">
+          <header class="step-head">
+            <span class="num">Étape 1 sur 5</span>
+            <h2 id="h1">Identification et organisation</h2>
+            <p class="en" lang="en">Identification and organization details</p>
+            <p class="lead">Vos coordonnées et votre organisation, telles qu'elles apparaîtront sur la cartographie.</p>
+          </header>
+
+          <div class="field">
+            <label for="nomComplet">Nom complet<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">full name</span></label>
+            <input type="text" id="nomComplet" autocomplete="name" required value="{{ personnel.nom }}">
+            <p class="error" id="err-nomComplet" role="alert"></p>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="pays">Pays de résidence<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">country</span></label>
+              <select id="pays" required onchange="onPaysChange()">
+                <option value="">Sélectionner un pays</option>
+               
+                 {% for pays in countries %}
+                    <option value="{{ pays.name }}" >{{ pays.name }}</option>
+                {% endfor %}
+              </select>
+              <p class="error" id="err-pays" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="ville">Ville<span class="en-label" lang="en">city</span></label>
+              <select id="ville">
+                <option value="">Choisissez d'abord un pays</option>
+              </select>
+              <input type="text" id="villeAutre" hidden placeholder="Précisez la ville" aria-label="Précisez la ville">
+              <p class="error" id="err-villeAutre" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="email">Adresse email<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">email</span></label>
+              <input type="email" id="email" autocomplete="email" required value="{{ personnel.mail }}">
+              <p class="error" id="err-email" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="telephone">Téléphone / WhatsApp<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">phone</span></label>
+              <input type="tel" id="telephone" autocomplete="tel" placeholder="+237 6XX XXX XXX" required value="{{ personnel.tel }}">
+              <p class="error" id="err-telephone" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <fieldset class="field">
+              <legend>Sexe<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">gender</span></legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="sexe" value="F" {% if personnel.sexe == 'F' %}checked{% endif %}><span>Féminin</span></label>
+                <label class="choice"><input type="radio" name="sexe" value="M" {% if personnel.sexe == 'M' %}checked{% endif %}><span>Masculin</span></label>
+                <label class="choice"><input type="radio" name="sexe" value="NP"><span>Non précisé</span></label>
+              </div>
+              <p class="error" id="err-sexe" role="alert"></p>
+            </fieldset>
+            <div class="field">
+              <label for="linkedin">Profil LinkedIn<span class="en-label" lang="en">optional</span></label>
+              <input type="text" id="linkedin" placeholder="linkedin.com/in/votre-nom" autocomplete="url">
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="typeOrg">Type d'organisation<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">organization type</span></label>
+              <select id="typeOrg" required onchange="onTypeOrgChange()">
+                <option value="">Sélectionner</option>
+                <option value="ONG">ONG internationale</option>
+                <option value="ONG-N">ONG nationale</option>
+                <option value="Gouvernement">Gouvernement</option>
+                <option value="ONU">Agence des Nations Unies</option>
+                <option value="Bailleur">Bailleur de fonds</option>
+                <option value="Recherche">Université / Recherche</option>
+                <option value="Prive">Cabinet / Secteur privé</option>
+                <option value="__autre">Autre</option>
+              </select>
+              <input type="text" id="typeOrgAutre" hidden placeholder="Précisez le type" aria-label="Précisez le type d'organisation">
+              <p class="error" id="err-typeOrg" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="fonctionOrg">Fonction occupée<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">position</span></label>
+              <select id="fonctionOrg" required onchange="onFonctionChange()">
+                <option value="">Sélectionner</option>
+                <option value="Responsable MEAL">Responsable MEAL</option>
+                <option value="Consultant">Consultant MEAL</option>
+                <option value="Charge SE">Chargé de suivi-évaluation</option>
+                <option value="Analyste">Analyste de données</option>
+                <option value="Chercheur">Chercheur / Enseignant</option>
+                <option value="__autre">Autre</option>
+              </select>
+              <input type="text" id="fonctionOrgAutre" hidden placeholder="Précisez la fonction" aria-label="Précisez la fonction">
+              <p class="error" id="err-fonctionOrg" role="alert"></p>
+            </div>
+          </div>
+        </section>

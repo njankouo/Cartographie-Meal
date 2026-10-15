@@ -1,0 +1,24 @@
+ <section class="step" data-step="2" hidden aria-labelledby="h2">
+          <header class="step-head">
+            <span class="num">Étape 2 sur 5</span>
+            <h2 id="h2">Statut MEAL Afrique / OPERAPLUS</h2>
+            <p class="en" lang="en">MEAL Afrique / OPERAPLUS status</p>
+            <p class="lead">Le badge OPERAPLUS est votre identité de membre vérifiable au sein de la communauté.</p>
+          </header>
+
+          <fieldset class="field">
+            <legend>Disposez-vous déjà d'un badge MEAL Afrique (OPERAPLUS) ?<span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices stack" style="margin-top:6px">
+              <label class="choice"><input type="radio" name="badge" value="oui" onchange="toggleBadge()"><span><span class="choice-title">Oui<small>Yes</small></span></span></label>
+              <label class="choice"><input type="radio" name="badge" value="non" onchange="toggleBadge()"><span><span class="choice-title">Non<small>No</small></span></span></label>
+              <label class="choice"><input type="radio" name="badge" value="encours" onchange="toggleBadge()"><span><span class="choice-title">En cours<small>In progress</small></span></span></label>
+            </div>
+            <p class="error" id="err-badge" role="alert"></p>
+          </fieldset>
+
+          <div class="field" id="numBadgeField" hidden>
+            <label for="numBadge">Numéro du badge<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="numBadge" autocomplete="off">
+            <p class="error" id="err-numBadge" role="alert"></p>
+          </div>
+        </section>

@@ -5,9 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    
-  
-    
+     
     path('Inscription-meal-afrique/', views.MealAfrique, name='Inscription-meal-afrique'),
     
     path('count-members/', views.CountMembers, name='count-members'),
@@ -32,9 +30,11 @@ urlpatterns = [
     
     path('members-meal-afrique/<str:country>/', views.memberscountry, name='members-meal-afrique'),
     
-    path('prodil-expert/', views.ProfilExpert, name='prodil-expert'),
+    path('profil-expert/<str:code>', views.ProfilExpert, name='profil-expert'),
     
     path('api/get-cities/', views.get_cities_by_country, name='api_get_cities'),
+
+    path('create-cartographie-meal/', views.secure_create_or_update_personnel, name='create-cartographie-meal')
 
 
 ]

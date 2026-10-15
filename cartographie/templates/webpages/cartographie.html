@@ -26,104 +26,7 @@
 <div class="layout">
 
   <!-- ═════════ Colonne gauche : badge en direct ═════════ -->
-  <aside class="side">
-    <div class="side-inner">
-      <div>
-        <span class="kicker">Cartographie des experts MEAL</span>
-        <h1 class="side-title">Votre fiche membre
-          <small>Elle se remplit au fil de votre saisie - <span lang="en">live preview</span></small>
-        </h1>
-      </div>
-
-      <div class="badge-scene">
-      <article class="badge" id="badge" aria-label="Aperçu de la fiche membre">
-        <div class="badge-top">
-          <span class="slot" aria-hidden="true"></span>
-          <div class="brand">
-            <div class="brand-logo">
-              <img id="mainLogo" src="https://meal-afrique.operaplus.org/wp-content/uploads/2022/03/logo-meal-afrique.png" alt="" onerror="this.replaceWith('MA')">
-            </div>
-            <div>
-              <div class="brand-name">MEAL Afrique</div>
-              <div class="brand-sub">Membre - OPERAPLUS</div>
-            </div>
-          </div>
-          <div class="weave" aria-hidden="true"></div>
-        </div>
-
-        <div class="badge-body">
-          <div class="identity">
-            <div class="avatar-wrap">
-              <div class="avatar" id="avatar">
-                {% if personnel.photo %}
-                  <img src="{{ personnel.photo.url }}" alt="Photo de {{ personnel.nom }}" id="avatarImg">
-                {% else %}
-                  <span id="initials">?</span>
-                {% endif %}
-              </div>
-
-              <!-- form="mealForm" : le champ reste rattaché au formulaire même s'il est placé hors de <form> -->
-              <input type="file" id="photoInput" name="photo" form="mealForm" accept="image/*" class="visually-hidden" onchange="previewImage(event)">
-
-              <label for="photoInput" class="photo-btn" title="Ajouter une photo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-                <span class="visually-hidden">Ajouter une photo</span>
-              </label>
-            </div>
-            <div class="who">
-              <h3 id="previewNom" class="placeholder">Nom et prénom</h3>
-              <p id="previewFonction" class="placeholder">Fonction</p>
-              <p id="previewOrg" class="org" hidden></p>
-            </div>
-          </div>
-
-          <div class="meta">
-            <span class="tag">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <span id="previewPays">Pays de résidence</span>
-            </span>
-            <span class="tag" id="previewBadge">Badge OPERAPLUS</span>
-          </div>
-
-          <div class="domains" id="previewDomaines" hidden></div>
-
-          <p class="bio placeholder" id="previewBio">Votre présentation apparaîtra ici : vos domaines d'expertise et votre rôle au sein du réseau panafricain.</p>
-        </div>
-
-        <div class="badge-foot">
-          <div class="id-block">
-            <svg id="barcode" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true"></svg>
-            <span class="member-id" id="memberId">MBR-2026-99</span>
-          </div>
-          <div class="complete">
-            <strong id="pct">0%</strong>
-            <span>profil complété</span>
-          </div>
-        </div>
-        <div class="meter" aria-hidden="true"><i id="meterBar"></i></div>
-      </article>
-      </div>
-
-      <ul class="perks">
-        <li>Visibilité dans la cartographie panafricaine des experts</li>
-        <li>Participation aux débats structurés et co-signature des MEAL Afrique Insights</li>
-        <li>Accès aux outils OPERAPLUS et à la MEAL Afrique Academy</li>
-      </ul>
-    </div>
-
-    <footer class="side-foot">
-      <span><strong>MEAL Afrique</strong> - Communauté propulsée par OPERAPLUS</span>
-      <a href="mailto:beininfoplus@operaplus.org">beininfoplus@operaplus.org</a>
-      <a href="https://wa.me/237699072561" target="_blank" rel="noopener">WhatsApp +237 699 072 561</a>
-      <span class="secure">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Chaque étape est enregistrée en base de données
-      </span>
-    </footer>
-  </aside>
+    {% include 'webpages/components/badge.html' %}
 
   <!-- ═════════ Colonne droite : formulaire ═════════ -->
   <main class="main">
@@ -140,263 +43,18 @@
       <form id="mealForm" novalidate onsubmit="return false;">
 
         <!-- ÉTAPE 1 -->
-        <section class="step" data-step="1" aria-labelledby="h1">
-          <header class="step-head">
-            <span class="num">Étape 1 sur 5</span>
-            <h2 id="h1">Identification et organisation</h2>
-            <p class="en" lang="en">Identification and organization details</p>
-            <p class="lead">Vos coordonnées et votre organisation, telles qu'elles apparaîtront sur la cartographie.</p>
-          </header>
-
-          <div class="field">
-            <label for="nomComplet">Nom complet<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">full name</span></label>
-            <input type="text" id="nomComplet" autocomplete="name" required value="{{ personnel.nom }}">
-            <p class="error" id="err-nomComplet" role="alert"></p>
-          </div>
-
-          <div class="grid2">
-            <div class="field">
-              <label for="pays">Pays de résidence<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">country</span></label>
-              <select id="pays" required onchange="onPaysChange()">
-                <option value="">Sélectionner un pays</option>
-               
-                 {% for pays in cities %}
-                    <option value="{{ code }}" >{{ name }}</option>
-                {% endfor %}
-              </select>
-              <p class="error" id="err-pays" role="alert"></p>
-            </div>
-            <div class="field">
-              <label for="ville">Ville<span class="en-label" lang="en">city</span></label>
-              <select id="ville"  onchange="onVilleChange()">
-                <option value="">Choisissez d'abord un pays</option>
-              </select>
-              <input type="text" id="villeAutre" hidden placeholder="Précisez la ville" aria-label="Précisez la ville">
-              <p class="error" id="err-villeAutre" role="alert"></p>
-            </div>
-          </div>
-
-          <div class="grid2">
-            <div class="field">
-              <label for="email">Adresse email<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">email</span></label>
-              <input type="email" id="email" autocomplete="email" required value="{{ personnel.mail }}">
-              <p class="error" id="err-email" role="alert"></p>
-            </div>
-            <div class="field">
-              <label for="telephone">Téléphone / WhatsApp<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">phone</span></label>
-              <input type="tel" id="telephone" autocomplete="tel" placeholder="+237 6XX XXX XXX" required value="{{ personnel.tel }}">
-              <p class="error" id="err-telephone" role="alert"></p>
-            </div>
-          </div>
-
-          <div class="grid2">
-            <fieldset class="field">
-              <legend>Sexe<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">gender</span></legend>
-              <div class="choices">
-                <label class="choice"><input type="radio" name="sexe" value="F" {% if personnel.sexe == 'F' %}checked{% endif %}><span>Féminin</span></label>
-                <label class="choice"><input type="radio" name="sexe" value="M" {% if personnel.sexe == 'M' %}checked{% endif %}><span>Masculin</span></label>
-                <label class="choice"><input type="radio" name="sexe" value="NP"><span>Non précisé</span></label>
-              </div>
-              <p class="error" id="err-sexe" role="alert"></p>
-            </fieldset>
-            <div class="field">
-              <label for="linkedin">Profil LinkedIn<span class="en-label" lang="en">optional</span></label>
-              <input type="text" id="linkedin" placeholder="linkedin.com/in/votre-nom" autocomplete="url">
-            </div>
-          </div>
-
-          <div class="grid2">
-            <div class="field">
-              <label for="typeOrg">Type d'organisation<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">organization type</span></label>
-              <select id="typeOrg" required onchange="onTypeOrgChange()">
-                <option value="">Sélectionner</option>
-                <option value="ONG">ONG internationale</option>
-                <option value="ONG-N">ONG nationale</option>
-                <option value="Gouvernement">Gouvernement</option>
-                <option value="ONU">Agence des Nations Unies</option>
-                <option value="Bailleur">Bailleur de fonds</option>
-                <option value="Recherche">Université / Recherche</option>
-                <option value="Prive">Cabinet / Secteur privé</option>
-                <option value="__autre">Autre</option>
-              </select>
-              <input type="text" id="typeOrgAutre" hidden placeholder="Précisez le type" aria-label="Précisez le type d'organisation">
-              <p class="error" id="err-typeOrg" role="alert"></p>
-            </div>
-            <div class="field">
-              <label for="fonctionOrg">Fonction occupée<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">position</span></label>
-              <select id="fonctionOrg" required onchange="onFonctionChange()">
-                <option value="">Sélectionner</option>
-                <option value="Responsable MEAL">Responsable MEAL</option>
-                <option value="Consultant">Consultant MEAL</option>
-                <option value="Charge SE">Chargé de suivi-évaluation</option>
-                <option value="Analyste">Analyste de données</option>
-                <option value="Chercheur">Chercheur / Enseignant</option>
-                <option value="__autre">Autre</option>
-              </select>
-              <input type="text" id="fonctionOrgAutre" hidden placeholder="Précisez la fonction" aria-label="Précisez la fonction">
-              <p class="error" id="err-fonctionOrg" role="alert"></p>
-            </div>
-          </div>
-        </section>
-
+        {%include 'webpages/components/section-1.html'%}
         <!-- ÉTAPE 2 -->
-        <section class="step" data-step="2" hidden aria-labelledby="h2">
-          <header class="step-head">
-            <span class="num">Étape 2 sur 5</span>
-            <h2 id="h2">Statut MEAL Afrique / OPERAPLUS</h2>
-            <p class="en" lang="en">MEAL Afrique / OPERAPLUS status</p>
-            <p class="lead">Le badge OPERAPLUS est votre identité de membre vérifiable au sein de la communauté.</p>
-          </header>
-
-          <fieldset class="field">
-            <legend>Disposez-vous déjà d'un badge MEAL Afrique (OPERAPLUS) ?<span class="req" aria-hidden="true">*</span></legend>
-            <div class="choices stack" style="margin-top:6px">
-              <label class="choice"><input type="radio" name="badge" value="oui" onchange="toggleBadge()"><span><span class="choice-title">Oui<small>Yes</small></span></span></label>
-              <label class="choice"><input type="radio" name="badge" value="non" onchange="toggleBadge()"><span><span class="choice-title">Non<small>No</small></span></span></label>
-              <label class="choice"><input type="radio" name="badge" value="encours" onchange="toggleBadge()"><span><span class="choice-title">En cours<small>In progress</small></span></span></label>
-            </div>
-            <p class="error" id="err-badge" role="alert"></p>
-          </fieldset>
-
-          <div class="field" id="numBadgeField" hidden>
-            <label for="numBadge">Numéro du badge<span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="numBadge" autocomplete="off">
-            <p class="error" id="err-numBadge" role="alert"></p>
-          </div>
-        </section>
+        {%include 'webpages/components/section-2.html'%}
 
         <!-- ÉTAPE 3 -->
-        <section class="step" data-step="3" hidden aria-labelledby="h3">
-          <header class="step-head">
-            <span class="num">Étape 3 sur 5</span>
-            <h2 id="h3">Profil et domaines d'expertise MEAL</h2>
-            <p class="en" lang="en">MEAL profile and areas of expertise</p>
-            <p class="lead">Ces informations permettent de vous retrouver rapidement dans la cartographie.</p>
-          </header>
-
-          <div class="field">
-            <label for="expertiseMain">Expertise principale<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">main expertise</span></label>
-            <input type="text" id="expertiseMain" placeholder="Ex : évaluation d'impact" required>
-            <p class="error" id="err-expertiseMain" role="alert"></p>
-          </div>
-
-          <fieldset class="field">
-            <legend>Domaines MEAL maîtrisés<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">select all that apply</span></legend>
-            <div class="chips" style="margin-top:6px">
-              <label class="chip"><input type="checkbox" name="domaines" value="Suivi"><span>Suivi</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Évaluation"><span>Évaluation</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Redevabilité"><span>Redevabilité</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Apprentissage"><span>Apprentissage</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Évaluation d'impact"><span>Évaluation d'impact</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Théorie du changement"><span>Théorie du changement</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Cadre logique"><span>Cadre logique</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Qualité des données"><span>Qualité des données</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Recherche qualitative"><span>Recherche qualitative</span></label>
-              <label class="chip"><input type="checkbox" name="domaines" value="Genre et inclusion"><span>Genre et inclusion</span></label>
-            </div>
-            <p class="error" id="err-domaines" role="alert"></p>
-          </fieldset>
-
-          <div class="grid2">
-            <div class="field">
-              <label for="experience">Années d'expérience<span class="en-label" lang="en">years of experience</span></label>
-              <select id="experience">
-                <option value="">Sélectionner</option>
-                <option value="0-2">Moins de 3 ans</option>
-                <option value="3-5">3 à 5 ans</option>
-                <option value="6-10">6 à 10 ans</option>
-                <option value="10+">Plus de 10 ans</option>
-              </select>
-            </div>
-            <fieldset class="field">
-              <legend>Langues de travail<span class="en-label" lang="en">languages</span></legend>
-              <div class="chips" style="margin-top:6px">
-                <label class="chip"><input type="checkbox" name="langues" value="Français"><span>Français</span></label>
-                <label class="chip"><input type="checkbox" name="langues" value="English"><span>English</span></label>
-                <label class="chip"><input type="checkbox" name="langues" value="Português"><span>Português</span></label>
-                <label class="chip"><input type="checkbox" name="langues" value="العربية"><span>العربية</span></label>
-              </div>
-            </fieldset>
-          </div>
-
-          <div class="field">
-            <label for="bio">Présentation courte<span class="en-label" lang="en">short bio</span></label>
-            <textarea id="bio" maxlength="280" placeholder="En quelques phrases : votre parcours, vos thématiques, votre apport au réseau."></textarea>
-            <div class="counter" aria-live="off"><span id="bioCount">0</span> / 280</div>
-          </div>
-        </section>
-
+        {%include 'webpages/components/section-3.html'%}
         <!-- ÉTAPE 4 -->
-        <section class="step" data-step="4" hidden aria-labelledby="h4">
-          <header class="step-head">
-            <span class="num">Étape 4 sur 5</span>
-            <h2 id="h4">Outils digitaux MEAL maîtrisés</h2>
-            <p class="en" lang="en">Digital MEAL tools you master</p>
-            <p class="lead">Cochez les outils que vous utilisez dans votre travail.</p>
-          </header>
-
-          <fieldset class="field">
-            <legend class="visually-hidden">Outils</legend>
-            <div class="chips">
-              <label class="chip"><input type="checkbox" name="outils" value="KoboToolbox"><span>KoboToolbox</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="ODK"><span>ODK</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="SurveyCTO"><span>SurveyCTO</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="CommCare"><span>CommCare</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="DHIS2"><span>DHIS2</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="ActivityInfo"><span>ActivityInfo</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="Power BI"><span>Power BI</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="Tableau"><span>Tableau</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="Excel avancé"><span>Excel avancé</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="R"><span>R</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="Python"><span>Python</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="SPSS"><span>SPSS</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="Stata"><span>Stata</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="NVivo"><span>NVivo</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="QGIS"><span>QGIS</span></label>
-              <label class="chip"><input type="checkbox" name="outils" value="OPERAPLUS"><span>OPERAPLUS</span></label>
-            </div>
-          </fieldset>
-
-          <div class="field">
-            <label for="autresOutils">Autres outils<span class="en-label" lang="en">other tools</span></label>
-            <input type="text" id="autresOutils" placeholder="Séparez par des virgules">
-          </div>
-        </section>
-
+        {%include 'webpages/components/section-4.html'%}
         <!-- ÉTAPE 5 -->
-        <section class="step" data-step="5" hidden aria-labelledby="h5">
-          <header class="step-head">
-            <span class="num">Étape 5 sur 5</span>
-            <h2 id="h5">Disponibilité et consentement</h2>
-            <p class="en" lang="en">Availability and consent</p>
-          </header>
-
-          <fieldset class="field">
-            <legend>Vous êtes disponible pour<span class="en-label" lang="en">available for</span></legend>
-            <div class="chips" style="margin-top:6px">
-              <label class="chip"><input type="checkbox" name="dispo" value="Missions de consultance"><span>Missions de consultance</span></label>
-              <label class="chip"><input type="checkbox" name="dispo" value="Mentorat"><span>Mentorat</span></label>
-              <label class="chip"><input type="checkbox" name="dispo" value="Formations"><span>Formations</span></label>
-              <label class="chip"><input type="checkbox" name="dispo" value="Partage d'expérience"><span>Partage d'expérience</span></label>
-              <label class="chip"><input type="checkbox" name="dispo" value="Débats structurés"><span>Débats structurés</span></label>
-            </div>
-          </fieldset>
-
-          <div>
-            <p class="legend" style="margin:0 0 8px;font-weight:600;font-size:.9rem">Récapitulatif</p>
-            <dl class="recap" id="recap"></dl>
-          </div>
-
-          <div class="field">
-            <div class="consent">
-              <input type="checkbox" id="consentement" required>
-              <label for="consentement">J'autorise MEAL Afrique et OPERAPLUS à publier ma fiche membre.
-                <span class="en-label" lang="en">I authorize MEAL Afrique and OPERAPLUS to publish my member profile.</span>
-              </label>
-            </div>
-            <p class="error" id="err-consentement" role="alert"></p>
-          </div>
-        </section>
+      
+        
+        {%include 'webpages/components/section-5.html'%}
 
         <div class="nav">
           <button type="button" class="btn btn-ghost" id="btnPrev" onclick="processAndSaveStep(-1)">← Précédent</button>
@@ -416,7 +74,7 @@
         <p>Votre fiche est enregistrée dans la cartographie des experts MEAL Afrique. Vous pouvez la modifier à tout moment.</p>
         <div class="actions">
           <button type="button" class="btn btn-ghost" onclick="reopenForm()">Modifier ma fiche</button>
-          <a class="btn btn-primary" href="/" style="text-decoration:none">Retour au journal →</a>
+          <a class="btn btn-primary" href="{%url 'profil-expert' personnel.code %}" style="text-decoration:none">Voir ma fiche →</a>
         </div>
       </section>
 
@@ -432,12 +90,6 @@
   let photoData = null;
   // Photo déjà présente côté serveur (Django) : elle compte dans la complétude
   const hasServerPhoto = !!document.getElementById("avatarImg");
-
-  const CITIES = {
-    "Cameroun": ["Yaoundé", "Douala", "Bafoussam", "Garoua", "Maroua", "Ngaoundéré", "Bertoua", "Bamenda", "Buea", "Ebolowa"],
-    "Sénégal": ["Dakar", "Thiès", "Saint-Louis", "Kaolack", "Ziguinchor", "Touba"],
-    "Côte d'Ivoire": ["Abidjan", "Yamoussoukro", "Bouaké", "San-Pédro", "Korhogo", "Daloa"]
-  };
 
   const $ = (id) => document.getElementById(id);
   const val = (id) => ($(id)?.value || "").trim();
@@ -485,9 +137,7 @@ async function onPaysChange() {
     }
 }
 
-function onVilleChange() {
-    // Logique optionnelle lors du changement de ville (ex: gérer l'option "Autre")
-}
+
 
 // Exécuter au chargement si un pays est déjà sélectionné (mode édition)
 document.addEventListener("DOMContentLoaded", () => {
@@ -531,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
       numBadge: val("numBadge"),
       expertiseMain: val("expertiseMain"),
       domaines: checks("domaines"),
-      experience: $("experience").value,
+      //experience: $("experience").value,
       langues: checks("langues"),
       bio: val("bio"),
       outils: checks("outils"),
@@ -592,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     3: () => {
       const d = collectAll();
       return [
-        ["expertiseMain", d.expertiseMain.length < 3 ? "Indiquez votre expertise principale." : ""],
+      
         ["domaines", d.domaines.length === 0 ? "Choisissez au moins un domaine." : ""]
       ];
     },
