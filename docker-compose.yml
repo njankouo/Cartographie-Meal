@@ -1,0 +1,77 @@
+name: meal-afrique
+
+services:
+
+  web:
+    build: .
+    container_name: meal-afrique-app-web
+    env_file:
+      - .env
+    volumes:
+      - meal-afrique-static_volume_meal_afrique:/app/static
+      - meal-afrique-media_volume_afrique:/app/media
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - global_proxy
+      - meal_afrique_network
+
+  redis:
+    image: redis:7
+    container_name: meal-afrique-app-redis
+    restart: unless-stopped
+    networks:
+      - meal_afrique_network
+
+  db:
+    image: postgres:15
+    container_name: meal-afrique-app-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data_meal_afrique:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meal_afrique_network
+
+  celery:
+    build: .
+    container_name: meal-afrique-app-celery
+    command: celery -A Opera_CTN worker -l info
+    env_file:
+      - .env
+    volumes:
+      - .:/app:z
+    working_dir: /app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - meal_afrique_network
+
+networks:
+  global_proxy:
+    external: true
+  meal_afrique_network:
+    driver: bridge
+
+volumes:
+  meal-afrique-static_volume_meal_afrique: {}
+  meal-afrique-media_volume_afrique: {}
+  db_data_meal_afrique: {}

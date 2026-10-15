@@ -160,15 +160,15 @@
               <select id="pays" required onchange="onPaysChange()">
                 <option value="">Sélectionner un pays</option>
                
-                 {% for code, name in countries %}
-                    <option value="{{ code }}" {% if personnel.country == code or personnel.pays == code %}selected{% endif %}>{{ name }}</option>
+                 {% for pays in cities %}
+                    <option value="{{ code }}" >{{ name }}</option>
                 {% endfor %}
               </select>
               <p class="error" id="err-pays" role="alert"></p>
             </div>
             <div class="field">
               <label for="ville">Ville<span class="en-label" lang="en">city</span></label>
-              <select id="ville" disabled onchange="onVilleChange()">
+              <select id="ville"  onchange="onVilleChange()">
                 <option value="">Choisissez d'abord un pays</option>
               </select>
               <input type="text" id="villeAutre" hidden placeholder="Précisez la ville" aria-label="Précisez la ville">
@@ -445,27 +445,64 @@
   const checks = (name) => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
   const selText = (id) => { const s = $(id); return s && s.selectedIndex > 0 ? s.options[s.selectedIndex].text : ""; };
 
-  function onPaysChange() {
-    const pays = $("pays").value;
-    const ville = $("ville");
-    ville.innerHTML = "";
-    if (!pays) {
-      ville.add(new Option("Choisissez d'abord un pays", ""));
-      ville.disabled = true;
-    } else {
-      ville.add(new Option("Sélectionner une ville", ""));
-      (CITIES[pays] || []).forEach(v => ville.add(new Option(v, v)));
-      ville.add(new Option("Autre ville", OTHER));
-      ville.disabled = false;
+
+async function onPaysChange() {
+    const countrySelect = document.getElementById('pays');
+    const villeSelect = document.getElementById('ville');
+    const selectedCountry = countrySelect.value;
+
+    // Réinitialiser le select des villes
+    villeSelect.innerHTML = '<option value="">Chargement des villes...</option>';
+    villeSelect.disabled = true;
+
+    if (!selectedCountry) {
+        villeSelect.innerHTML = '<option value="">Choisissez d\'abord un pays</option>';
+        return;
     }
-    onVilleChange();
-  }
+
+    try {
+        // Appel vers l'API Django créée à l'étape 1
+        const response = await fetch(`/api/get-cities/?country=${selectedCountry}`);
+        const data = await response.json();
+
+        villeSelect.innerHTML = '<option value="">Sélectionner une ville</option>';
+        
+        if (data.cities && data.cities.length > 0) {
+            data.cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city.id; // ou city.name selon votre besoin
+                option.textContent = city.name;
+                villeSelect.appendChild(option);
+            });
+            villeSelect.disabled = false;
+        } else {
+            villeSelect.innerHTML = '<option value="">Aucune ville disponible</option>';
+            // Optionnel : afficher l'input libre si aucune ville n'est trouvée
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des villes:', error);
+        villeSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+    }
+}
+
+function onVilleChange() {
+    // Logique optionnelle lors du changement de ville (ex: gérer l'option "Autre")
+}
+
+// Exécuter au chargement si un pays est déjà sélectionné (mode édition)
+document.addEventListener("DOMContentLoaded", () => {
+    const countrySelect = document.getElementById('pays');
+    if (countrySelect.value) {
+        onPaysChange();
+    }
+});
+
   function toggleOther(selectId, inputId) {
     const show = $(selectId).value === OTHER;
     $(inputId).hidden = !show;
     if (!show) $(inputId).value = "";
   }
-  function onVilleChange() { toggleOther("ville", "villeAutre"); updatePreview(); }
+
   function onTypeOrgChange() { toggleOther("typeOrg", "typeOrgAutre"); updatePreview(); }
   function onFonctionChange() { toggleOther("fonctionOrg", "fonctionOrgAutre"); updatePreview(); }
   function toggleBadge() {

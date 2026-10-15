@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+
+    <!-- SEO -->
+    <title>Membres MEAL Afrique - {{ pays_nom }} | OPERAPLUS</title>
+    <meta name="description" content="Découvrez les membres et les statistiques de la communauté MEAL Afrique en {{ pays_nom }}, sur la plateforme OPERAPLUS.">
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) : l'image doit être une URL absolue -->
+    <meta property="og:title" content="Membres MEAL Afrique - {{ pays_nom }} | OPERAPLUS">
+    <meta property="og:description" content="Les membres de la communauté MEAL Afrique en {{ pays_nom }} : profils et statistiques.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MEAL Afrique - OPERAPLUS">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'logo-meal.jpg' %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Membres MEAL Afrique - {{ pays_nom }}">
+    <meta name="twitter:description" content="Les membres et statistiques MEAL Afrique en {{ pays_nom }}.">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'logo-meal.jpg' %}">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                fontFamily: {
+                    serif: ['Fraunces', 'Georgia', 'serif'],
+                    sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+                },
+                colors: {
+                    navy: { 300:'#9FB3D9', 600:'#1F3864', 700:'#0D2B5C', 800:'#0A2248', 900:'#081C3D', 950:'#051230' },
+                    gold: { 100:'#F4ECD3', 300:'#E2CB80', 400:'#D8B33A', 500:'#C9A227', 600:'#B8860B' }
+                }
+            } }
+        }
+    </script>
+
+    <style>
+        body { font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+        .font-serif { font-family: "Fraunces", Georgia, serif; }
+        .font-data { font-family: "JetBrains Mono", ui-monospace, monospace; }
+        ::selection { background: #C9A227; color: #081C3D; }
+        :focus-visible { outline: 3px solid #C9A227; outline-offset: 2px; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #051230; }
+        ::-webkit-scrollbar-thumb { background: #1F3864; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C9A227; }
+
+        /* Cartes membres */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+        .animate-fade-in-up { animation: fadeInUp .55s cubic-bezier(.16,1,.3,1) both; }
+        @keyframes laserSweep { 0% { transform: translateX(-100%); } 35%, 100% { transform: translateX(100%); } }
+        .member-card .laser { transform: translateX(-100%); }
+        .member-card:hover .laser { animation: laserSweep 1.6s cubic-bezier(.4,0,.2,1) 1; }
+
+        /* Menu de partage */
+        .share-menu { opacity: 0; visibility: hidden; transform: translateY(8px); transition: .25s ease; }
+        .share.open .share-menu, .share:hover .share-menu, .share:focus-within .share-menu { opacity: 1; visibility: visible; transform: none; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-navy-950 text-slate-100 min-h-screen antialiased flex flex-col relative overflow-x-hidden">
+
+    <!-- GLOBE 3D DE FOND -->
+    <div id="globe-3d-container" class="fixed inset-0 w-full h-full opacity-[0.28] z-0 pointer-events-none" aria-hidden="true"></div>
+    <div class="fixed top-[-10%] left-[10%] w-[320px] sm:w-[520px] h-[320px] sm:h-[520px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none z-0" aria-hidden="true"></div>
+    <div class="fixed bottom-[5%] right-[5%] w-[320px] sm:w-[520px] h-[320px] sm:h-[520px] bg-navy-600/40 rounded-full blur-[120px] pointer-events-none z-0" aria-hidden="true"></div>
+
+    <!-- ═════════ EN-TÊTE ═════════ -->
+    <header class="bg-navy-950/85 backdrop-blur-xl border-b-2 border-gold-500 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <button type="button" onclick="toggleMobileMenu()" aria-label="Ouvrir le menu" aria-controls="mobileMenu"
+                        class="md:hidden text-slate-300 hover:text-gold-500 p-2 -ml-2 text-lg transition-colors">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+                <a href="/Inscription-meal-afrique/" class="flex items-center gap-3 min-w-0">
+                    <img src="{% static 'img/logoOfficiel.jpg' %}" alt="" class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white object-cover ring-2 ring-gold-500 shrink-0">
+                    <div class="min-w-0">
+                        <span class="font-serif text-base sm:text-lg font-bold leading-none text-white block truncate">MEAL <span class="italic font-medium text-gold-500">Afrique</span></span>
+                        <span class="font-data text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-[.16em] flex items-center gap-1.5 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
+                            Cartographie - {{ pays_nom }}
+                        </span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex items-center gap-2" aria-label="Navigation">
+                <a href="https://meal-afrique.operaplus.org" target="_blank" rel="noopener"
+                   class="px-4 py-2.5 font-data text-[11px] font-bold uppercase tracking-widest text-slate-300 border border-white/15 hover:text-white hover:border-gold-500 transition">OPERAPLUS</a>
+                <a href="/Inscription-meal-afrique/"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-900 font-data text-[11px] font-bold uppercase tracking-widest transition">
+                    <i class="fa-solid fa-user-plus"></i> Rejoindre
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ═════════ MENU MOBILE ═════════ -->
+    <div id="mobileMenu" class="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-sm -translate-x-full transition-transform duration-300 md:hidden" aria-hidden="true">
+        <div class="w-full max-w-xs bg-navy-900 h-full p-6 border-r border-gold-500/30 flex flex-col justify-between shadow-2xl">
+            <div class="space-y-6">
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <span class="font-serif text-lg font-bold text-white">MEAL <span class="italic font-medium text-gold-500">Afrique</span></span>
+                    <button type="button" onclick="toggleMobileMenu()" aria-label="Fermer le menu" class="text-slate-400 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <a href="/Inscription-meal-afrique/" class="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-data font-bold text-xs py-3.5 uppercase tracking-widest flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-user-plus"></i> Rejoindre la communauté
+                </a>
+                <a href="https://meal-afrique.operaplus.org" target="_blank" rel="noopener" class="w-full border border-white/15 hover:border-gold-500 text-slate-200 font-data font-bold text-xs py-3.5 uppercase tracking-widest flex items-center justify-center gap-2 transition">
+                    Plateforme OPERAPLUS
+                </a>
+            </div>
+            <p class="font-data text-[10px] text-slate-500 uppercase tracking-widest border-t border-white/10 pt-4">MEAL Afrique - OPERAPLUS</p>
+        </div>
+    </div>
+
+    <!-- ═════════ BOUTON DE PARTAGE ═════════ -->
+    <div class="share fixed bottom-5 right-5 z-40" id="shareBox">
+        <div class="share-menu absolute bottom-16 right-0 flex flex-col gap-3">
+            <a href="https://wa.me/?text={{ 'Découvrez les membres MEAL Afrique : '|urlencode }}{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp"
+               class="w-12 h-12 flex items-center justify-center bg-[#25D366] text-white rounded-full shadow-lg hover:scale-110 transition-transform"><i class="fa-brands fa-whatsapp text-xl"></i></a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur LinkedIn"
+               class="w-12 h-12 flex items-center justify-center bg-[#0A66C2] text-white rounded-full shadow-lg hover:scale-110 transition-transform"><i class="fa-brands fa-linkedin-in text-lg"></i></a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur Facebook"
+               class="w-12 h-12 flex items-center justify-center bg-[#1877F2] text-white rounded-full shadow-lg hover:scale-110 transition-transform"><i class="fa-brands fa-facebook-f text-lg"></i></a>
+        </div>
+        <button type="button" id="shareBtn" aria-label="Partager cette page" aria-expanded="false"
+                class="w-14 h-14 bg-navy-900 text-gold-500 rounded-full shadow-[0_10px_30px_rgba(201,162,39,.2)] border border-gold-500/40 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition">
+            <i class="fa-solid fa-share-nodes text-xl"></i>
+        </button>
+    </div>
+
+    <!-- ═════════ CONTENU ═════════ -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 w-full flex-1 space-y-8 relative z-10">
+        {% block content %}
+
+        <!-- Titre -->
+        <section class="relative overflow-hidden rounded-2xl border border-gold-500/25 bg-gradient-to-br from-navy-700/90 via-navy-900/90 to-navy-950/90 backdrop-blur p-6 sm:p-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div aria-hidden="true" class="absolute -right-4 -bottom-10 font-serif font-black text-[140px] sm:text-[180px] leading-none text-gold-500/[0.07] select-none">{{ members_count }}</div>
+            <div class="relative space-y-3 text-center lg:text-left">
+                <span class="font-data text-[11px] font-bold uppercase tracking-[.2em] text-gold-500">Cartographie des experts MEAL</span>
+                <h1 class="font-serif text-3xl sm:text-5xl font-bold leading-tight text-white">
+                    Communauté MEAL <span class="italic font-medium text-gold-500">{{ pays_nom }}</span>
+                </h1>
+                <p class="text-sm text-slate-300 max-w-xl mx-auto lg:mx-0">
+                    Les professionnels du Suivi, de l'Évaluation, de la Redevabilité et de l'Apprentissage inscrits en {{ pays_nom }} sur OPERAPLUS.
+                </p>
+            </div>
+            <a href="/Inscription-meal-afrique/" class="relative self-center lg:self-auto inline-flex items-center justify-center gap-2.5 bg-gold-500 hover:bg-gold-400 text-navy-900 font-data font-bold text-xs py-3.5 px-6 uppercase tracking-widest shadow-lg transition shrink-0">
+                <i class="fa-solid fa-user-plus"></i> Rejoindre la communauté
+            </a>
+        </section>
+
+        <!-- Indicateurs -->
+        <section aria-label="Statistiques" class="grid grid-cols-3 gap-3 sm:gap-4">
+            <div class="rounded-xl border border-white/10 bg-navy-900/70 backdrop-blur p-4 sm:p-6">
+                <p class="font-data text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2"><i class="fa-solid fa-users text-gold-500"></i> Membres</p>
+                <p class="font-serif text-3xl sm:text-5xl font-black text-white tabular-nums mt-2 leading-none">{{ members_count }}</p>
+            </div>
+            <div class="rounded-xl border border-gold-500/30 bg-navy-900/70 backdrop-blur p-4 sm:p-6">
+                <p class="font-data text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2"><i class="fa-solid fa-venus text-gold-500"></i> Femmes</p>
+                <p class="font-serif text-3xl sm:text-5xl font-black text-gold-500 tabular-nums mt-2 leading-none">{{ country_members_female }}</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-navy-900/70 backdrop-blur p-4 sm:p-6">
+                <p class="font-data text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2"><i class="fa-solid fa-mars text-navy-300"></i> Hommes</p>
+                <p class="font-serif text-3xl sm:text-5xl font-black text-navy-300 tabular-nums mt-2 leading-none">{{ country_members_male }}</p>
+            </div>
+            <!-- Barre de répartition -->
+            <div class="col-span-3" aria-hidden="true">
+                <div class="h-2 w-full rounded-full overflow-hidden bg-navy-300/80 flex">
+                    <div id="femaleBar" class="h-full bg-gold-500 transition-[width] duration-700" style="width:0%"
+                         data-f="{{ country_members_female|default:0 }}" data-m="{{ country_members_male|default:0 }}"></div>
+                </div>
+                <p id="genderPct" class="font-data text-[10px] text-slate-400 mt-2 tracking-wider"></p>
+            </div>
+        </section>
+
+        <!-- Liste des membres -->
+        <section class="rounded-2xl border border-white/10 bg-navy-900/60 backdrop-blur p-5 sm:p-8 space-y-6" aria-labelledby="membersTitle">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-gold-500/60 pb-5">
+                <h2 id="membersTitle" class="font-serif text-2xl font-bold tracking-tight text-white flex items-center gap-3 flex-wrap">
+                    Membres de la communauté
+                    <span class="font-data text-[11px] px-2.5 py-1 bg-gold-500/10 border border-gold-500/40 text-gold-500 uppercase tracking-widest">{{ pays_nom }}</span>
+                </h2>
+                <div class="relative w-full sm:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <label for="memberSearch" class="sr-only">Rechercher un membre</label>
+                    <input type="search" id="memberSearch" placeholder="Nom ou nationalité..." autocomplete="off"
+                           class="w-full bg-navy-950/60 border border-white/15 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-500 transition placeholder:text-slate-500">
+                </div>
+            </div>
+
+            <p id="searchCount" class="font-data text-[11px] text-slate-400 -mt-2" aria-live="polite"></p>
+
+            <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {% for members in member %}
+                <article class="member-card group relative bg-navy-950/50 border border-white/10 hover:border-gold-500/50 rounded-xl p-5 overflow-hidden animate-fade-in-up transition-colors"
+                         data-name="{{ members.nom|lower }} {{ members.nationalite|lower }}"
+                         style="animation-delay: {% widthratio forloop.counter0 1 60 %}ms;">
+                    <div class="flex items-center gap-4">
+                        <!-- Avatar -->
+                        <div class="relative shrink-0">
+                            {% if members.photo %}
+                                <img src="{{ members.photo.url }}" alt="Photo de {{ members.nom }}" loading="lazy"
+                                     class="w-16 h-16 rounded-xl object-cover border-2 {% if members.sexe == 'F' or members.genre == 'Femme' %}border-gold-500{% else %}border-navy-300/60{% endif %}">
+                            {% else %}
+                                <div class="w-16 h-16 rounded-xl flex items-center justify-center font-serif font-black text-xl uppercase border-2 {% if members.sexe == 'F' or members.genre == 'Femme' %}bg-gold-500/10 text-gold-500 border-gold-500/60{% else %}bg-navy-700 text-navy-300 border-navy-300/40{% endif %}">
+                                    {{ members.nom|slice:":2" }}
+                                </div>
+                            {% endif %}
+                            {% if members.sexe == 'F' or members.genre == 'Femme' %}
+                                <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-gold-500 text-navy-900 border-2 border-navy-950 rounded-lg flex items-center justify-center text-[11px]" title="Femme"><i class="fa-solid fa-venus"></i></span>
+                            {% elif members.sexe == 'H' or members.sexe == 'M' or members.genre == 'Homme' %}
+                                <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-navy-300 text-navy-900 border-2 border-navy-950 rounded-lg flex items-center justify-center text-[11px]" title="Homme"><i class="fa-solid fa-mars"></i></span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Infos -->
+                        <div class="min-w-0 flex-1">
+                            <p class="font-data text-[9px] font-bold uppercase tracking-widest text-gold-500/90 flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Membre actif
+                            </p>
+                            <h3 class="font-serif font-bold text-lg text-white truncate mt-1 group-hover:text-gold-400 transition-colors">{{ members.nom }}</h3>
+                            <p class="text-xs text-slate-400 truncate mt-0.5"><i class="fa-solid fa-flag text-[10px] text-gold-500 mr-1"></i>{{ members.nationalite|default:"-" }}</p>
+                            {% if members.date_enregistrement %}
+                            <p class="font-data text-[10px] text-slate-500 mt-1.5 tracking-wider">Membre depuis le {{ members.date_enregistrement|date:"d/m/Y" }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="laser absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
+                </article>
+                {% empty %}
+                <div class="col-span-full text-center py-14">
+                    <p class="font-serif text-2xl text-white">Aucun membre inscrit pour le moment</p>
+                    <p class="text-sm text-slate-400 mt-2">Soyez le premier membre MEAL Afrique de {{ pays_nom }}.</p>
+                    <a href="/Inscription-meal-afrique/" class="inline-flex mt-6 px-6 py-3.5 bg-gold-500 hover:bg-gold-400 text-navy-900 font-data text-xs font-bold uppercase tracking-widest transition">S'inscrire →</a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="noResult" class="hidden text-center py-10">
+                <p class="font-serif text-xl text-white">Aucun membre ne correspond à votre recherche</p>
+                <p class="text-sm text-slate-400 mt-1">Essayez un autre nom ou une autre nationalité.</p>
+            </div>
+        </section>
+
+        <script>
+            /* Recherche (nom + nationalité) avec compteur et état vide */
+            (function () {
+                const input = document.getElementById('memberSearch');
+                const cards = Array.from(document.querySelectorAll('.member-card'));
+                const count = document.getElementById('searchCount');
+                const none = document.getElementById('noResult');
+                if (!input || !cards.length) return;
+                const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                input.addEventListener('input', () => {
+                    const q = norm(input.value.trim());
+                    let shown = 0;
+                    cards.forEach(c => { const ok = norm(c.dataset.name).includes(q); c.hidden = !ok; if (ok) shown++; });
+                    none.classList.toggle('hidden', shown > 0);
+                    count.textContent = q ? `${shown} membre${shown > 1 ? 's' : ''} sur ${cards.length}` : '';
+                });
+            })();
+
+            /* Barre de répartition femmes / hommes */
+            (function () {
+                const bar = document.getElementById('femaleBar');
+                if (!bar) return;
+                const f = parseInt(bar.dataset.f, 10) || 0, m = parseInt(bar.dataset.m, 10) || 0, t = f + m;
+                if (!t) return;
+                const pf = Math.round(f / t * 100);
+                requestAnimationFrame(() => { bar.style.width = pf + '%'; });
+                document.getElementById('genderPct').textContent = `Femmes ${pf} % - Hommes ${100 - pf} %`;
+            })();
+        </script>
+        {% endblock %}
+    </main>
+
+    <!-- ═════════ PIED DE PAGE ═════════ -->
+    <footer class="relative z-10 border-t-2 border-gold-500 bg-navy-900/95 mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 pr-24 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-300">
+            <span><span class="font-serif text-base font-bold text-white">MEAL Afrique</span> <span class="font-data text-gold-500 ml-2">© 2026 - OPERAPLUS / BeINfos+</span></span>
+            <span class="font-data flex flex-wrap gap-4">
+                <a href="mailto:beininfoplus@operaplus.org" class="hover:text-white">beininfoplus@operaplus.org</a>
+                <a href="https://wa.me/237699072561" target="_blank" rel="noopener" class="hover:text-white">WhatsApp +237 699 072 561</a>
+            </span>
+        </div>
+    </footer>
+
+    <script>
+        /* ───────── Menu mobile ───────── */
+        function toggleMobileMenu() {
+            const m = document.getElementById('mobileMenu');
+            const open = m.classList.toggle('-translate-x-full') === false;
+            m.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+        document.getElementById('mobileMenu').addEventListener('click', e => { if (e.target.id === 'mobileMenu') toggleMobileMenu(); });
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            const m = document.getElementById('mobileMenu');
+            if (!m.classList.contains('-translate-x-full')) toggleMobileMenu();
+            closeShare();
+        });
+
+        /* ───────── Partage : partage natif sur mobile, sinon menu ───────── */
+        const shareBox = document.getElementById('shareBox'), shareBtn = document.getElementById('shareBtn');
+        function closeShare() { shareBox.classList.remove('open'); shareBtn.setAttribute('aria-expanded', 'false'); }
+        shareBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+                try { await navigator.share({ title: document.title, url: location.href }); return; } catch (err) { if (err.name === 'AbortError') return; }
+            }
+            const open = shareBox.classList.toggle('open');
+            shareBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', e => { if (!shareBox.contains(e.target)) closeShare(); });
+
+        /* ───────── Globe 3D (couleurs MEAL Afrique) ───────── */
+        (function () {
+            const container = document.getElementById('globe-3d-container');
+            if (!window.THREE || !container || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            let renderer;
+            try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); } catch (e) { return; }
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 1, 1000);
+            camera.position.z = 170;
+            renderer.setSize(innerWidth, innerHeight);
+            renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const globe = new THREE.Group();
+            scene.add(globe);
+            const R = 85;
+            globe.add(new THREE.Mesh(new THREE.SphereGeometry(R, 18, 18),
+                new THREE.MeshBasicMaterial({ color: 0x9FB3D9, wireframe: true, transparent: true, opacity: 0.04 })));
+
+            const N = 1400, pos = [], col = [];
+            const gold = new THREE.Color(0xC9A227), blue = new THREE.Color(0x5B78B0);
+            for (let i = 0; i < N; i++) {
+                const phi = Math.acos(-1 + (2 * i) / N), theta = Math.sqrt(N * Math.PI) * phi;
+                const lat = (phi * 180) / Math.PI - 90, lon = ((theta * 180) / Math.PI) % 360 - 180;
+                let land = false;
+                if (lon > -22 && lon < 52 && lat > -35 && lat < 70) { if (!(lat > 32 && lat < 45 && lon > -5 && lon < 40)) land = true; }
+                else if (lon >= 52 && lon < 145 && lat > -12 && lat < 75) land = true;
+                else if (lon > -120 && lon < -34 && lat > -55 && lat < 18) land = true;
+                else if (lon > -160 && lon < -60 && lat >= 18 && lat < 72) land = true;
+                if (!land) continue;
+                pos.push(R * Math.sin(phi) * Math.sin(theta), R * Math.cos(phi), R * Math.sin(phi) * Math.cos(theta));
+                const c = (lon > -18 && lon < 50 && lat > -35 && lat < 36) ? gold : blue;  // l'Afrique en or
+                col.push(c.r, c.g, c.b);
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+            globe.add(new THREE.Points(geo, new THREE.PointsMaterial({ size: 2.3, vertexColors: true, transparent: true, opacity: 0.8 })));
+            globe.rotation.set(0.2, 0, 0.4);
+
+            let mx = 0, my = 0, tx = 0, ty = 0, raf = null;
+            // Écoute sur window : le conteneur est derrière le contenu et ne recevait jamais la souris
+            addEventListener('mousemove', e => { mx = (e.clientX - innerWidth / 2) * 0.015; my = (e.clientY - innerHeight / 2) * 0.015; }, { passive: true });
+            addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+            function frame() {
+                raf = requestAnimationFrame(frame);
+                tx += (mx - tx) * 0.04; ty += (my - ty) * 0.04;
+                globe.rotation.y += 0.0012 + tx * 0.0015;
+                globe.rotation.x += ty * 0.0015;
+                renderer.render(scene, camera);
+            }
+            // Pause quand l'onglet est caché (économie de batterie et de données)
+            document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(raf); raf = null; } else if (!raf) frame(); });
+            frame();
+        })();
+    </script>
+</body>
+</html>

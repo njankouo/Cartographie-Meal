@@ -4,8 +4,10 @@ from django.urls import reverse
 from django.utils.text import slugify
 # Create your models here.
 class ProfilMeal(models.Model):
+    code = models.CharField(max_length=255, null=True)
     intitule = models.CharField(max_length=255)
-    description = models.TextField()
+    description_fr = models.TextField()
+    description_en = models.TextField()
 
 class Personnel(models.Model):
     nom	= models.CharField(max_length=128,blank=True,null=True)
@@ -45,6 +47,13 @@ class Personnel(models.Model):
     other_language = models.TextField(max_length=255)
 
     describe_certification = models.TextField(null=True)
+    
+    profil_linkedin = models.URLField(max_length=255, null=True)
+    
+    organization_type = models.CharField(max_length=255, null=True)
+    
+    
+    fonction_organization = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.code or f"{self.nom} {self.prenom}"
@@ -72,11 +81,14 @@ class PersonnelSecteurIntervention(models.Model):
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE, null=True)
     secteur_intervention = models.ForeignKey(SecteurIntervention, on_delete=models.CASCADE, null=True)
 
-
 class OutilsMeal(models.Model):
-
+    code = models.CharField(max_length=255, null=True, blank=True)
     intitule = models.CharField(max_length=255)
-    description= models.TextField()
+    description_fr = models.TextField(null=True, blank=True)
+    description_en = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.intitule
 
 class PersonnelOutilMeal(models.Model):
     personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE, null=True)

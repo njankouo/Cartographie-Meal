@@ -80,10 +80,15 @@ WSGI_APPLICATION = 'cartographie_meal.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cartographie_meal',
+        'USER': 'postgres',
+        'PASSWORD': 'corporate2019',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
+
 
 
 # Password validation

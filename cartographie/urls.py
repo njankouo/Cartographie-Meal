@@ -29,6 +29,12 @@ urlpatterns = [
     path('count-male-and-female/', views.count_male_and_female, name='count-members-male-and-female'),
     
     path('count-members-of-countries/', views.group_member_by_country, name='count-members-of-countries'),
+    
+    path('members-meal-afrique/<str:country>/', views.memberscountry, name='members-meal-afrique'),
+    
+    path('prodil-expert/', views.ProfilExpert, name='prodil-expert'),
+    
+    path('api/get-cities/', views.get_cities_by_country, name='api_get_cities'),
 
 
 ]

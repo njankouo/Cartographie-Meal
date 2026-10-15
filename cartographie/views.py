@@ -168,26 +168,40 @@ def Information_members(request, code):
 
     return render(request, template, context)
 
-
+from cities_light.models import City, Country
 
 def Cartographie(request, code):
-    # On utilise __iexact pour ignorer la casse et accepter avec ou sans accent
-    # Ou __icontains si vous voulez être encore plus large
-    cities = City.objects.filter(name__iexact="Yaoundé") 
-
     personnel = Personnel.objects.get(code=code)
     
-    # Si vous voulez tester avec ou sans accent :
-    if not cities.exists():
-        cities = City.objects.filter(name__iexact="Yaounde")
+    # Récupérer tous les pays de cities-light triés par nom
+    countries = Country.objects.all().order_by('name')
 
     context = {
-        'cities': cities,
-        'personnel':personnel,
         'countries': countries,
+        'personnel': personnel,
     }
     return render(request, 'webpages/cartographie.html', context)
+def get_cities_by_country(request):
+    """
+    API endpoint pour récupérer les villes selon le code ISO du pays envoyé par le front-end
+    """
+    country_code = request.GET.get('country')
+    
+    if not country_code:
+        return JsonResponse({'cities': []}, safe=False)
 
+    try:
+        # cities-light relie City à Country via le champ 'country'
+        # et stocke le code ISO dans 'country.code' ou 'country.code2'
+        cities = City.objects.filter(country__code__iexact=country_code).values('id', 'name')
+        
+        if not cities.exists():
+            cities = City.objects.filter(country__code2__iexact=country_code).values('id', 'name')
+
+    except Exception as e:
+        cities = []
+
+    return JsonResponse({'cities': list(cities)}, safe=False)
 
 def EditProfil(request, code):
     template = 'webpages/edit-profil.html'
@@ -296,3 +310,36 @@ def group_member_by_country(request):
             continue
 
     return JsonResponse(results)
+
+
+
+
+def memberscountry(request, country):
+    template = 'webpages/details-country.html'
+    
+    country_upper = country.upper()
+    
+    # --- Récupération du nom complet ---
+    # Recherche le pays par son code (alpha_2)
+    country_obj = pycountry.countries.get(alpha_2=country_upper)
+    # Si trouvé, on prend le nom, sinon on garde le code
+    country_name = country_obj.name if country_obj else country_upper
+    
+    country_members = Personnel.objects.filter(country=country_upper)
+    country_members_female = country_members.filter(sexe="F").count()
+    country_members_male = country_members.filter(sexe="H").count()
+    
+    context = {
+        'members_count': country_members.count(),
+        'member': country_members,
+        'pays_code': country_upper,       # Le code (ex: FR)
+        'pays_nom': country_name,         # Le nom complet (ex: France)
+        'country_members_female': country_members_female,
+        'country_members_male': country_members_male
+    }
+    
+    return render(request, template, context)
+
+
+def ProfilExpert(request):
+    return render(request, 'webpages/profil_expert.html')
