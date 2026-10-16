@@ -34,7 +34,9 @@ urlpatterns = [
     
     path('api/get-cities/', views.get_cities_by_country, name='api_get_cities'),
 
-    path('create-cartographie-meal/', views.secure_create_or_update_personnel, name='create-cartographie-meal')
+    path('create-cartographie-meal/', views.secure_create_or_update_personnel, name='create-cartographie-meal'),
+
+    path('authentification/', views.authentification, name='authentification')
 
 
 ]

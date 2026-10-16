@@ -275,7 +275,7 @@ def Updateprofil(request):
 
            
             messages.success(request, "Votre profil a été mis à jour avec succès.")
-            return redirect(f'/Information-members/{instance_personnel.code}/')  # Remplacez 'profile' par l'URL de la page de profil
+            return redirect(f'/cartographie-users/{instance_personnel.code}/')  # Remplacez 'profile' par l'URL de la page de profil
 
         except ObjectDoesNotExist:
             # Si l'objet Personnel n'existe pas, afficher un message d'erreur
@@ -375,112 +375,189 @@ def ProfilExpert(request, code):
     }
     return render(request, 'webpages/profil_expert.html', context)
 
+import json
+from django.http import JsonResponse
+from django.db import transaction
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.validators import validate_email, URLValidator
+# Assurez-vous d'importer vos modèles et vos loggers ici
+# from .models import Personnel, ProfilMeal, DomaineExpertise, SecteurIntervention, OutilsMeal, DisponibilityType, ProfilPersonnel, PersonnelDomaine, PersonnelSecteurIntervention, PersonnelOutilMeal, PersonnelDisponibilityType
+# import logging
+# logger = logging.getLogger(__name__)
 
-
-
-def secure_create_or_update_personnel(data: dict, unique_field='code'):
- 
-    
-    # 1. EXTRACTION ET NETTOYAGE DES RELATIONS
-    domaines_ids = data.pop('domaines', None)
-    secteurs_ids = data.pop('secteurs_intervention', None)
-    outils_ids = data.pop('outils_meal', None)
-    disponibilites_ids = data.pop('types_disponibilite', None)
-    year_experience_profil = data.pop('year_experience_profil', None)
-
-    # Vérification du champ unique de recherche
-    lookup_value = data.get(unique_field)
-    if not lookup_value:
-        raise ValidationError({unique_field: f"Le champ de recherche '{unique_field}' est obligatoire."})
-
-    # 2. VALIDATION STRICTE DES DONNÉES (DATA INTEGRITY & FORMATS)
-    
-    # Validation de l'e-mail si présent
-    if data.get('mail'):
+def secure_create_or_update_personnel(request):
+    # 1. EXTRACTION DES DONNÉES (Support JSON et form-data classique)
+    if request.content_type == 'application/json':
         try:
-            validate_email(data['mail'])
-        except DjangoValidationError:
-            raise ValidationError({'mail': "Format d'adresse e-mail invalide."})
+            post_data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': "Format JSON invalide."}, status=400)
+    else:
+        post_data = request.POST.copy()
 
-    # Validation du profil LinkedIn si présent
-    if data.get('profil_linkedin'):
+    # Récupération des listes
+    profils_ids = post_data.get('profils', [])
+    domaines_ids = post_data.get('domaines', [])
+    secteurs_ids = post_data.get('secteurs', [])
+    outils_ids = post_data.get('outils', [])
+    disponibilites_ids = post_data.get('dispo', [])
+    
+    # Extraction des expériences par profil
+    profils_experiences = {}
+    if isinstance(post_data, dict):
+        for key, value in post_data.items():
+            if key.startswith('experience_'):
+                profil_id = key.split('_')[1]
+                profils_experiences[profil_id] = value
+    else:
+        for key in post_data:
+            if key.startswith('experience_'):
+                profil_id = key.split('_')[1]
+                profils_experiences[profil_id] = post_data.get(key)
+
+    # Utilisation de l'email comme identifiant unique
+    lookup_value = post_data.get('email') or post_data.get('mail')
+    if not lookup_value:
+        return JsonResponse({'errors': {'email': "L'adresse e-mail est obligatoire pour l'enregistrement."}}, status=400)
+
+    # 2. VALIDATION STRICTE DES DONNÉES
+    try:
+        validate_email(lookup_value)
+    except DjangoValidationError:
+        return JsonResponse({'errors': {'email': "Format d'adresse e-mail invalide."}}, status=400)
+
+    linkedin_url = post_data.get('linkedin')
+    if linkedin_url:
         validator = URLValidator()
         try:
-            validator(data['profil_linkedin'])
+            validator(linkedin_url)
         except DjangoValidationError:
-            raise ValidationError({'profil_linkedin': "L'URL du profil LinkedIn est invalide."})
+            return JsonResponse({'errors': {'linkedin': "L'URL du profil LinkedIn est invalide."}}, status=400)
 
-    # Nettoyage de base des chaînes textuelles (protection contre les espaces superflus)
-    for field in ['nom', 'prenom', 'fonction', 'code']:
-        if data.get(field):
-            data[field] = str(data[field]).strip()
+    cleaned_data = {
+        'nom': str(post_data.get('nomComplet', '')).strip(),
+        'mail': str(lookup_value).strip(),
+        'tel': str(post_data.get('telephone', '')).strip(),
+        'pays': str(post_data.get('pays', '')).strip(),
+        'ville': str(post_data.get('ville', '')).strip(),
+        'sexe': str(post_data.get('sexe', '')).strip(),
+        'linkedin': str(linkedin_url).strip() if linkedin_url else '',
+        'type_org': str(post_data.get('typeOrg', '')).strip(),
+        'fonction_org': str(post_data.get('fonctionOrg', '')).strip(),
+        'badge': str(post_data.get('badge', '')).strip(),
+        'num_badge': str(post_data.get('numBadge', '')).strip(),
+        'bio': str(post_data.get('bio', '')).strip(),
+        'niveau_expertise': str(post_data.get('niveau_expertise', '')).strip(),
+        'annees_profil_actuel': post_data.get('annees_profil_actuel') or None,
+    }
+    
+    cleaned_data = {k: v for k, v in cleaned_data.items() if v != "" and v is not None}
 
-    # 3. VÉRIFICATION DE L'EXISTENCE DES CLÉS ÉTRANGÈRES (Empêche l'injection d'IDs corrompus ou orphelins)
-    if data.get('current_profil'):
-        profil_id = data['current_profil'].id if hasattr(data['current_profil'], 'id') else data['current_profil']
-        if not ProfilMeal.objects.filter(id=profil_id).exists():
-            raise ValidationError({'current_profil': "Le profil MEAL spécifié n'existe pas en base de données."})
-
+    # 3. VÉRIFICATION DE L'EXISTENCE DES CLÉS ÉTRANGÈRES
     def verify_existence(model_class, ids_list, field_name):
         if ids_list:
-            # S'assure que tous les IDs fournis existent réellement et gère les doublons potentiels
-            existing_count = model_class.objects.filter(id__in=ids_list).count()
-            if existing_count != len(set(ids_list)):
+            try:
+                int_ids = [int(i) for i in ids_list]
+            except (ValueError, TypeError):
+                raise ValidationError({field_name: "Format d'identifiant invalide."})
+                
+            existing_count = model_class.objects.filter(id__in=int_ids).count()
+            if existing_count != len(set(int_ids)):
                 raise ValidationError({field_name: "Un ou plusieurs identifiants fournis n'existent pas."})
+            return int_ids
+        return []
 
-    verify_existence(DomaineExpertise, domaines_ids, 'domaines')
-    verify_existence(SecteurIntervention, secteurs_ids, 'secteurs_intervention')
-    verify_existence(OutilsMeal, outils_ids, 'outils_meal')
-    verify_existence(DisponibilityType, disponibilites_ids, 'types_disponibilite')
+    try:
+        verified_profils_ids = verify_existence(ProfilMeal, profils_ids, 'profils')
+        verified_domaines_ids = verify_existence(DomaineExpertise, domaines_ids, 'domaines')
+        verified_secteurs_ids = verify_existence(SecteurIntervention, secteurs_ids, 'secteurs')
+        verified_outils_ids = verify_existence(OutilsMeal, outils_ids, 'outils')
+        verified_dispo_ids = verify_existence(DisponibilityType, disponibilites_ids, 'dispo')
+    except ValidationError as ve:
+        return JsonResponse({'errors': ve.message_dict}, status=400)
 
-    # 4. EXÉCUTION SÉCURISÉE EN TRANSACTION ATOMIQUE (Règle ACID)
+    # 4. EXÉCUTION SÉCURISÉE EN TRANSACTION ATOMIQUE (ACID)
     try:
         with transaction.atomic():
-            lookup_kwargs = {unique_field: lookup_value}
-            personnel, created = Personnel.update_or_create(
-                **lookup_kwargs,
-                defaults=data
+            personnel, created = Personnel.objects.update_or_create(
+                mail=lookup_value,
+                defaults=cleaned_data
             )
 
-            # Gestion de la table ProfilPersonnel
-            if personnel.current_profil:
-                ProfilPersonnel.objects.update_or_create(
-                    personnel=personnel,
-                    profil=personnel.current_profil,
-                    defaults={'year_experience': year_experience_profil}
-                )
+            # Affectations spécifiques (avec valeurs sécurisées depuis post_data)
+            personnel.cartographie_is_valid = True
+            personnel.fonction_organization = post_data.get('fonctionOrg', '')
+            personnel.organization_type = post_data.get('typeOrg', '')
+            personnel.consentement = post_data.get('consentement', False)
+            personnel.profil_linkedin = linkedin_url or ''
+            personnel.describe_certification = post_data.get('describe_certification', '')
+            
+            # Utilisation de _id pour la clé étrangère (convertie en int ou None)
+            curr_prof = post_data.get('current_profil')
+            personnel.current_profil_id = int(curr_prof) if curr_prof else None
 
-            # Synchronisation sécurisée des relations Many-to-Many / Intermédiaires
-            if domaines_ids is not None:
+            personnel.years_expertise = post_data.get('annees_profil_actuel') or None
+            personnel.level_expertise = post_data.get('niveau_expertise', '')
+            personnel.is_speeck_french = post_data.get('is_speeck_french', False)
+            personnel.is_speeck_english = post_data.get('is_speeck_english', False)
+            personnel.other_language = post_data.get('other_language', '')
+            personnel.pays = post_data.get('pays', '')
+            personnel.ville = post_data.get('ville', '')
+            
+            # Sauvegarde de l'instance
+            personnel.save()
+
+            if verified_profils_ids:
+                ProfilPersonnel.objects.filter(personnel=personnel).delete()
+                profil_personnel_objects = []
+                for p_id in verified_profils_ids:
+                    exp_val = profils_experiences.get(str(p_id))
+                    profil_personnel_objects.append(
+                        ProfilPersonnel(
+                            personnel=personnel,
+                            profil_id=p_id,
+                            year_experience=int(exp_val) if exp_val not in [None, ''] else None
+                        )
+                    )
+                ProfilPersonnel.objects.bulk_create(profil_personnel_objects)
+
+            if verified_domaines_ids:
                 PersonnelDomaine.objects.filter(personnel=personnel).delete()
                 PersonnelDomaine.objects.bulk_create([
-                    PersonnelDomaine(personnel=personnel, domaine_id=d_id) for d_id in domaines_ids
+                    PersonnelDomaine(personnel=personnel, domaine_id=d_id) for d_id in verified_domaines_ids
                 ])
 
-            if secteurs_ids is not None:
+            if verified_secteurs_ids:
                 PersonnelSecteurIntervention.objects.filter(personnel=personnel).delete()
                 PersonnelSecteurIntervention.objects.bulk_create([
-                    PersonnelSecteurIntervention(personnel=personnel, secteur_intervention_id=s_id) for s_id in secteurs_ids
+                    PersonnelSecteurIntervention(personnel=personnel, secteur_intervention_id=s_id) for s_id in verified_secteurs_ids
                 ])
 
-            if outils_ids is not None:
+            if verified_outils_ids:
                 PersonnelOutilMeal.objects.filter(personnel=personnel).delete()
                 PersonnelOutilMeal.objects.bulk_create([
-                    PersonnelOutilMeal(personnel=personnel, outil_meal_id=o_id) for o_id in outils_ids
+                    PersonnelOutilMeal(personnel=personnel, outil_meal_id=o_id) for o_id in verified_outils_ids
                 ])
 
-            if disponibilites_ids is not None:
+            if verified_dispo_ids:
                 PersonnelDisponibilityType.objects.filter(personnel=personnel).delete()
                 PersonnelDisponibilityType.objects.bulk_create([
-                    PersonnelDisponibilityType(personnel=personnel, type_disponibilite_id=dt_id) for dt_id in disponibilites_ids
+                    PersonnelDisponibilityType(personnel=personnel, type_disponibilite_id=dt_id) for dt_id in verified_dispo_ids
                 ])
 
-        # 5. TRAÇABILITÉ (AUDIT LOG SYSTÈME)
+        # 5. TRAÇABILITÉ ET RÉPONSE JSON
         action_type = "Création" if created else "Mise à jour"
-        logger.info(f"Sécurité - {action_type} réussie du personnel (Code: {personnel.code}) par le processus système.")
+        logger.info(f"Sécurité - {action_type} réussie du personnel par le processus système.")
 
-        return personnel, created
+        return JsonResponse({
+            'success': True,
+            'message': f"Enregistrement effectué avec succès ({action_type}).",
+            'redirect_url': '/'
+        }, status=200)
 
     except Exception as e:
         logger.error(f"Erreur critique lors du create_update sécurisé du personnel : {str(e)}")
-        raise e
+        return JsonResponse({'error': f"Une erreur interne est survenue : {str(e)}"}, status=500)
+
+def authentification(request):
+    return render(request, 'webpages/login.html')

@@ -199,13 +199,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // À remplacer par votre appel API Django (penser au jeton CSRF), par exemple :
   // return fetch("/api/members/draft", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify(data) }).then(r => r.json());
   // Pour envoyer la photo, utiliser FormData(document.getElementById("mealForm")) plutôt que JSON.
+  
+
   function simulateDatabaseSave(step, data) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(`[BD OK] Étape ${step} sauvegardée :`, data);
-        resolve({ success: true, status: 200 });
-      }, 500);
-    });
+    return fetch("/create-cartographie-meal/", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify(data) }).then(r => r.json());
   }
 
   function setError(id, msg) {

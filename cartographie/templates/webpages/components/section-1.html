@@ -8,14 +8,14 @@
 
           <div class="field">
             <label for="nomComplet">Nom complet<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">full name</span></label>
-            <input type="text" id="nomComplet" autocomplete="name" required value="{{ personnel.nom }}">
+            <input type="text" id="nomComplet" autocomplete="name" required value="{{ personnel.nom }}" name="nomComplet">
             <p class="error" id="err-nomComplet" role="alert"></p>
           </div>
 
           <div class="grid2">
             <div class="field">
               <label for="pays">Pays de résidence<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">country</span></label>
-              <select id="pays" required onchange="onPaysChange()">
+              <select id="pays" required onchange="onPaysChange()" name="pays">
                 <option value="">Sélectionner un pays</option>
                
                  {% for pays in countries %}
@@ -26,7 +26,7 @@
             </div>
             <div class="field">
               <label for="ville">Ville<span class="en-label" lang="en">city</span></label>
-              <select id="ville">
+              <select id="ville" name="ville">
                 <option value="">Choisissez d'abord un pays</option>
               </select>
               <input type="text" id="villeAutre" hidden placeholder="Précisez la ville" aria-label="Précisez la ville">
@@ -37,12 +37,12 @@
           <div class="grid2">
             <div class="field">
               <label for="email">Adresse email<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">email</span></label>
-              <input type="email" id="email" autocomplete="email" required value="{{ personnel.mail }}">
+              <input type="email" id="email" autocomplete="email" required value="{{ personnel.mail }}" name="email">
               <p class="error" id="err-email" role="alert"></p>
             </div>
             <div class="field">
               <label for="telephone">Téléphone / WhatsApp<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">phone</span></label>
-              <input type="tel" id="telephone" autocomplete="tel" placeholder="+237 6XX XXX XXX" required value="{{ personnel.tel }}">
+              <input type="tel" id="telephone" autocomplete="tel" placeholder="+237 6XX XXX XXX" required value="{{ personnel.tel }}" name="telephone">
               <p class="error" id="err-telephone" role="alert"></p>
             </div>
           </div>
@@ -59,14 +59,14 @@
             </fieldset>
             <div class="field">
               <label for="linkedin">Profil LinkedIn<span class="en-label" lang="en">optional</span></label>
-              <input type="text" id="linkedin" placeholder="linkedin.com/in/votre-nom" autocomplete="url">
+              <input type="text" id="linkedin" placeholder="linkedin.com/in/votre-nom" autocomplete="url" name="linkedin" value="{{personnel.profil_linkedin}}">
             </div>
           </div>
 
           <div class="grid2">
             <div class="field">
               <label for="typeOrg">Type d'organisation<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">organization type</span></label>
-              <select id="typeOrg" required onchange="onTypeOrgChange()">
+              <select id="typeOrg" required onchange="onTypeOrgChange()" name='typeOrg'>
                 <option value="">Sélectionner</option>
                 <option value="ONG">ONG internationale</option>
                 <option value="ONG-N">ONG nationale</option>
@@ -82,7 +82,7 @@
             </div>
             <div class="field">
               <label for="fonctionOrg">Fonction occupée<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">position</span></label>
-              <select id="fonctionOrg" required onchange="onFonctionChange()">
+              <select id="fonctionOrg" required onchange="onFonctionChange()" name='fonctionOrg'>
                 <option value="">Sélectionner</option>
                 <option value="Responsable MEAL">Responsable MEAL</option>
                 <option value="Consultant">Consultant MEAL</option>

@@ -21,6 +21,7 @@
 <meta name="twitter:title" content="Dr Aminata Diallo - Expert MEAL Afrique">
 <meta name="twitter:description" content="Évaluatrice senior MEAL - 12 ans, 40+ évaluations, 9 pays.">
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=1200&h=630">
+{%load static%}
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ProfilePage","mainEntity":{"@type":"Person","name":"Dr Aminata Diallo","jobTitle":"Évaluatrice senior MEAL","nationality":"Sénégalaise","address":{"@type":"PostalAddress","addressLocality":"Dakar","addressCountry":"SN"},"memberOf":{"@type":"Organization","name":"MEAL Afrique","url":"https://meal-afrique.operaplus.org"}}}
 </script>
@@ -28,343 +29,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Thème « Sahel contemporain » : polices d'affichage -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --navy:#0D2B5C; --navy-2:#1F3864; --ink:#0B1A33;
-  --gold:#A8842A; --gold-line:#D9C38A; --gold-soft:#F6F0E1;
-  --paper:#FAF8F4; --white:#FFFFFF; --line:#E4E0D7; --line-2:#EFECE5;
-  --text:#1B2333; --muted:#5B6474; --ok:#2E7D5B;
-  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
-  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --radius:10px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:80px}
-body{font-family:var(--sans);background:var(--paper);color:var(--text);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
-::selection{background:var(--gold-line);color:var(--ink)}
-:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-@media(min-width:768px){.wrap{padding:0 40px}}
-
-.label{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
-.label::before{content:"";display:inline-block;width:22px;height:1px;background:var(--gold);vertical-align:middle;margin-right:10px}
-.on-dark .label{color:var(--gold-line)}.on-dark .label::before{background:var(--gold-line)}
-
-/* Boutons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;padding:12px 20px;border-radius:8px;transition:background .2s,color .2s,border-color .2s;border:1px solid transparent;white-space:nowrap}
-.btn svg{width:16px;height:16px;flex:none}
-.btn-primary{background:var(--navy);color:#fff}
-.btn-primary:hover{background:var(--ink)}
-.btn-outline{border-color:var(--line);background:var(--white);color:var(--navy)}
-.btn-outline:hover{border-color:var(--navy)}
-.on-dark .btn-light{background:#fff;color:var(--navy)}
-.on-dark .btn-light:hover{background:var(--gold-soft)}
-.on-dark .btn-ghost{border-color:rgba(255,255,255,.28);color:#fff}
-.on-dark .btn-ghost:hover{border-color:#fff}
-
-/* ───────── Navigation ───────── */
-.nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid transparent;transition:border-color .2s}
-.nav.scrolled{border-bottom-color:var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
-.brand{display:flex;align-items:center;gap:12px}
-.brand img,.brand .mk{width:36px;height:36px;border-radius:8px;object-fit:cover;background:var(--navy);border:1px solid var(--line)}
-.brand span{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);letter-spacing:-.01em}
-.brand small{display:block;font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.02em}
-.nav-links{display:none;gap:28px}
-@media(min-width:920px){.nav-links{display:flex}}
-.nav-links a{position:relative;font-size:14px;font-weight:500;color:var(--muted);padding:6px 0;transition:color .2s}
-.nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
-.nav-links a:hover,.nav-links a.active{color:var(--navy)}
-.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
-.nav .btn{padding:10px 16px}
-
-/* ───────── En-tête profil ───────── */
-.hero{padding:56px 0 64px}
-@media(min-width:960px){.hero{padding:80px 0 88px}}
-.hero-grid{display:grid;gap:48px;align-items:center}
-@media(min-width:960px){.hero-grid{grid-template-columns:1.35fr 1fr;gap:72px}}
-.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,6vw,64px);line-height:1.05;letter-spacing:-.02em;color:var(--navy);margin:18px 0 12px}
-.hero .title{font-size:clamp(18px,2vw,21px);color:var(--text);font-weight:500}
-.hero .title span{color:var(--muted);font-weight:400}
-.hero .summary{margin-top:20px;max-width:560px;color:var(--muted);font-size:17px}
-.meta{display:grid;gap:10px;margin:28px 0 32px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-@media(min-width:560px){.meta{grid-template-columns:1fr 1fr}}
-.meta div{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)}
-.meta svg{width:16px;height:16px;color:var(--gold);flex:none}
-.avail{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ok);background:#EAF4EE;border:1px solid #CFE6D9;padding:6px 12px;border-radius:999px}
-.avail i{width:7px;height:7px;border-radius:50%;background:var(--ok)}
-.actions{display:flex;flex-wrap:wrap;gap:12px}
-
-.portrait{position:relative;justify-self:center;width:min(380px,100%)}
-.portrait figure{position:relative;z-index:1;aspect-ratio:4/5;border-radius:var(--radius);overflow:hidden;background:var(--navy-2)}
-.portrait img{width:100%;height:100%;object-fit:cover}
-.portrait::before{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--gold-line);border-radius:var(--radius);z-index:0}
-.portrait figcaption{position:relative;z-index:2;margin:-1px 0 0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:var(--white);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);font-size:13px;color:var(--muted)}
-.portrait figure{border-radius:var(--radius) var(--radius) 0 0}
-.portrait figcaption b{color:var(--navy);font-weight:600}
-
-/* ───────── Chiffres clés ───────── */
-.figures{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.fig-grid{display:grid;grid-template-columns:repeat(2,1fr)}
-@media(min-width:860px){.fig-grid{grid-template-columns:repeat(4,1fr)}}
-.fig{padding:30px 24px}
-.fig:not(:last-child){border-right:1px solid var(--line-2)}
-@media(max-width:859px){.fig:nth-child(2){border-right:0}.fig:nth-child(-n+2){border-bottom:1px solid var(--line-2)}}
-.fig b{display:block;font-family:var(--serif);font-weight:600;font-size:clamp(34px,4vw,44px);line-height:1;color:var(--navy)}
-.fig b small{font-size:.5em;color:var(--gold);font-weight:600;margin-left:3px}
-.fig span{display:block;margin-top:8px;font-size:14px;color:var(--muted)}
-
-/* ───────── Sections ───────── */
-section.block{padding:80px 0}
-@media(min-width:960px){section.block{padding:104px 0}}
-.alt{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.head{display:grid;gap:12px;margin-bottom:44px}
-@media(min-width:900px){.head{grid-template-columns:1fr 1fr;align-items:end;gap:48px}}
-.head h2{font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,42px);line-height:1.12;letter-spacing:-.015em;color:var(--navy);margin-top:12px}
-.head p{color:var(--muted);max-width:480px}
-.on-dark{background:var(--navy);color:#fff}
-.on-dark .head h2{color:#fff}
-.on-dark .head p{color:#BBC6DA}
-
-/* Apparition discrète */
-.js .rv{opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
-.js .rv.in{opacity:1;transform:none}
-
-/* Profil */
-.about{display:grid;gap:48px}
-@media(min-width:960px){.about{grid-template-columns:1.4fr 1fr;gap:80px}}
-.lede{font-family:var(--serif);font-size:clamp(22px,2.4vw,27px);line-height:1.45;color:var(--navy);font-weight:500;margin:16px 0 22px}
-.about-body p:not(.lede){color:var(--muted);margin-top:14px}
-.brief{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:8px 24px}
-.brief h3{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:18px 0 6px}
-.brief dl{display:grid}
-.brief div{padding:14px 0;border-top:1px solid var(--line-2)}
-.brief div:first-of-type{border-top:0}
-.brief dt{font-size:12.5px;color:var(--muted)}
-.brief dd{font-weight:600;color:var(--text);margin-top:2px}
-
-/* Expertises */
-.areas{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-@media(min-width:700px){.areas{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1000px){.areas{grid-template-columns:repeat(3,1fr)}}
-.area{background:var(--white);padding:28px 26px;transition:background .2s}
-.area:hover{background:var(--gold-soft)}
-.area .n{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--gold)}
-.area h3{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--navy);line-height:1.25;margin:10px 0 8px}
-.area p{font-size:14.5px;color:var(--muted)}
-.tools{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.tools strong{font-size:13px;font-weight:600;color:var(--muted);margin-right:8px}
-.tools span{font-size:13px;font-weight:500;padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--text)}
-
-/* Parcours */
-.timeline{display:grid}
-.tl{display:grid;gap:8px 40px;padding:32px 0;border-top:1px solid var(--line)}
-.tl:last-child{border-bottom:1px solid var(--line)}
-@media(min-width:860px){.tl{grid-template-columns:200px 1fr}}
-.tl .when{font-size:14px;font-weight:600;color:var(--gold)}
-.tl .when small{display:block;font-weight:400;color:var(--muted);margin-top:2px}
-.tl h3{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);line-height:1.25}
-.tl .org{color:var(--text);font-weight:500;margin-top:2px}
-.tl ul{list-style:none;margin-top:12px;display:grid;gap:6px}
-.tl li{position:relative;padding-left:18px;color:var(--muted);font-size:15px}
-.tl li::before{content:"";position:absolute;left:0;top:.75em;width:6px;height:1px;background:var(--gold)}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.tags span{font-size:12px;font-weight:500;padding:4px 10px;border-radius:4px;background:#EEF1F6;color:var(--navy-2)}
-
-/* Missions */
-.cases{display:grid;gap:20px}
-@media(min-width:860px){.cases{grid-template-columns:repeat(3,1fr)}}
-.case{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);border-top:3px solid var(--navy);border-radius:var(--radius);padding:28px 26px;transition:border-color .2s,box-shadow .2s}
-.case:hover{box-shadow:0 18px 40px -28px rgba(13,43,92,.35)}
-.case .type{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
-.case h3{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--navy);line-height:1.25;margin:12px 0 10px}
-.case p{font-size:14.5px;color:var(--muted);flex:1}
-.case .res{margin-top:22px;padding-top:18px;border-top:1px solid var(--line-2);display:flex;align-items:baseline;gap:12px}
-.case .res b{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--navy);line-height:1;white-space:nowrap}
-.case .res span{font-size:13.5px;color:var(--muted)}
-
-/* Zones et diplômes */
-.two{display:grid;gap:48px}
-@media(min-width:900px){.two{grid-template-columns:1fr 1fr;gap:72px}}
-.two h3{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);margin:12px 0 20px}
-.countries{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));border-top:1px solid var(--line)}
-.countries li{list-style:none;padding:12px 0;border-bottom:1px solid var(--line);font-weight:500;display:flex;align-items:center;gap:10px}
-.countries li span{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;min-width:22px}
-.certs{display:grid;border-top:1px solid var(--line)}
-.cert{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
-.cert svg{width:22px;height:22px;color:var(--gold);flex:none;margin-top:2px}
-.cert strong{display:block;color:var(--text);font-weight:600}
-.cert small{color:var(--muted);font-size:14px}
-
-/* Recommandations */
-.quotes{display:grid;gap:24px}
-@media(min-width:860px){.quotes{grid-template-columns:1fr 1fr;gap:32px}}
-.quote{padding:32px;border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);background:rgba(255,255,255,.03)}
-.quote svg{width:28px;height:28px;color:var(--gold-line);margin-bottom:16px}
-.quote p{font-family:var(--serif);font-size:19px;line-height:1.55;color:#EEF2F9}
-.quote footer{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:14px}
-.quote footer b{display:block;font-weight:600;color:#fff}
-.quote footer small{color:#AEB9CF}
-
-/* Contact */
-.contact{display:grid;gap:36px;background:var(--navy);color:#fff;border-radius:14px;padding:44px 28px}
-@media(min-width:900px){.contact{grid-template-columns:1.3fr 1fr;padding:64px;gap:64px;align-items:center}}
-.contact h2{font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,42px);line-height:1.12;margin-top:12px}
-.contact p{color:#C3CDE0;margin-top:14px;max-width:520px}
-.offer{list-style:none;display:grid;gap:10px;margin-top:24px}
-.offer li{display:flex;gap:10px;align-items:baseline;color:#E3E8F2;font-size:15px}
-.offer li::before{content:"";width:6px;height:6px;border:1px solid var(--gold-line);transform:rotate(45deg);flex:none;position:relative;top:-1px}
-.contact-box{display:grid;gap:10px}
-.contact-box .btn{width:100%;padding:14px 20px}
-.contact-box small{display:block;color:#8F9CB6;font-size:12.5px;margin-top:8px;line-height:1.5}
-
-/* Partager */
-.share{display:grid;gap:40px;padding-top:56px;border-top:1px solid var(--line)}
-@media(min-width:900px){.share{grid-template-columns:1.5fr 1fr;align-items:center;gap:64px}}
-.share h2{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1.15;color:var(--navy);margin-top:12px}
-.soc{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.soc a{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);border-radius:8px;background:var(--white);font-size:13.5px;font-weight:500;color:var(--text);transition:border-color .2s,color .2s}
-.soc a:hover{border-color:var(--navy);color:var(--navy)}
-.soc svg{width:16px;height:16px;fill:currentColor}
-.copy{margin-top:14px;display:flex;align-items:center;gap:8px;padding:5px 5px 5px 14px;border:1px solid var(--line);border-radius:8px;background:var(--white);max-width:520px}
-.copy input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:13.5px;color:var(--muted);outline:none}
-.copy button{padding:9px 16px;border-radius:6px;background:var(--navy);color:#fff;font-size:13px;font-weight:600}
-.copy button:hover{background:var(--ink)}
-.qr{display:flex;gap:20px;align-items:center}
-@media(min-width:900px){.qr{justify-content:flex-end}}
-.qr-frame{padding:12px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);flex:none}
-.qr img{width:132px;height:132px}
-.qr p{font-size:13.5px;color:var(--muted);max-width:200px}
-.qr a{display:inline-block;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--navy);border-bottom:1px solid var(--gold-line)}
-
-/* Pied de page */
-.foot{border-top:1px solid var(--line);padding:32px 0;font-size:13.5px;color:var(--muted);background:var(--white)}
-.foot-in{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center}
-.foot b{font-family:var(--serif);color:var(--navy);font-size:16px;font-weight:700}
-.foot a:hover{color:var(--navy)}
-
-/* Barre mobile */
-.mbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .3s ease}
-.mbar.show{transform:none}
-.mbar .btn{flex:1;padding:12px}
-@media(min-width:920px){.mbar{display:none}}
-
-.toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-8px);opacity:0;z-index:90;pointer-events:none;padding:10px 18px;border-radius:8px;background:var(--ink);color:#fff;font-weight:500;font-size:14px;transition:.25s ease}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-
-/* ───────── Dynamisme ───────── */
-:root{--ease:cubic-bezier(.2,.7,.2,1)}
-.progress{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-line));transform-origin:0 50%;transform:scaleX(0);z-index:60;pointer-events:none}
-
-/* Entrée de l'en-tête en cascade */
-@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes wipe{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
-@keyframes settle{from{transform:scale(1.14)}to{transform:scale(1)}}
-@keyframes frame{from{opacity:0;transform:translate(-18px,-18px)}to{opacity:1;transform:none}}
-.js .hero-text>*{animation:up .8s var(--ease) both}
-.js .hero-text>*:nth-child(2){animation-delay:.08s}
-.js .hero-text>*:nth-child(3){animation-delay:.16s}
-.js .hero-text>*:nth-child(4){animation-delay:.24s}
-.js .hero-text>*:nth-child(5){animation-delay:.32s}
-.js .hero-text>*:nth-child(6){animation-delay:.40s}
-.js .portrait figure{animation:wipe 1.1s .15s cubic-bezier(.7,0,.2,1) both}
-.js .portrait img{animation:settle 1.8s .15s var(--ease) both}
-.js .portrait::before{animation:frame 1s .8s var(--ease) both}
-.js .portrait figcaption{animation:up .7s 1s var(--ease) both}
-.portrait img{transition:transform .9s var(--ease)}
-.portrait:hover img{transform:scale(1.04)}
-.portrait::before{transition:inset .5s var(--ease)}
-.portrait:hover::before{inset:12px -12px -12px 12px}
-
-/* Pastille de disponibilité */
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,125,91,.45)}70%,100%{box-shadow:0 0 0 7px rgba(46,125,91,0)}}
-.avail i{animation:pulse 2.4s ease-out infinite}
-
-/* Boutons */
-.btn{transition:background .2s,color .2s,border-color .2s,transform .2s var(--ease),box-shadow .2s}
-.btn:hover{transform:translateY(-1px)}
-.btn-primary:hover{box-shadow:0 10px 22px -12px rgba(13,43,92,.6)}
-.btn .arrow{transition:transform .25s var(--ease)}
-.btn:hover .arrow{transform:translateX(4px)}
-
-/* Filet doré des libellés qui se déploie */
-.js .rv .label::before{width:0;transition:width .7s .25s var(--ease)}
-.js .rv.in .label::before{width:22px}
-
-/* Chiffres clés */
-.fig{position:relative;transition:background .25s}
-.fig:hover{background:var(--gold-soft)}
-.fig::after{content:"";position:absolute;left:24px;bottom:0;width:40px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .9s .2s var(--ease)}
-.fig.in::after{transform:scaleX(1)}
-
-/* Domaines d'expertise */
-.area{position:relative}
-.area::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
-.area:hover::before{transform:scaleX(1)}
-.area .n{display:inline-block;transition:transform .35s var(--ease)}
-.area:hover .n{transform:translateX(4px)}
-.tools span{transition:border-color .2s,color .2s,background .2s,transform .2s var(--ease)}
-.tools span:hover{border-color:var(--gold);color:var(--navy);background:var(--white);transform:translateY(-2px)}
-
-/* Parcours : rail qui se remplit au défilement */
-.timeline{position:relative;padding-left:30px}
-.timeline::before,.timeline .rail{content:"";position:absolute;left:4px;top:0;width:1px;height:100%;background:var(--line)}
-.timeline .rail{background:var(--gold);width:2px;left:3.5px;height:0;transition:height .15s linear}
-.tl{position:relative}
-.tl::before{content:"";position:absolute;left:-31px;top:37px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:2px solid var(--line);transition:background .4s,border-color .4s,box-shadow .4s;z-index:1}
-.tl.lit::before{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 5px rgba(168,132,42,.15)}
-.tl h3{transition:color .2s}
-.tl:hover h3{color:var(--gold)}
-
-/* Missions */
-.case{transition:transform .35s var(--ease),box-shadow .35s,border-top-color .35s}
-.case:hover{transform:translateY(-5px);border-top-color:var(--gold);box-shadow:0 24px 48px -30px rgba(13,43,92,.45)}
-
-/* Pays et diplômes */
-.countries li{transition:padding-left .25s var(--ease),color .2s}
-.countries li:hover{padding-left:6px;color:var(--navy)}
-.cert svg{transition:transform .35s var(--ease)}
-.cert:hover svg{transform:rotate(-8deg) scale(1.1)}
-
-/* Recommandations */
-.quote{transition:border-color .3s,background .3s,transform .35s var(--ease)}
-.quote:hover{border-color:rgba(217,195,138,.5);background:rgba(255,255,255,.06);transform:translateY(-3px)}
-
-/* Bloc contact : lumière lente */
-.contact{position:relative;overflow:hidden}
-.contact>*{position:relative;z-index:1}
-.contact::before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-200px;border-radius:50%;background:radial-gradient(circle,rgba(217,195,138,.18),transparent 65%);animation:drift 14s ease-in-out infinite alternate;z-index:0}
-@keyframes drift{to{transform:translate(-120px,140px)}}
-
-/* Partage */
-.soc a{transition:border-color .2s,color .2s,transform .2s var(--ease)}
-.soc a:hover{transform:translateY(-2px)}
-.qr-frame{transition:transform .35s var(--ease),box-shadow .35s}
-.qr-frame:hover{transform:scale(1.04);box-shadow:0 16px 34px -22px rgba(13,43,92,.5)}
-
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}html{scroll-behavior:auto}.js .rv{opacity:1;transform:none}}
-
-/* Impression / fiche PDF */
-@page{size:A4;margin:14mm}
-@media print{
-  .nav,.mbar,.actions,.contact-box,.share,.toast{display:none!important}
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{font-size:12.5px;background:#fff}
-  .js .rv{opacity:1!important;transform:none!important}
-  .hero{padding:0 0 20px}.hero-grid{grid-template-columns:1.6fr 1fr;gap:28px}
-  .portrait{width:200px}.portrait::before{display:none}
-  section.block{padding:24px 0;break-inside:avoid}
-  .contact{padding:20px;border-radius:8px}
-  .head{margin-bottom:18px}
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{%static 'css/profil_expert.css'%}">
 </head>
 <body>
 <script>document.documentElement.classList.add('js')</script>
+<div class="intro" aria-hidden="true"><span>MEAL Afrique</span></div>
+<a href="#profil" class="skip">Aller au contenu</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
 <!-- ═══════════ NAVIGATION ═══════════ -->
 <nav class="nav" id="nav">
@@ -374,43 +48,55 @@ section.block{padding:80px 0}
       <span>MEAL Afrique<small>Réseau d'experts · OPERAPLUS</small></span>
     </a>
     <div class="nav-links">
-      <a href="#profil">Profil</a><a href="#expertises">Expertises</a><a href="#parcours">Parcours</a><a href="#missions">Missions</a><a href="#contact">Contact</a>
+      <a href="#profil">Profil</a><a href="#expertises">Expertises</a><a href="#parcours">Parcours</a><a href="#missions">Missions</a><a href="#methode">Méthode</a><a href="#contact">Contact</a>
     </div>
-    <a href="#contact" class="btn btn-primary">Solliciter</a>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-primary">Solliciter</a>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mnav" id="mnav" hidden>
+    <a href="#profil">Profil</a><a href="#expertises">Expertises</a><a href="#parcours">Parcours</a><a href="#missions">Missions</a><a href="#methode">Méthode</a><a href="#contact">Contact</a>
   </div>
 </nav>
 
 <!-- ═══════════ EN-TÊTE ═══════════ -->
 <header class="hero" id="top">
   <div class="wrap hero-grid">
-    <div class="rv">
+    <div class="rv hero-text">
       <span class="label">Expert MEAL Afrique · N° MA-00084</span>
-      <h1>Dr Aminata Diallo</h1>
+      <h1>{{personnel.nom}}<svg class="vbadge" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Profil vérifié"><title>Profil vérifié par MEAL Afrique</title><path d="M12 1.5l2.6 1.9 3.2-.2 1 3.1 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3.1-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3.1L2.6 15.8l1-3.1-1-3.1 2.6-1.9 1-3.1 3.2.2z"/><path d="m8 12.2 2.7 2.7L16.2 9.4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></h1>
       <p class="title">Évaluatrice senior MEAL <span>· Évaluation d'impact et méthodes mixtes</span></p>
       <p class="summary">Douze ans d'accompagnement d'ONG internationales, d'agences onusiennes et de ministères, de la théorie du changement à l'évaluation finale.</p>
       <div class="meta">
-        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Dakar, Sénégal</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>{{personnel.ville|default:'-'}}, {{personnel.country}}</div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Français, anglais, wolof</div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>Doctorat, économie du développement</div>
         <div><span class="avail"><i></i>Disponible dès novembre 2026</span></div>
       </div>
       <div class="actions">
         <a href="#contact" class="btn btn-primary">Proposer une mission
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <button type="button" class="btn btn-outline" data-share-native>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Partager</button>
         <button type="button" class="btn btn-outline" onclick="window.print()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>Fiche PDF</button>
       </div>
+      <div class="trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Profil vérifié MEAL Afrique</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Réponse sous 48 h ouvrées</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Terrain ou à distance</span>
+      </div>
     </div>
 
     <div class="portrait rv">
       <figure>
-        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=900" alt="Portrait de Dr Aminata Diallo">
+        <img src="{{personnel.photo.url}}" alt="Portrait {{personnel.nom}}">
       </figure>
-      <figcaption><span><b>Membre certifiée</b> MEAL Afrique</span><span>Depuis 2023</span></figcaption>
+      <figcaption><span><b>Membre certifiée</b> MEAL Afrique</span><span>Depuis {{personnel.date_enregistrement}}</span></figcaption>
     </div>
   </div>
+  <a href="#profil" class="scroll-cue" aria-label="Défiler vers le profil"></a>
 </header>
 
 <!-- ═══════════ CHIFFRES CLÉS ═══════════ -->
@@ -474,6 +160,7 @@ section.block{padding:80px 0}
       <p>Des enquêtes de base aux évaluations finales multi-pays, au service d'acteurs humanitaires et de développement.</p>
     </div>
     <div class="timeline">
+      <span class="rail" aria-hidden="true"></span>
       <article class="tl rv">
         <div class="when">2021 - aujourd'hui<small>Poste actuel</small></div>
         <div>
@@ -535,8 +222,24 @@ section.block{padding:80px 0}
   </div>
 </section>
 
+<!-- ═══════════ MÉTHODE (ajout) ═══════════ -->
+<section class="block" id="methode">
+  <div class="wrap">
+    <div class="head rv">
+      <div><span class="label">Méthode</span><h2>Comment se déroule une mission</h2></div>
+      <p>Un déroulé clair, des livrables attendus à chaque étape et une validation conjointe avec vos équipes.</p>
+    </div>
+    <div class="steps rv">
+      <div class="step"><span class="k">1</span><h3>Cadrage</h3><p>Revue documentaire, entretiens de lancement, matrice d'évaluation et note de cadrage.</p><span class="d">Note de cadrage</span></div>
+      <div class="step"><span class="k">2</span><h3>Outils et collecte</h3><p>Questionnaires et guides, formation des enquêteurs, collecte mobile hors ligne et contrôle qualité.</p><span class="d">Outils validés · Données</span></div>
+      <div class="step"><span class="k">3</span><h3>Analyse</h3><p>Analyses quantitatives et qualitatives, triangulation, atelier de validation des constats.</p><span class="d">Rapport provisoire</span></div>
+      <div class="step"><span class="k">4</span><h3>Restitution et apprentissage</h3><p>Rapport final, note de synthèse et plan de mise en œuvre des recommandations.</p><span class="d">Rapport final · Synthèse</span></div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════ ZONES ET QUALIFICATIONS ═══════════ -->
-<section class="block">
+<section class="block alt">
   <div class="wrap two">
     <div class="rv">
       <span class="label">Zones d'intervention</span>
@@ -593,6 +296,7 @@ section.block{padding:80px 0}
           <li>Formation et coaching des équipes</li>
           <li>Théorie du changement et cadre logique</li>
         </ul>
+        <small class="pick-hint">Astuce : sélectionnez un ou plusieurs types de mission, ils seront ajoutés à votre message.</small>
       </div>
       <div class="contact-box">
         <a id="mailBtn" href="mailto:aminata.diallo@exemple.org" class="btn btn-light">
@@ -611,9 +315,9 @@ section.block{padding:80px 0}
         <span class="label">Recommander ce profil</span>
         <h2>Vous connaissez une organisation qui recherche cette expertise ?</h2>
         <div class="soc">
-          <a href="#" data-share="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.75a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 0 0 0-2.9Z"/></svg>LinkedIn</a>
+          <a href="#" data-share="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.790v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.75a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 0 0 0-2.9Z"/></svg>LinkedIn</a>
           <a href="#" data-share="whatsapp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Z"/></svg>WhatsApp</a>
-          <a href="#" data-share="facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14A28 28 0 0 0 14.64 2C11.93 2 10 3.66 10 6.7v2.8H7v4h3V22h4v-8.5Z"/></svg>Facebook</a>
+          <a href="#" data-share="facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14A28 28 0 0 0 14.64 2C11.93 2 10 3.660 10 6.7v2.8H7v4h3V22h4v-8.5Z"/></svg>Facebook</a>
           <a href="#" data-share="x" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.19L2 3h6.33l4.37 5.77L17.75 3Zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2Z"/></svg>X</a>
           <a href="#" data-share="telegram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21.94 4.3 18.9 19.05c-.23 1.02-.83 1.27-1.69.79l-4.66-3.43-2.25 2.16c-.25.25-.46.46-.94.46l.34-4.76 8.65-7.82c.38-.34-.08-.52-.58-.19L7.08 13.01 2.48 11.57c-1-.31-1.02-1 .21-1.48L20.66 3.2c.83-.31 1.56.19 1.28 1.1Z"/></svg>Telegram</a>
           <a href="#" data-share="email"><svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7.1L4.4 7H4v.6l8 5.4 8-5.4V7h-.4L12 12.1Z"/></svg>E-mail</a>
@@ -640,59 +344,14 @@ section.block{padding:80px 0}
 
 <!-- Barre d'action mobile -->
 <div class="mbar" id="mbar">
+  <a href="https://wa.me/221771234567" target="_blank" rel="noopener" class="btn btn-wa" aria-label="Écrire sur WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg></a>
   <button type="button" class="btn btn-outline" data-share-native>Partager</button>
   <a href="#contact" class="btn btn-primary">Solliciter</a>
 </div>
 
+<button type="button" class="totop" id="totop" aria-label="Revenir en haut de la page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<script>
-(function(){
-  const PROFILE={nom:"Dr Aminata Diallo",titre:"Évaluatrice senior MEAL",mail:"aminata.diallo@exemple.org",tel:"+221771234567",ville:"Dakar",pays:"Sénégal",url:location.href.split('#')[0]};
-  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-  function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
-
-  /* Partage, lien et QR construits sur l'URL réelle */
-  const u=encodeURIComponent(PROFILE.url), t=encodeURIComponent(`${PROFILE.nom} - ${PROFILE.titre} | Expert MEAL Afrique`);
-  const L={linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${u}`,whatsapp:`https://wa.me/?text=${t}%20${u}`,facebook:`https://www.facebook.com/sharer/sharer.php?u=${u}`,x:`https://twitter.com/intent/tweet?text=${t}&url=${u}`,telegram:`https://t.me/share/url?url=${u}&text=${t}`,email:`mailto:?subject=${encodeURIComponent('Profil expert MEAL : '+PROFILE.nom)}&body=${encodeURIComponent("Je vous recommande ce profil d'expert MEAL : ")}${u}`};
-  $$('[data-share]').forEach(a=>a.href=L[a.dataset.share]);
-  $('#linkField').value=PROFILE.url;
-  const qr=(s,m)=>`https://api.qrserver.com/v1/create-qr-code/?size=${s}x${s}&margin=${m}&color=0D2B5C&data=${u}`;
-  $('#qrImg').src=qr(264,0); $('#qrDl').href=qr(800,16)+'&format=png';
-
-  /* E-mail de proposition pré-rempli */
-  const body=`Bonjour ${PROFILE.nom},\n\nJ'ai consulté votre profil d'expert sur MEAL Afrique et souhaiterais vous proposer une mission.\n\nOrganisation :\nNature de la mission :\nPériode et durée :\nLieu :\nBudget indicatif :\n\nCordialement,`;
-  $('#mailBtn').href=`mailto:${PROFILE.mail}?subject=${encodeURIComponent('Proposition de mission MEAL - via MEAL Afrique')}&body=${encodeURIComponent(body)}`;
-
-  /* Copier le lien */
-  $('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(PROFILE.url)}catch(e){const f=$('#linkField');f.select();document.execCommand('copy')}toast('Lien copié')});
-
-  /* Partage natif, sinon section Partager */
-  $$('[data-share-native]').forEach(b=>b.addEventListener('click',async()=>{
-    if(navigator.share){try{await navigator.share({title:`${PROFILE.nom} - Expert MEAL Afrique`,text:`${PROFILE.nom}, ${PROFILE.titre}`,url:PROFILE.url});return}catch(e){if(e.name==='AbortError')return}}
-    $('#partager').scrollIntoView({behavior:'smooth'});
-  }));
-
-  /* vCard */
-  $('#vcardBtn').addEventListener('click',()=>{
-    const v=['BEGIN:VCARD','VERSION:3.0',`FN:${PROFILE.nom}`,`TITLE:${PROFILE.titre}`,'ORG:MEAL Afrique',`EMAIL;TYPE=WORK:${PROFILE.mail}`,`TEL;TYPE=CELL:${PROFILE.tel}`,`ADR;TYPE=WORK:;;;${PROFILE.ville};;;${PROFILE.pays}`,`URL:${PROFILE.url}`,'NOTE:Expert MEAL - communauté MEAL Afrique (OPERAPLUS)','END:VCARD'].join('\r\n');
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([v],{type:'text/vcard;charset=utf-8'}));a.download='Aminata-Diallo-MEAL.vcf';document.body.appendChild(a);a.click();a.remove();toast('Contact téléchargé');
-  });
-
-  /* Navigation : bordure au défilement, lien actif, barre mobile */
-  const nav=$('#nav'),mbar=$('#mbar'),hero=$('#top');
-  function onScroll(){const y=scrollY;nav.classList.toggle('scrolled',y>8);mbar.classList.toggle('show',y>hero.offsetHeight*.6)}
-  addEventListener('scroll',onScroll,{passive:true});onScroll();
-  const links=[...$$('.nav-links a')];
-  const sio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
-  links.forEach(l=>{const s=document.querySelector(l.getAttribute('href'));if(s)sio.observe(s)});
-
-  /* Apparition discrète (contenu visible sans JS ou mouvement réduit) */
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){document.documentElement.classList.remove('js');return}
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
-  $$('.rv').forEach(el=>io.observe(el));
-  setTimeout(()=>$$('.rv').forEach(el=>el.classList.add('in')),3000);
-})();
-</script>
+<script src="{%static 'js/profil_expert.js'%}"></script>
 </body>
 </html>

@@ -38,6 +38,10 @@ class Personnel(models.Model):
 
     country = models.CharField(max_length=128,blank=True,null=True)
 
+    pays = models.CharField(max_length=255)
+
+    ville = models.CharField(max_length=255)
+
     is_active = models.BooleanField(default=False)
     
     collaborateurs = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='parent')

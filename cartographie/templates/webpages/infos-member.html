@@ -129,6 +129,50 @@
                 -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .scanner-line, .auth-bar { display: none; }
         }
+
+        /* ═════════ FONCTIONS AJOUTÉES ═════════ */
+        /* Menu PNG */
+        .dl-menu { position: relative; }
+        .dl-menu > summary { list-style: none; cursor: pointer; }
+        .dl-menu > summary::-webkit-details-marker { display: none; }
+        .dl-menu[open] > summary { color: #fff; border-color: var(--accent); }
+        .dl-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; min-width: 210px; padding: 6px; background: var(--navy-ink); border: 1px solid rgba(255,255,255,.15); border-top: 2px solid var(--accent); box-shadow: 0 24px 40px -18px rgba(0,0,0,.6); }
+        .dl-panel button { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 12px; color: #D3DAE8; font-size: 13px; font-weight: 600; text-align: left; }
+        .dl-panel button:hover { background: rgba(255,255,255,.06); color: #fff; }
+        .dl-panel small { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--accent); letter-spacing: .08em; }
+        .tb-btn.is-on { color: var(--navy-ink); background: #fff; border-color: #fff; }
+        .tb-btn:disabled { opacity: .5; cursor: progress; }
+
+        /* Vue « carte 3D » : recto et verso superposés, retournement */
+        .flip-mode .stage { display: grid !important; place-items: center; }
+        .flip-mode .stage > .card-fit { grid-area: 1 / 1; cursor: pointer; transform-style: preserve-3d; -webkit-backface-visibility: hidden; backface-visibility: hidden; transition: transform .9s cubic-bezier(.4,.2,.15,1); }
+        .flip-mode .stage > .card-fit .id-card { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+        .flip-mode .stage > .card-fit:nth-child(2) { transform: rotateY(180deg); }
+        .flip-mode.flipped .stage > .card-fit:nth-child(1) { transform: rotateY(-180deg); }
+        .flip-mode.flipped .stage > .card-fit:nth-child(2) { transform: rotateY(0deg); }
+        .flip-hint { display: none; text-align: center; margin: -18px 0 36px; font-size: 13px; color: #64748B; }
+        .flip-mode .flip-hint { display: block; }
+        .flip-hint b { font-family: "JetBrains Mono", monospace; font-size: 11px; color: #0D2B5C; padding: 2px 7px; border: 1px solid var(--line); border-radius: 4px; margin: 0 2px; }
+
+        /* QR plein écran */
+        .qr-modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(5,18,48,.9); backdrop-filter: blur(8px); }
+        .qr-modal.open { display: flex; animation: qrIn .3s ease both; }
+        @keyframes qrIn { from { opacity: 0; } }
+        .qr-sheet { width: min(420px, 100%); background: #fff; border-radius: 22px; padding: 28px 26px 24px; text-align: center; border-top: 5px solid var(--accent); box-shadow: 0 40px 80px -30px rgba(0,0,0,.7); animation: qrPop .4s cubic-bezier(.3,1.4,.5,1) both; }
+        @keyframes qrPop { from { transform: scale(.9); opacity: 0; } }
+        .qr-sheet img { width: 100%; max-width: 300px; aspect-ratio: 1; margin: 18px auto 14px; display: block; image-rendering: pixelated; }
+        .qr-close { margin-top: 18px; width: 100%; padding: 13px; font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--navy); border-radius: 12px; }
+
+        /* Notification */
+        .toast { position: fixed; left: 50%; bottom: 24px; z-index: 120; transform: translate(-50%, 16px); opacity: 0; pointer-events: none; padding: 11px 18px; border-radius: 999px; background: var(--navy-ink); color: #fff; font-size: 13px; font-weight: 600; border: 1px solid rgba(var(--accent-rgb), .5); transition: .25s ease; }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        @media (prefers-reduced-motion: reduce) { .flip-mode .stage > .card-fit { transition: none; } }
+        @media print {
+            .flip-mode .stage { display: flex !important; }
+            .flip-mode .stage > .card-fit { transform: none !important; grid-area: auto; }
+            .flip-hint, .qr-modal, .toast { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -150,6 +194,29 @@
                     <input type="color" id="colorInput" value="#C9A227" class="absolute inset-0 opacity-0 cursor-pointer" aria-label="Couleur personnalisée">
                 </label>
             </div>
+            <button type="button" id="flipModeBtn" class="tb-btn" aria-pressed="false" title="Afficher la carte en 3D et la retourner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5"/></svg>
+                <span>Retourner</span>
+            </button>
+            <details class="dl-menu">
+                <summary class="tb-btn" id="pngBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                    Image PNG
+                </summary>
+                <div class="dl-panel" role="menu">
+                    <button type="button" role="menuitem" data-png="recto">Recto <small>1680 × 1050</small></button>
+                    <button type="button" role="menuitem" data-png="verso">Verso <small>1680 × 1050</small></button>
+                    <button type="button" role="menuitem" data-png="both">Recto + verso <small>1 image</small></button>
+                </div>
+            </details>
+            <button type="button" id="shareBtn" class="tb-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+                Partager
+            </button>
+            <button type="button" id="qrBtn" class="tb-btn" title="Afficher le QR code en grand pour un contrôle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>
+                QR
+            </button>
             <button type="button" onclick="window.print()" class="tb-btn primary">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                 Badge PDF
@@ -270,6 +337,22 @@
 
 </main>
 
+<p class="flip-hint no-print">Cliquez sur la carte ou appuyez sur <b>Espace</b> pour la retourner.</p>
+
+<!-- QR plein écran -->
+<div class="qr-modal no-print" id="qrModal" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+    <div class="qr-sheet">
+        <span class="mono text-[10.5px] font-bold uppercase tracking-[.2em] text-[#B8860B]">Contrôle d'adhésion</span>
+        <h2 id="qrTitle" class="serif text-2xl font-bold text-[#0D2B5C] mt-1"></h2>
+        <img id="qrBig" alt="QR code de vérification en grand format">
+        <p class="mono text-sm font-bold text-[#0D2B5C]" id="qrNum"></p>
+        <p class="text-xs text-slate-500 mt-1">Présentez cet écran au contrôle. Luminosité au maximum recommandée.</p>
+        <button type="button" class="qr-close" id="qrClose">Fermer</button>
+    </div>
+</div>
+
+<div class="toast no-print" id="toast" role="status" aria-live="polite"></div>
+
 <script>
     const root = document.documentElement;
     const cards = document.querySelectorAll('.id-card');
@@ -309,6 +392,117 @@
         });
         card.addEventListener('pointerleave', () => { card.style.transform = 'rotateX(0) rotateY(0)'; });
     });
+</script>
+
+<!-- ═════════ Fonctions ajoutées : vue 3D, PNG, partage, QR plein écran ═════════ -->
+<script>
+(function(){
+    const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+    const body = document.body, recto = $('#recto-card'), verso = $('#verso-card');
+    const LIB = "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js";
+    const SITE = "https://meal-afrique.operaplus.org";
+
+    const name = (recto.querySelector('h2')?.textContent || 'Membre').trim();
+    const num = ([...recto.querySelectorAll('p')].find(p => /^\s*N°/.test(p.textContent))?.textContent || '').replace(/^\s*N°\s*/, '').trim();
+    const slug = (num || name).replace(/[^\w-]+/g, '-');
+
+    function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2600); }
+
+    /* ── 1. Vue 3D : recto et verso superposés, retournement au clic ── */
+    const flipBtn = $('#flipModeBtn');
+    function setMode(on){
+        body.classList.toggle('flip-mode', on);
+        if (!on) body.classList.remove('flipped');
+        flipBtn.classList.toggle('is-on', on);
+        flipBtn.setAttribute('aria-pressed', on);
+        flipBtn.querySelector('span').textContent = on ? 'Recto + verso' : 'Vue 3D';
+        try { localStorage.setItem('ma-card-3d', on ? '1' : '0'); } catch(e) {}
+    }
+    const flip = () => body.classList.toggle('flipped');
+    flipBtn.addEventListener('click', () => setMode(!body.classList.contains('flip-mode')));
+    $$('.stage > .card-fit').forEach(c => c.addEventListener('click', () => { if (body.classList.contains('flip-mode')) flip(); }));
+    document.addEventListener('keydown', e => {
+        if (e.code === 'Space' && body.classList.contains('flip-mode') && !/^(INPUT|BUTTON|TEXTAREA|SUMMARY|SELECT|A)$/.test(document.activeElement.tagName)) { e.preventDefault(); flip(); }
+        if (e.key === 'Escape') closeQr();
+    });
+    let saved = null; try { saved = localStorage.getItem('ma-card-3d'); } catch(e) {}
+    setMode(saved === '1');
+
+    /* ── 2. Export PNG haute définition (3x) ── */
+    function loadLib(){
+        if (window.htmlToImage) return Promise.resolve();
+        return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = LIB; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+    }
+    async function renderCard(card){
+        await loadLib();
+        return htmlToImage.toCanvas(card, {
+            pixelRatio: 3, width: 560, height: 350, cacheBust: true,
+            style: { scale: '1', transform: 'none', margin: '0', boxShadow: 'none' },
+            filter: n => !(n.classList && n.classList.contains('scanner-line'))
+        });
+    }
+    function download(canvas, file){
+        return new Promise(res => canvas.toBlob(b => {
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = file;
+            document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); res();
+        }, 'image/png'));
+    }
+    async function exportPng(which){
+        const btn = $('#pngBtn'); btn.parentElement.open = false;
+        toast('Préparation de l\'image...');
+        try {
+            if (which === 'both') {
+                const [a, b] = [await renderCard(recto), await renderCard(verso)];
+                const pad = 120, gap = 100, c = document.createElement('canvas');
+                c.width = a.width + pad * 2; c.height = a.height + b.height + gap + pad * 2;
+                const x = c.getContext('2d'); x.fillStyle = '#FBF9F4'; x.fillRect(0, 0, c.width, c.height);
+                x.drawImage(a, pad, pad); x.drawImage(b, pad, pad + a.height + gap);
+                await download(c, `MEAL-Afrique-carte-${slug}.png`);
+            } else {
+                await download(await renderCard(which === 'recto' ? recto : verso), `MEAL-Afrique-carte-${slug}-${which}.png`);
+            }
+            toast('Image téléchargée');
+        } catch(e) {
+            console.error(e); toast('Export impossible. Utilisez « Badge PDF ».');
+        }
+    }
+    $$('[data-png]').forEach(b => b.addEventListener('click', () => exportPng(b.dataset.png)));
+    document.addEventListener('click', e => { const d = $('.dl-menu'); if (d.open && !d.contains(e.target)) d.open = false; });
+
+    /* ── 3. Partage : image de la carte (mobile) ou texte + lien ── */
+    $('#shareBtn').addEventListener('click', async () => {
+        const text = `${name}, membre de MEAL Afrique${num ? ' (N° ' + num + ')' : ''}. La communauté panafricaine du MEAL, propulsée par OPERAPLUS.`;
+        const btn = $('#shareBtn'); btn.disabled = true;
+        try {
+            if (navigator.canShare) {
+                try {
+                    const canvas = await renderCard(recto);
+                    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+                    const file = new File([blob], `MEAL-Afrique-carte-${slug}.png`, { type: 'image/png' });
+                    if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Ma carte MEAL Afrique', text: text + ' ' + SITE }); return; }
+                } catch(e) { if (e.name === 'AbortError') return; }
+            }
+            if (navigator.share) { await navigator.share({ title: 'Ma carte MEAL Afrique', text, url: SITE }); return; }
+            await navigator.clipboard.writeText(text + ' ' + SITE);
+            toast('Texte de partage copié');
+        } catch(e) {
+            if (e.name !== 'AbortError') toast('Partage indisponible sur ce navigateur');
+        } finally { btn.disabled = false; }
+    });
+
+    /* ── 4. QR code plein écran pour les contrôles ── */
+    const modal = $('#qrModal');
+    function openQr(){
+        const small = verso.querySelector('img[src*="qrserver"]');
+        if (small) $('#qrBig').src = small.src.replace(/size=\d+x\d+/, 'size=600x600').replace(/margin=\d+/, 'margin=12');
+        $('#qrTitle').textContent = name; $('#qrNum').textContent = num ? 'N° ' + num : '';
+        modal.classList.add('open'); $('#qrClose').focus();
+    }
+    function closeQr(){ if (modal.classList.contains('open')) { modal.classList.remove('open'); $('#qrBtn').focus(); } }
+    $('#qrBtn').addEventListener('click', openQr);
+    $('#qrClose').addEventListener('click', closeQr);
+    modal.addEventListener('click', e => { if (e.target === modal) closeQr(); });
+})();
 </script>
 </body>
 </html>

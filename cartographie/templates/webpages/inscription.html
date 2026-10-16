@@ -43,8 +43,16 @@
                 }
             }
         }
-        // Thème sombre par défaut si aucune préférence n'est enregistrée
-        try { if (!localStorage.getItem('theme')) localStorage.setItem('theme', 'dark'); } catch (e) {}
+        // Thème sombre par défaut. Appliqué une fois à tous les visiteurs (y compris ceux
+        // passés en clair par la version précédente) ; un choix fait ensuite au bouton est respecté.
+        try {
+            if (!localStorage.getItem('theme-v3')) {
+                localStorage.setItem('theme', 'dark');
+                localStorage.setItem('theme-v3', '1');
+            }
+            // Évite un flash clair au chargement : la classe suit le choix enregistré
+            document.documentElement.classList.toggle('dark', localStorage.getItem('theme') !== 'light');
+        } catch (e) {}
     </script>
 
     <style>
@@ -101,6 +109,51 @@
         .dark .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0,0,0,.4); }
         #emailInput::placeholder { font-weight: 400; opacity: .6; }
 
+        /* Zones toujours sombres (globe, espace membre) : texte de base clair */
+        .zone-sombre { color: #E2E8F0; }
+
+        /* ═════════ Bande statistiques : tenir à 31+ pays et 1 000+ membres ═════════ */
+        /* Chaque carte garde sa hauteur naturelle : plus de grand vide créé par l'étirement */
+        @media (min-width: 1024px) { .meal-split { align-items: start !important; } }
+        .meal-stats { margin-top: 0 !important; }
+
+        /* Genre : pourcentage au centre de l'anneau + effectifs */
+        .gender-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+        .gender-center b { font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: 30px; line-height: 1; color: #C9A227; font-variant-numeric: tabular-nums; }
+        .gender-center small { font-family: "JetBrains Mono", monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #94A3B8; margin-top: 4px; }
+        .gender-num { color: #fff; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        /* Compteur : reste lisible au-delà de 1 000 */
+        #counter { font-size: clamp(46px, 5.2vw, 64px); letter-spacing: -.03em; }
+        .meal-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; text-align: left; }
+        .meal-mini div { padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+        .meal-mini b { display: block; font-family: "Fraunces", Georgia, serif; font-weight: 900; font-size: 24px; line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+        .meal-mini span { display: block; margin-top: 5px; font-size: 11px; line-height: 1.35; color: #94A3B8; }
+
+        /* Zones de présence : recherche + liste bornée qui défile */
+        .meal-zones-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .meal-zones-count { font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 700; letter-spacing: .1em; color: #081C3D; background: #C9A227; padding: 3px 9px; border-radius: 999px; }
+        .meal-zones-count:empty { display: none; }
+        .meal-zones-search { display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); transition: border-color .15s; }
+        .meal-zones-search:focus-within { border-color: #C9A227; }
+        .meal-zones-search svg { width: 16px; height: 16px; color: #94A3B8; flex: none; }
+        .meal-zones-search input { flex: 1; min-width: 0; background: none; border: 0; outline: none; padding: 11px 0; color: #fff; font-size: 14px; }
+        .meal-zones-search input::placeholder { color: #8A93A6; }
+        .meal-zones-box { position: relative; }
+        .meal-zones-box #globe-legend { max-height: 150px; overflow-y: auto; padding: 2px 6px 18px 2px; align-content: flex-start; scrollbar-width: thin; scrollbar-color: rgba(201,162,39,.5) transparent; -webkit-mask: linear-gradient(#000 82%, transparent); mask: linear-gradient(#000 82%, transparent); }
+        .meal-zones-box.open #globe-legend { max-height: none; -webkit-mask: none; mask: none; }
+        .meal-zones-box #globe-legend::-webkit-scrollbar { width: 6px; }
+        .meal-zones-box #globe-legend::-webkit-scrollbar-thumb { background: rgba(201,162,39,.5); border-radius: 6px; }
+        .meal-zones-box #globe-legend > * { flex: none; }
+        .meal-zones-box #globe-legend > .is-hidden { display: none !important; }
+        .meal-zones-empty { font-size: 12px; color: #94A3B8; padding: 6px 2px; }
+        .meal-zones-more { font-family: "JetBrains Mono", monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #C9A227; padding: 4px 0; border-bottom: 1px solid rgba(201,162,39,.4); }
+        .meal-zones-more:hover { color: #fff; border-color: #fff; }
+
+        /* Espace membre : message de retour sous le champ, sans chevauchement */
+        #feedback { line-height: 1.35; right: 8px; }
+        @media (max-width: 639px) { #emailInput { font-size: 16px; } }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
         }
@@ -118,7 +171,7 @@
         <div class="animate-marquee-ultra-slow flex w-max gap-4 pl-4">
             {% for _ in "12" %}
             <div class="flex gap-4 items-center" {% if forloop.last %}aria-hidden="true"{% endif %}>
-                {% for member in members %}
+                {% for member in members|slice:":40" %}
                 <div class="flex items-center gap-3 pl-1.5 pr-4 py-1.5 bg-white/5 rounded-full border border-white/10 min-w-max">
                     <img src="{% if member.photo %}{{ member.photo.url }}{% else %}{% static 'africa.jpg' %}{% endif %}" alt="" class="w-8 h-8 rounded-full border-2 border-gold-500 object-cover" loading="lazy">
                     <div class="flex flex-col leading-tight">
@@ -187,10 +240,23 @@
                 </ul>
             </div>
 
-            <div class="relative w-full max-w-[300px] md:max-w-[400px] mx-auto lg:mx-0">
-                <div class="absolute inset-6 bg-gold-500/20 blur-[90px] rounded-full"></div>
-                <div class="absolute inset-0 rounded-full border border-gold-500/20"></div>
-                <svg id="globe" class="relative w-full h-full aspect-square" role="img" aria-label="Répartition des membres sur le globe"></svg>
+            <!-- Carte du globe : toujours sombre -->
+            <div class="dark">
+                <div class="zone-sombre relative overflow-hidden rounded-2xl bg-navy-900 border border-gold-500/20 shadow-[0_30px_60px_-30px_rgba(8,28,61,.7)] p-6 md:p-8">
+                    <div class="relative flex items-center justify-between gap-3 mb-4 text-left">
+                        <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-500">Nos membres dans le monde</span>
+                        <span class="inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>En direct
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="relative w-full max-w-[300px] md:max-w-[400px] mx-auto lg:mx-0">
+                            <div class="absolute inset-6 bg-gold-500/20 blur-[90px] rounded-full"></div>
+                            <div class="absolute inset-0 rounded-full border border-gold-500/20"></div>
+                            <svg id="globe" class="relative w-full h-full aspect-square" role="img" aria-label="Répartition des membres sur le globe"></svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -320,9 +386,11 @@
     </div>
 </main>
 
-<!-- ═════════ ESPACE MEMBRE + STATISTIQUES ═════════ -->
+<!-- ═════════ ESPACE MEMBRE + STATISTIQUES : bande toujours sombre ═════════ -->
+<div class="dark">
+<div class="zone-sombre bg-navy-900 border-t-2 border-gold-500 pt-16">
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch meal-split">
 
         <!-- Espace membre -->
         <div class="p-8 bg-white dark:bg-navy-800/70 rounded-2xl border border-line dark:border-white/10 flex flex-col">
@@ -353,23 +421,28 @@
                 <div id="feedback" role="status" aria-live="polite" class="absolute -bottom-7 left-2 text-[11px] font-bold hidden"></div>
             </div>
 
-            <div class="mt-auto pt-8 border-t border-line dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-                <div>
+            <div class="mt-auto pt-8 border-t border-line dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center meal-stats">
+                <div class="meal-gender">
                     <span class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-3">
                         <span class="w-2 h-2 bg-gold-500 rounded-full"></span> Répartition par genre
                     </span>
                     <div class="relative h-[170px] w-full flex justify-center items-center">
                         <canvas id="genderChart" aria-label="Répartition hommes et femmes" role="img"></canvas>
+                        <div class="gender-center" aria-hidden="true"><b id="genderPctF">-</b><small>femmes</small></div>
                     </div>
                     <div class="flex justify-center gap-5 mt-3 text-xs text-slate-500 dark:text-slate-400">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-navy-700 dark:bg-[#9FB3D9]"></span>Hommes</span>
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-gold-500"></span>Femmes</span>
+                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-navy-700 dark:bg-[#9FB3D9]"></span>Hommes <b class="gender-num" id="genderNumH"></b></span>
+                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-gold-500"></span>Femmes <b class="gender-num" id="genderNumF"></b></span>
                     </div>
                 </div>
-                <div class="text-center sm:text-left">
+                <div class="text-center sm:text-left meal-count">
                     <p class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Membres inscrits</p>
                     <p id="counter" class="font-serif text-6xl font-black text-navy-700 dark:text-gold-500 tabular-nums leading-none mt-2">0</p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">et la communauté grandit chaque jour</p>
+                    <div class="meal-mini">
+                        <div><b id="miniCountries">{{ total_countries }}</b><span>pays représentés</span></div>
+                        <div><b id="miniAvg">-</b><span>membres par pays en moyenne</span></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -404,13 +477,27 @@
                 </div>
             </div>
 
-            <div class="space-y-3 relative">
-                <p class="font-mono text-[10px] font-bold text-slate-300 uppercase tracking-widest">Zones de présence</p>
-                <div id="globe-legend" class="flex flex-wrap gap-2"></div>
+            <div class="space-y-3 relative meal-zones">
+                <div class="meal-zones-head">
+                    <p class="font-mono text-[10px] font-bold text-slate-300 uppercase tracking-widest">Zones de présence</p>
+                    <span class="meal-zones-count" id="zonesCount"></span>
+                </div>
+                <div class="meal-zones-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                    <label for="zonesFilter" class="sr-only">Rechercher un pays</label>
+                    <input type="search" id="zonesFilter" placeholder="Rechercher un pays..." autocomplete="off">
+                </div>
+                <div class="meal-zones-box">
+                    <div id="globe-legend" class="flex flex-wrap gap-2"></div>
+                    <p class="meal-zones-empty" id="zonesEmpty" hidden>Aucun pays ne correspond.</p>
+                </div>
+                <button type="button" class="meal-zones-more" id="zonesMore" hidden>Voir tous les pays</button>
             </div>
         </div>
     </div>
 </section>
+</div>
+</div>
 
 <footer class="border-t-2 border-gold-500 bg-navy-900 text-slate-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
@@ -457,7 +544,8 @@ window.addEventListener("load", function () {
     fetch('/count-male-and-female/')
         .then(r => r.json())
         .then(data => {
-            const isDark = document.documentElement.classList.contains("dark");
+            // Le graphique est dans la bande sombre : couleurs claires, quel que soit le thème de la page
+            const isDark = document.getElementById('genderChart').closest('.dark') !== null;
             new Chart(document.getElementById('genderChart').getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -482,7 +570,7 @@ async function checkEmail() {
     const loader = document.getElementById("loaderContainer");
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-        showFeedback("Veuillez entrer une adresse email valide.", "text-red-500");
+        showFeedback("Veuillez entrer une adresse email valide.", "text-red-400");
         return;
     }
 
@@ -503,18 +591,18 @@ async function checkEmail() {
         const data = await response.json();
 
         if (data.exists && data.code) {
-            showFeedback("Profil trouvé ! Redirection...", "text-emerald-500");
+            showFeedback("Profil trouvé ! Redirection...", "text-emerald-400");
             setTimeout(() => { window.location.href = `/Information-members/${data.code}/`; }, 800);
             return;
         }
         hideLoader();
         btn.disabled = false;
-        if (data.exists) showFeedback("Erreur : code utilisateur invalide.", "text-red-500");
-        else showFeedback("Aucun compte trouvé avec cet email. Inscrivez-vous ci-dessus.", "text-gold-600");
+        if (data.exists) showFeedback("Erreur : code utilisateur invalide.", "text-red-400");
+        else showFeedback("Aucun compte trouvé avec cet email. Inscrivez-vous ci-dessus.", "text-gold-500");
     } catch (error) {
         hideLoader();
         btn.disabled = false;
-        showFeedback("Erreur serveur. Veuillez réessayer.", "text-red-500");
+        showFeedback("Erreur serveur. Veuillez réessayer.", "text-red-400");
     }
 }
 
@@ -537,5 +625,56 @@ document.getElementById("emailInput").addEventListener("keydown", (e) => {
 
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
 <script src="{% static 'js/file.js' %}"></script>
+
+<!-- ═════════ Statistiques et zones : ajouts (n'interfèrent pas avec file.js) ═════════ -->
+<script>
+(function(){
+  const fmt = n => Number(n || 0).toLocaleString('fr-FR');
+  let totalMembers = 0;
+
+  /* Genre : pourcentage au centre et effectifs */
+  fetch('/count-male-and-female/').then(r => r.json()).then(d => {
+    const h = +d.male || 0, f = +d.female || 0, t = h + f;
+    document.getElementById('genderNumH').textContent = fmt(h);
+    document.getElementById('genderNumF').textContent = fmt(f);
+    document.getElementById('genderPctF').textContent = t ? Math.round(f * 100 / t) + ' %' : '-';
+  }).catch(() => {});
+
+  /* Moyenne de membres par pays */
+  function updateAvg(){
+    const c = parseInt(document.getElementById('miniCountries').textContent, 10);
+    document.getElementById('miniAvg').textContent = (c && totalMembers) ? fmt(Math.round(totalMembers / c)) : '-';
+  }
+  fetch("{% url 'count-members' %}").then(r => r.json()).then(d => { totalMembers = +d.personnel || 0; updateAvg(); }).catch(() => {});
+
+  /* Compteur : séparateur de milliers une fois l'animation terminée (1 000 au lieu de 1000) */
+  const counter = document.getElementById('counter');
+  new MutationObserver(() => {
+    const raw = counter.textContent.replace(/\s/g, '');
+    if (/^\d{4,}$/.test(raw) && +raw === totalMembers) { const v = fmt(raw); if (counter.textContent !== v) counter.textContent = v; }
+  }).observe(counter, { childList: true, characterData: true, subtree: true });
+
+  /* Zones de présence : compteur, recherche, déplier */
+  const legend = document.getElementById('globe-legend');
+  const box = legend.parentElement, input = document.getElementById('zonesFilter');
+  const count = document.getElementById('zonesCount'), empty = document.getElementById('zonesEmpty'), more = document.getElementById('zonesMore');
+  const norm = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function refresh(){
+    const items = [...legend.children];
+    const q = norm(input.value.trim());
+    let shown = 0;
+    items.forEach(el => { const ok = !q || norm(el.textContent).includes(q); el.classList.toggle('is-hidden', !ok); if (ok) shown++; });
+    count.textContent = items.length ? (q ? shown + ' / ' + items.length : items.length + ' pays') : '';
+    empty.hidden = !(items.length && shown === 0);
+    more.hidden = !(items.length > 0 && legend.scrollHeight > 160 && !q);
+    more.textContent = box.classList.contains('open') ? 'Réduire la liste' : 'Voir les ' + items.length + ' pays';
+  }
+  new MutationObserver(refresh).observe(legend, { childList: true });
+  input.addEventListener('input', refresh);
+  more.addEventListener('click', () => { box.classList.toggle('open'); refresh(); });
+  refresh();
+})();
+</script>
 </body>
 </html>
