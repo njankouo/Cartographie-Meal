@@ -565,7 +565,8 @@ window.addEventListener("load", function () {
 
 /* ───────── Espace membre : recherche par email ───────── */
 async function checkEmail() {
-    const email = document.getElementById("emailInput").value.trim();
+    const emailInput = document.getElementById("emailInput");
+    const email = emailInput ? emailInput.value.trim() : "";
     const btn = document.getElementById("searchBtn");
     const loader = document.getElementById("loaderContainer");
 
@@ -574,9 +575,11 @@ async function checkEmail() {
         return;
     }
 
-    loader.classList.remove("hidden");
-    loader.classList.add("flex");
-    btn.disabled = true;
+    if (loader) {
+        loader.classList.remove("hidden");
+        loader.classList.add("flex");
+    }
+    if (btn) btn.disabled = true;
 
     try {
         const response = await fetch("/check-email/", {
@@ -587,25 +590,29 @@ async function checkEmail() {
             },
             body: JSON.stringify({ email })
         });
-        if (!response.ok) throw new Error("Erreur dans la requête");
+
         const data = await response.json();
 
-        if (data.exists && data.code) {
-            showFeedback("Profil trouvé ! Redirection...", "text-emerald-400");
-            setTimeout(() => { window.location.href = `/Information-members/${data.code}/`; }, 800);
+        if (!response.ok) {
+            throw new Error(data.error || "Erreur dans la requête");
+        }
+
+        if (data.exists) {
+            showFeedback("Code OTP envoyé avec succès ! Redirection...", "text-emerald-400");
+            
+            // Redirection propre et sécurisée (URL neutre)
+            setTimeout(() => { 
+                window.location.href = "/verification-otp/"; 
+            }, 1000);
             return;
         }
-        hideLoader();
-        btn.disabled = false;
-        if (data.exists) showFeedback("Erreur : code utilisateur invalide.", "text-red-400");
-        else showFeedback("Aucun compte trouvé avec cet email. Inscrivez-vous ci-dessus.", "text-gold-500");
+
     } catch (error) {
-        hideLoader();
-        btn.disabled = false;
-        showFeedback("Erreur serveur. Veuillez réessayer.", "text-red-400");
+        if (loader) hideLoader();
+        if (btn) btn.disabled = false;
+        showFeedback(error.message || "Erreur serveur. Veuillez réessayer.", "text-red-400");
     }
 }
-
 function showFeedback(msg, color) {
     const fb = document.getElementById("feedback");
     fb.textContent = msg;

@@ -12,27 +12,32 @@
             <p class="error" id="err-nomComplet" role="alert"></p>
           </div>
 
-          <div class="grid2">
-            <div class="field">
-              <label for="pays">Pays de résidence<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">country</span></label>
-              <select id="pays" required onchange="onPaysChange()" name="pays">
-                <option value="">Sélectionner un pays</option>
-               
-                 {% for pays in countries %}
-                    <option value="{{ pays.name }}" >{{ pays.name }}</option>
-                {% endfor %}
-              </select>
-              <p class="error" id="err-pays" role="alert"></p>
-            </div>
-            <div class="field">
-              <label for="ville">Ville<span class="en-label" lang="en">city</span></label>
-              <select id="ville" name="ville">
-                <option value="">Choisissez d'abord un pays</option>
-              </select>
-              <input type="text" id="villeAutre" hidden placeholder="Précisez la ville" aria-label="Précisez la ville">
-              <p class="error" id="err-villeAutre" role="alert"></p>
-            </div>
-          </div>
+        <div class="grid2">
+    <!-- PAYS -->
+    <div class="field">
+      <label for="pays">Pays de résidence<span class="req" aria-hidden="true">*</span></label>
+      <select id="pays" required onchange="onPaysChange()" name="pays">
+        <option value="">Sélectionner un pays</option>
+        {% for pays in countries %}
+            <option value="{{ pays.name }}" {% if personnel.pays == pays.name %}selected{% endif %}>
+                {{ pays.name }}
+            </option>
+        {% endfor %}
+      </select>
+      <p class="error" id="err-pays" role="alert"></p>
+    </div>
+
+    <!-- VILLE -->
+    <div class="field">
+      <label for="ville">Ville</label>
+      <!-- On utilise personnel.ville car c'est là que se trouve la valeur "30640" -->
+      <select id="ville" name="ville" data-saved-ville="{{ personnel.ville|default:'' }}">
+        <option value="">Choisissez d'abord un pays</option>
+      </select>
+      <input type="text" id="villeAutre" hidden placeholder="Précisez la ville">
+      <p class="error" id="err-villeAutre" role="alert"></p>
+    </div>
+</div>
 
           <div class="grid2">
             <div class="field">
@@ -63,36 +68,39 @@
             </div>
           </div>
 
-          <div class="grid2">
-            <div class="field">
-              <label for="typeOrg">Type d'organisation<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">organization type</span></label>
-              <select id="typeOrg" required onchange="onTypeOrgChange()" name='typeOrg'>
-                <option value="">Sélectionner</option>
-                <option value="ONG">ONG internationale</option>
-                <option value="ONG-N">ONG nationale</option>
-                <option value="Gouvernement">Gouvernement</option>
-                <option value="ONU">Agence des Nations Unies</option>
-                <option value="Bailleur">Bailleur de fonds</option>
-                <option value="Recherche">Université / Recherche</option>
-                <option value="Prive">Cabinet / Secteur privé</option>
-                <option value="__autre">Autre</option>
-              </select>
-              <input type="text" id="typeOrgAutre" hidden placeholder="Précisez le type" aria-label="Précisez le type d'organisation">
-              <p class="error" id="err-typeOrg" role="alert"></p>
-            </div>
-            <div class="field">
-              <label for="fonctionOrg">Fonction occupée<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">position</span></label>
-              <select id="fonctionOrg" required onchange="onFonctionChange()" name='fonctionOrg'>
-                <option value="">Sélectionner</option>
-                <option value="Responsable MEAL">Responsable MEAL</option>
-                <option value="Consultant">Consultant MEAL</option>
-                <option value="Charge SE">Chargé de suivi-évaluation</option>
-                <option value="Analyste">Analyste de données</option>
-                <option value="Chercheur">Chercheur / Enseignant</option>
-                <option value="__autre">Autre</option>
-              </select>
-              <input type="text" id="fonctionOrgAutre" hidden placeholder="Précisez la fonction" aria-label="Précisez la fonction">
-              <p class="error" id="err-fonctionOrg" role="alert"></p>
-            </div>
-          </div>
+         <div class="grid2">
+    <!-- Type d'organisation -->
+    <div class="field">
+      <label for="typeOrg">Type d'organisation<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">organization type</span></label>
+      <select id="typeOrg" required onchange="onTypeOrgChange()" name='typeOrg'>
+        <option value="">Sélectionner</option>
+        <option value="ONG" {% if personnel.organization_type == "ONG" %}selected{% endif %}>ONG internationale</option>
+        <option value="ONG-N" {% if personnel.organization_type == "ONG-N" %}selected{% endif %}>ONG nationale</option>
+        <option value="Gouvernement" {% if personnel.organization_type == "Gouvernement" %}selected{% endif %}>Gouvernement</option>
+        <option value="ONU" {% if personnel.organization_type == "ONU" %}selected{% endif %}>Agence des Nations Unies</option>
+        <option value="Bailleur" {% if personnel.organization_type == "Bailleur" %}selected{% endif %}>Bailleur de fonds</option>
+        <option value="Recherche" {% if personnel.organization_type == "Recherche" %}selected{% endif %}>Université / Recherche</option>
+        <option value="Prive" {% if personnel.organization_type == "Prive" %}selected{% endif %}>Cabinet / Secteur privé</option>
+        <option value="__autre" {% if personnel.organization_type == "__autre" %}selected{% endif %}>Autre</option>
+      </select>
+      <input type="text" id="typeOrgAutre" hidden placeholder="Précisez le type" aria-label="Précisez le type d'organisation">
+      <p class="error" id="err-typeOrg" role="alert"></p>
+    </div>
+
+    <!-- Fonction occupée -->
+    <div class="field">
+      <label for="fonctionOrg">Fonction occupée<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">position</span></label>
+      <select id="fonctionOrg" required onchange="onFonctionChange()" name='fonctionOrg'>
+        <option value="">Sélectionner</option>
+        <option value="Responsable MEAL" {% if personnel.fonction_organization == "Responsable MEAL" %}selected{% endif %}>Responsable MEAL</option>
+        <option value="Consultant" {% if personnel.fonction_organization == "Consultant" %}selected{% endif %}>Consultant MEAL</option>
+        <option value="Charge SE" {% if personnel.fonction_organization == "Charge SE" %}selected{% endif %}>Chargé de suivi-évaluation</option>
+        <option value="Analyste" {% if personnel.fonction_organization == "Analyste" %}selected{% endif %}>Analyste de données</option>
+        <option value="Chercheur" {% if personnel.fonction_organization == "Chercheur" %}selected{% endif %}>Chercheur / Enseignant</option>
+        <option value="__autre" {% if personnel.fonction_organization == "__autre" %}selected{% endif %}>Autre</option>
+      </select>
+      <input type="text" id="fonctionOrgAutre" hidden placeholder="Précisez la fonction" aria-label="Précisez la fonction">
+      <p class="error" id="err-fonctionOrg" role="alert"></p>
+    </div>
+</div>
         </section>

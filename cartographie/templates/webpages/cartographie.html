@@ -15,9 +15,9 @@
 
 <div class="topbar">
   <div class="topbar-in">
-    <a class="back" href="/">← MEAL Afrique Journal</a>
+    <a class="back" href="/Inscription-meal-afrique/">← Acceuil</a>
     <div class="links">
-      <a href="https://meal-afrique.operaplus.org" target="_blank" rel="noopener">OPERAPLUS</a>
+      <a href="https://operaplus.org" target="_blank" rel="noopener">OPERAPLUS</a>
       <a href="https://wa.me/237699072561" target="_blank" rel="noopener">Assistance</a>
     </div>
   </div>
@@ -74,135 +74,297 @@
         <p>Votre fiche est enregistrée dans la cartographie des experts MEAL Afrique. Vous pouvez la modifier à tout moment.</p>
         <div class="actions">
           <button type="button" class="btn btn-ghost" onclick="reopenForm()">Modifier ma fiche</button>
-          <a class="btn btn-primary" href="{%url 'profil-expert' personnel.code %}" style="text-decoration:none">Voir ma fiche →</a>
+          <a class="btn btn-primary" href="{%url 'profil-expert'  %}" style="text-decoration:none">Voir ma fiche →</a>
         </div>
       </section>
 
     </div>
   </main>
 </div>
-
 <script>
   const TOTAL = 5;
   const OTHER = "__autre";
   let currentStep = 1;
   let maxReached = 1;
   let photoData = null;
-  // Photo déjà présente côté serveur (Django) : elle compte dans la complétude
   const hasServerPhoto = !!document.getElementById("avatarImg");
 
   const $ = (id) => document.getElementById(id);
   const val = (id) => ($(id)?.value || "").trim();
   const radio = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
   const checks = (name) => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
-  const selText = (id) => { const s = $(id); return s && s.selectedIndex > 0 ? s.options[s.selectedIndex].text : ""; };
+  const selText = (id) => { const s = $(id); return s && s.selectedIndex >= 0 ? s.options[s.selectedIndex].text : ""; };
 
+  // --- Récupération des libellés textuels des cases à cocher (pour le récapitulatif UI) ---
+  function checksLabels(name) {
+    return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(el => {
+      const label = el.closest('label') || el.parentElement;
+      const span = label ? label.querySelector('span') : null;
+      return span ? span.textContent.trim() : el.value;
+    });
+  }
 
-async function onPaysChange() {
+  // --- Chargement dynamique des villes via cities-light (Nettoyé contre les répétitions) ---
+  async function onPaysChange(preselectedCityId = null) {
     const countrySelect = document.getElementById('pays');
     const villeSelect = document.getElementById('ville');
-    const selectedCountry = countrySelect.value;
+    const selectedCountry = countrySelect ? countrySelect.value : '';
 
-    // Réinitialiser le select des villes
+    if (!villeSelect) return;
+
     villeSelect.innerHTML = '<option value="">Chargement des villes...</option>';
     villeSelect.disabled = true;
 
     if (!selectedCountry) {
-        villeSelect.innerHTML = '<option value="">Choisissez d\'abord un pays</option>';
-        return;
+      villeSelect.innerHTML = '<option value="">Choisissez d\'abord un pays</option>';
+      return;
     }
 
     try {
-        // Appel vers l'API Django créée à l'étape 1
-        const response = await fetch(`/api/get-cities/?country=${selectedCountry}`);
-        const data = await response.json();
+      const response = await fetch(`/api/get-cities/?country=${selectedCountry}`);
+      const data = await response.json();
 
-        villeSelect.innerHTML = '<option value="">Sélectionner une ville</option>';
+      villeSelect.innerHTML = '<option value="">Sélectionner une ville</option>';
+      let found = false;
+
+      if (data.cities && data.cities.length > 0) {
+        data.cities.forEach(city => {
+          const option = document.createElement('option');
+          option.value = city.id;
+          option.textContent = city.name;
+
+          if (preselectedCityId && String(city.id) === String(preselectedCityId)) {
+            option.selected = true;
+            found = true;
+          }
+          villeSelect.appendChild(option);
+        });
+        villeSelect.disabled = false;
+      }
+
+      // Si l'ID ou le texte n'est pas trouvé dans la liste des villes du pays
+      if (preselectedCityId && !found) {
+        // Supprime les préfixes "Ville enregistrée (" accumulés
+        let cleanName = String(preselectedCityId).replace(/(Ville enregistrée\s*\(\vert{}\))+/gi, '').trim();
         
-        if (data.cities && data.cities.length > 0) {
-            data.cities.forEach(city => {
-                const option = document.createElement('option');
-                option.value = city.id; // ou city.name selon votre besoin
-                option.textContent = city.name;
-                villeSelect.appendChild(option);
-            });
-            villeSelect.disabled = false;
-        } else {
-            villeSelect.innerHTML = '<option value="">Aucune ville disponible</option>';
-            // Optionnel : afficher l'input libre si aucune ville n'est trouvée
-        }
+        const option = document.createElement('option');
+        option.value = preselectedCityId;
+        option.textContent = cleanName || "Ville sélectionnée";
+        option.selected = true;
+        villeSelect.appendChild(option);
+        villeSelect.disabled = false;
+      }
+
+      if (preselectedCityId) {
+        villeSelect.value = preselectedCityId;
+      }
     } catch (error) {
-        console.error('Erreur lors du chargement des villes:', error);
-        villeSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+      console.error('Erreur lors du chargement des villes:', error);
+      villeSelect.innerHTML = '<option value="">Erreur de chargement</option>';
     }
-}
-
-
-
-// Exécuter au chargement si un pays est déjà sélectionné (mode édition)
-document.addEventListener("DOMContentLoaded", () => {
-    const countrySelect = document.getElementById('pays');
-    if (countrySelect.value) {
-        onPaysChange();
-    }
-});
+  }
 
   function toggleOther(selectId, inputId) {
-    const show = $(selectId).value === OTHER;
-    $(inputId).hidden = !show;
-    if (!show) $(inputId).value = "";
+    const show = $(selectId)?.value === OTHER;
+    if ($(inputId)) {$(inputId).hidden = !show;
+      if (!show) $(inputId).value = "";
+    }
   }
 
   function onTypeOrgChange() { toggleOther("typeOrg", "typeOrgAutre"); updatePreview(); }
   function onFonctionChange() { toggleOther("fonctionOrg", "fonctionOrgAutre"); updatePreview(); }
   function toggleBadge() {
-    $("numBadgeField").hidden = radio("badge") !== "oui";
-    if (radio("badge") !== "oui") $("numBadge").value = "";
+    if ($("numBadgeField")) $("numBadgeField").hidden = radio("badge") !== "oui";
+    if (radio("badge") !== "oui" && $("numBadge")) $("numBadge").value = "";
     updatePreview();
   }
 
+  // --- Collecte unifiée (UI textuelle + Backend IDs) ---
   function collectAll() {
-    const ville = $("ville").value === OTHER ? val("villeAutre") : $("ville").value;
-    const typeOrg = $("typeOrg").value === OTHER ? val("typeOrgAutre") : selText("typeOrg");
-    const fonction = $("fonctionOrg").value === OTHER ? val("fonctionOrgAutre") : selText("fonctionOrg");
+    const villeElem = $("ville");
+    let villeNom = "";
+    if (villeElem) {
+      if (villeElem.tagName === 'SELECT' && villeElem.selectedIndex >= 0) {
+        let rawText = villeElem.options[villeElem.selectedIndex].text;
+        // Nettoyage rigoureux pour ne conserver que le nom réel
+        villeNom = rawText.replace(/(Ville enregistrée\s*\(\vert{}\))+/gi, '').trim();
+      } else {
+        villeNom = villeElem.value.replace(/(Ville enregistrée\s*\(\vert{}\))+/gi, '').trim();
+      }
+    }
+
+    const typeOrg = $("typeOrg")?.value === OTHER ? val("typeOrgAutre") : selText("typeOrg");
+    const fonction = $("fonctionOrg")?.value === OTHER ? val("fonctionOrgAutre") : selText("fonctionOrg");
+
     return {
       nomComplet: val("nomComplet"),
-      pays: $("pays").value,
-      ville,
+      pays: $("pays")?.value || "",
+      ville: villeNom,
+      ville_id: villeElem?.value || "",
       email: val("email"),
       telephone: val("telephone"),
       sexe: radio("sexe"),
       linkedin: val("linkedin"),
-      typeOrg: $("typeOrg").value,
+      typeOrg: $("typeOrg")?.value || "",
       typeOrgLabel: typeOrg,
-      fonctionOrg: $("fonctionOrg").value,
+      fonctionOrg: $("fonctionOrg")?.value || "",
       fonctionLabel: fonction,
       badge: radio("badge"),
       numBadge: val("numBadge"),
       expertiseMain: val("expertiseMain"),
-      domaines: checks("domaines"),
-      //experience: $("experience").value,
+      
+      // Libellés textuels pour récapitulatif & badge UI
+      domaines: checksLabels("domaines"),
+      outils: checksLabels("outils"),
+      
+      // IDs bruts pour l'ORM Django
+      domaines_ids: checks("domaines").map(v => parseInt(v)).filter(Boolean),
+      outils_ids: checks("outils").map(v => parseInt(v)).filter(Boolean),
+      
       langues: checks("langues"),
       bio: val("bio"),
-      outils: checks("outils"),
       autresOutils: val("autresOutils"),
       dispo: checks("dispo"),
-      consentement: $("consentement").checked,
+      consentement: $("consentement") ? $("consentement").checked : false,
       hasPhoto: !!photoData || hasServerPhoto
     };
   }
 
-  function collectStepData(step) {
-    return { member_id: $("memberId").textContent, step_number: step, ...collectAll(), updated_at: new Date().toISOString() };
+  // --- Génération du récapitulatif (Étape 5) ---
+  function renderRecap() {
+    const d = collectAll();
+    const badgeText = { oui: "Oui" + (d.numBadge ? ` (n° ${d.numBadge})` : ""), non: "Non", encours: "En cours" }[d.badge] || "-";
+    const rows = [
+      ["Nom", d.nomComplet, 1],
+      ["Localisation", [d.ville, d.pays].filter(Boolean).join(", "), 1],
+      ["Contact", [d.email, d.telephone].filter(Boolean).join(" · "), 1],
+      ["Organisation", [d.fonctionLabel, d.typeOrgLabel].filter(Boolean).join(" · "), 1],
+      ["Badge OPERAPLUS", badgeText, 2],
+      ["Expertise", [d.expertiseMain, ...d.domaines].filter(Boolean).join(", "), 3],
+      ["Outils", [...d.outils, d.autresOutils].filter(Boolean).join(", ") || "Aucun renseigné", 4]
+    ];
+    const dl = $("recap");
+    if (!dl) return;
+    dl.innerHTML = "";
+    rows.forEach(([k, v, step]) => {
+      const div = document.createElement("div");
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd");
+      const span = document.createElement("span"); span.textContent = v || "-";
+      const edit = document.createElement("button");
+      edit.type = "button"; edit.textContent = "Modifier";
+      edit.addEventListener("click", () => jumpToStep(step));
+      dd.append(span, edit);
+      div.append(dt, dd);
+      dl.append(div);
+    });
   }
 
-  // À remplacer par votre appel API Django (penser au jeton CSRF), par exemple :
-  // return fetch("/api/members/draft", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify(data) }).then(r => r.json());
-  // Pour envoyer la photo, utiliser FormData(document.getElementById("mealForm")) plutôt que JSON.
-  
+  function collectStepData(step) {
+    return { 
+      member_id: $("memberId")?.textContent || "", 
+      step_number: step, 
+      ...collectAll(), 
+      updated_at: new Date().toISOString() 
+    };
+  }
 
+  // --- Extraction sécurisée du jeton CSRF via les cookies Django ---
+  const MEAL_SECURITY = {
+    csrf() {
+      const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+      if (match) return decodeURIComponent(match[1]);
+      const inputToken = document.querySelector('[name=csrfmiddlewaretoken]');
+      return inputToken ? inputToken.value : '';
+    }
+  };
+
+  // --- Enregistrement AJAX vers Django ---
   function simulateDatabaseSave(step, data) {
-    return fetch("/create-cartographie-meal/", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify(data) }).then(r => r.json());
+    if (typeof notyf !== 'undefined') notyf.dismissAll();
+    
+    const pending = typeof MEAL_TOAST !== 'undefined' 
+      ? MEAL_TOAST.show('loading', 'Enregistrement en cours...', '<span>Merci de patienter quelques secondes.</span>') 
+      : null;
+    let handled = false;
+
+    // Transmission des IDs numériques pour l'ORM Django
+    data.profils = Array.from(document.querySelectorAll('input[name="profils"]:checked')).map(el => parseInt(el.value));
+    data.secteurs = Array.from(document.querySelectorAll('input[name="secteurs"]:checked')).map(el => parseInt(el.value));
+    data.domaines = data.domaines_ids || Array.from(document.querySelectorAll('input[name="domaines"]:checked')).map(el => parseInt(el.value));
+    data.outils = data.outils_ids || Array.from(document.querySelectorAll('input[name="outils"]:checked')).map(el => parseInt(el.value));
+    data.dispo = Array.from(document.querySelectorAll('input[name="dispo"]:checked')).map(el => parseInt(el.value));
+
+    data.profils_experiences = {};
+    document.querySelectorAll('input[name^="experience_"]').forEach(input => {
+      if (input.value !== '') {
+        const profilId = input.name.split('_')[1];
+        data.profils_experiences[profilId] = parseInt(input.value);
+      }
+    });
+
+    const profilActuelSelect = document.getElementById('profil_actuel');
+    if (profilActuelSelect && !profilActuelSelect.disabled) data.profil_actuel = profilActuelSelect.value;
+
+    const anneesActuelInput = document.getElementById('anneesActuel');
+    if (anneesActuelInput) data.annees_profil_actuel = anneesActuelInput.value;
+
+    const niveauExpertiseInput = document.getElementById('niveauExpertise');
+    if (niveauExpertiseInput) data.niveau_expertise = niveauExpertiseInput.value;
+
+    const frenchCb = document.querySelector('input[name="is_speeck_french"]');
+    const englishCb = document.querySelector('input[name="is_speeck_english"]');
+    if (frenchCb) data.is_speeck_french = frenchCb.checked;
+    if (englishCb) data.is_speeck_english = englishCb.checked;
+
+    data.langues_autres = Array.from(document.querySelectorAll('input[name="langues_autres"]:checked')).map(el => el.value);
+
+    return fetch("/create-cartographie-meal/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": MEAL_SECURITY.csrf()
+      },
+      body: JSON.stringify(data)
+    })
+    .then(async response => {
+      let payload = {};
+      try { payload = await response.json(); } catch (e) {}
+      if (pending && typeof notyf !== 'undefined') notyf.dismiss(pending);
+
+      if (!response.ok || payload.success === false) {
+        handled = true;
+        if (typeof MEAL_TOAST !== 'undefined') {
+          if (payload.errors && Object.keys(payload.errors).length) {
+            MEAL_TOAST.validation(payload.errors);
+          } else if (payload.error) {
+            MEAL_TOAST.show('error', payload.error, '', 'Erreur');
+          } else if (response.status === 403) {
+            MEAL_TOAST.show('warning', 'Session expirée', '<span>Rechargez la page puis réessayez.</span>', 'Sécurité');
+          } else if (response.status >= 500) {
+            MEAL_TOAST.show('error', 'Le serveur ne répond pas correctement', '<span>Réessayez dans quelques instants.</span>', 'Erreur ' + response.status);
+          } else {
+            MEAL_TOAST.show('error', "Une erreur est survenue lors de l'enregistrement.", '', 'Erreur');
+          }
+        }
+        throw new Error("Erreur de validation");
+      }
+      return payload;
+    })
+    .then(result => {
+      if (result.success && typeof MEAL_TOAST !== 'undefined') {
+        document.querySelectorAll('.nt-invalid').forEach(el => el.classList.remove('nt-invalid'));
+        MEAL_TOAST.show('success', result.message || "Étape enregistrée avec succès !", '', step ? 'Étape ' + step : 'Enregistré');
+      }
+      return result;
+    })
+    .catch(error => {
+      if (pending && typeof notyf !== 'undefined') notyf.dismiss(pending);
+      if (!handled && typeof MEAL_TOAST !== 'undefined') {
+        MEAL_TOAST.show('error', 'Connexion impossible', navigator.onLine === false ? '<span>Vous semblez hors ligne. Vérifiez votre connexion internet.</span>' : '<span>Le serveur est injoignable pour le moment.</span>', 'Réseau');
+      }
+      console.error("Erreur réseau ou critique:", error);
+    });
   }
 
   function setError(id, msg) {
@@ -215,18 +377,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // --- Règles de validation par étape ---
   const VALIDATORS = {
     1: () => {
       const d = collectAll();
       return [
         ["nomComplet", d.nomComplet.length < 3 ? "Indiquez votre nom complet." : ""],
         ["pays", !d.pays ? "Sélectionnez votre pays de résidence." : ""],
-        ["villeAutre", $("ville").value === OTHER && !d.ville ? "Précisez votre ville." : ""],
+        ["villeAutre", $("ville")?.value === OTHER && !d.ville ? "Précisez votre ville." : ""],
         ["email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email) ? "Saisissez une adresse email valide, par exemple nom@organisation.org." : ""],
         ["telephone", d.telephone.replace(/\D/g, "").length < 8 ? "Saisissez un numéro valide, avec l'indicatif du pays." : ""],
         ["sexe", !d.sexe ? "Choisissez une option." : ""],
-        ["typeOrg", !$("typeOrg").value ? "Sélectionnez le type d'organisation." : ($("typeOrg").value === OTHER && !d.typeOrgLabel ? "Précisez le type d'organisation." : "")],
-        ["fonctionOrg", !$("fonctionOrg").value ? "Sélectionnez votre fonction." : ($("fonctionOrg").value === OTHER && !d.fonctionLabel ? "Précisez votre fonction." : "")]
+        ["typeOrg", !$("typeOrg")?.value ? "Sélectionnez le type d'organisation." : ($("typeOrg")?.value === OTHER && !d.typeOrgLabel ? "Précisez le type d'organisation." : "")],
+        ["fonctionOrg", !$("fonctionOrg")?.value ? "Sélectionnez votre fonction." : ($("fonctionOrg")?.value === OTHER && !d.fonctionLabel ? "Précisez votre fonction." : "")]
       ];
     },
     2: () => {
@@ -239,12 +402,11 @@ document.addEventListener("DOMContentLoaded", () => {
     3: () => {
       const d = collectAll();
       return [
-      
         ["domaines", d.domaines.length === 0 ? "Choisissez au moins un domaine." : ""]
       ];
     },
     4: () => [],
-    5: () => [["consentement", !$("consentement").checked ? "Votre accord est nécessaire pour publier votre fiche." : ""]]
+    5: () => [["consentement", !$("consentement")?.checked ? "Votre accord est nécessaire pour publier votre fiche." : ""]]
   };
 
   const FOCUS_TARGET = { sexe: 'input[name="sexe"]', badge: 'input[name="badge"]', domaines: 'input[name="domaines"]' };
@@ -276,12 +438,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await simulateDatabaseSave(currentStep, collectStepData(currentStep));
       if (!res.success) throw new Error("save failed");
       const t = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-      $("saveStatus").textContent = `Étape ${currentStep} enregistrée à ${t}`;
+      if ($("saveStatus")) $("saveStatus").textContent = `Étape ${currentStep} enregistrée à ${t}`;
       maxReached = Math.max(maxReached, currentStep + 1);
       jumpToStep(currentStep + 1);
     } catch (e) {
       console.error("BD Error:", e);
-      $("saveStatus").textContent = "L'enregistrement a échoué. Vérifiez votre connexion et réessayez.";
+      if ($("saveStatus")) $("saveStatus").textContent = "L'enregistrement a échoué. Vérifiez votre connexion et réessayez.";
     } finally {
       btn.disabled = false;
       btn.innerHTML = label;
@@ -291,12 +453,16 @@ document.addEventListener("DOMContentLoaded", () => {
   function jumpToStep(target) {
     if (target < 1 || target > TOTAL || target > maxReached) return;
     document.querySelectorAll(".step").forEach(s => s.hidden = true);
-    document.querySelector(`.step[data-step="${target}"]`).hidden = false;
+    const stepElem = document.querySelector(`.step[data-step="${target}"]`);
+    if (stepElem) stepElem.hidden = false;
     currentStep = target;
     if (target === 5) renderRecap();
     updateUI();
-    const top = $("sheet").getBoundingClientRect().top + window.scrollY - 16;
-    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
+    const sheet = $("sheet");
+    if (sheet) {
+      const top = sheet.getBoundingClientRect().top + window.scrollY - 16;
+      if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
+    }
   }
 
   function updateUI() {
@@ -306,72 +472,65 @@ document.addEventListener("DOMContentLoaded", () => {
       const dot = li.querySelector(".dot");
       li.classList.toggle("done", n < currentStep);
       li.classList.toggle("current", n === currentStep);
-      btn.disabled = n > maxReached;
-      if (n === currentStep) btn.setAttribute("aria-current", "step"); else btn.removeAttribute("aria-current");
-      dot.innerHTML = n < currentStep
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
-        : String(n);
+      if (btn) {
+        btn.disabled = n > maxReached;
+        if (n === currentStep) btn.setAttribute("aria-current", "step"); else btn.removeAttribute("aria-current");
+      }
+      if (dot) {
+        dot.innerHTML = n < currentStep
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+          : String(n);
+      }
     });
-    $("btnPrev").style.visibility = currentStep === 1 ? "hidden" : "visible";
-    $("btnNext").hidden = currentStep === TOTAL;
-    $("btnSubmit").hidden = currentStep !== TOTAL;
+    if ($("btnPrev")) $("btnPrev").style.visibility = currentStep === 1 ? "hidden" : "visible";
+    if ($("btnNext")) $("btnNext").hidden = currentStep === TOTAL;
+    if ($("btnSubmit")) $("btnSubmit").hidden = currentStep !== TOTAL;
   }
 
+  // --- Soumission finale complète ("Valider ma fiche") ---
   async function submitFinalForm() {
     for (let s = 1; s <= TOTAL; s++) {
-      if (!validateStep(s)) { maxReached = TOTAL; jumpToStep(s); validateStep(s); return; }
+      if (!validateStep(s)) {
+        maxReached = TOTAL;
+        jumpToStep(s);
+        validateStep(s);
+        if (typeof MEAL_TOAST !== 'undefined') {
+          MEAL_TOAST.show('warning', `Veuillez corriger l'étape ${s}`, '', 'Validation');
+        }
+        return;
+      }
     }
+
     const btn = $("btnSubmit");
+    const originalText = btn.textContent;
     btn.disabled = true;
     btn.innerHTML = '<span class="spin" aria-hidden="true"></span> Validation…';
+
     try {
-      await simulateDatabaseSave(TOTAL, { ...collectStepData(TOTAL), final: true });
-      $("mealForm").hidden = true;
-      $("stepper").hidden = true;
-      $("success").hidden = false;
-      const h = $("success").querySelector("h2");
-      h.tabIndex = -1; h.focus();
+      const res = await simulateDatabaseSave(TOTAL, { ...collectStepData(TOTAL), final: true });
+      if (!res || !res.success) throw new Error("Validation échouée");
+
+      if ($("mealForm")) $("mealForm").hidden = true;
+      if ($("stepper")) $("stepper").hidden = true;
+      if ($("success")) {
+        $("success").hidden = false;
+        const h = $("success").querySelector("h2");
+        if (h) { h.tabIndex = -1; h.focus(); }
+      }
     } catch (e) {
-      $("saveStatus").textContent = "La validation a échoué. Réessayez.";
+      console.error("Erreur soumission finale:", e);
+      if ($("saveStatus")) $("saveStatus").textContent = "La validation a échoué. Réessayez.";
     } finally {
       btn.disabled = false;
-      btn.textContent = "Valider ma fiche";
+      btn.textContent = originalText;
     }
   }
 
   function reopenForm() {
-    $("success").hidden = true;
-    $("mealForm").hidden = false;
-    $("stepper").hidden = false;
+    if ($("success")) $("success").hidden = true;
+    if ($("mealForm")) $("mealForm").hidden = false;
+    if ($("stepper")) $("stepper").hidden = false;
     jumpToStep(1);
-  }
-
-  function renderRecap() {
-    const d = collectAll();
-    const badgeText = { oui: "Oui" + (d.numBadge ? ` (n° ${d.numBadge})` : ""), non: "Non", encours: "En cours" }[d.badge] || "-";
-    const rows = [
-      ["Nom", d.nomComplet, 1],
-      ["Localisation", [d.ville, d.pays].filter(Boolean).join(", "), 1],
-      ["Contact", [d.email, d.telephone].filter(Boolean).join(" · "), 1],
-      ["Organisation", [d.fonctionLabel, d.typeOrgLabel].filter(Boolean).join(" · "), 1],
-      ["Badge OPERAPLUS", badgeText, 2],
-      ["Expertise", [d.expertiseMain, ...d.domaines].filter(Boolean).join(", "), 3],
-      ["Outils", [...d.outils, d.autresOutils].filter(Boolean).join(", ") || "Aucun renseigné", 4]
-    ];
-    const dl = $("recap");
-    dl.innerHTML = "";
-    rows.forEach(([k, v, step]) => {
-      const div = document.createElement("div");
-      const dt = document.createElement("dt"); dt.textContent = k;
-      const dd = document.createElement("dd");
-      const span = document.createElement("span"); span.textContent = v || "-";
-      const edit = document.createElement("button");
-      edit.type = "button"; edit.textContent = "Modifier";
-      edit.addEventListener("click", () => jumpToStep(step));
-      dd.append(span, edit);
-      div.append(dt, dd);
-      dl.append(div);
-    });
   }
 
   function initialsOf(name) {
@@ -384,65 +543,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function setText(id, text, fallback) {
     const el = $(id);
+    if (!el) return;
     const next = text || fallback;
     if (el.textContent !== next) { el.textContent = next; flash(el); }
     el.classList.toggle("placeholder", !text);
   }
-  function flash(el) { el.classList.remove("ink"); void el.offsetWidth; el.classList.add("ink"); }
+
+  function flash(el) { if (el) { el.classList.remove("ink"); void el.offsetWidth; el.classList.add("ink"); } }
 
   function updatePreview() {
     const d = collectAll();
     setText("previewNom", d.nomComplet, "Nom et prénom");
     setText("previewFonction", d.fonctionLabel, "Fonction");
+    
     const org = $("previewOrg");
-    org.hidden = !d.typeOrgLabel;
-    org.textContent = d.typeOrgLabel;
-    $("previewPays").textContent = [d.ville, d.pays].filter(Boolean).join(", ") || "Pays de résidence";
+    if (org) {
+      org.hidden = !d.typeOrgLabel;
+      org.textContent = d.typeOrgLabel;
+    }
+    
+    if ($("previewPays")) $("previewPays").textContent = [d.ville, d.pays].filter(Boolean).join(", ") || "Pays de résidence";
 
-    // Corrigé : #initials n'existe pas quand une photo est déjà enregistrée côté serveur
     const ini = $("initials");
     if (ini && !photoData) ini.textContent = initialsOf(d.nomComplet);
 
     const b = $("previewBadge");
-    b.className = "tag";
-    if (d.badge === "oui") { b.classList.add("status-oui"); b.textContent = "Badge OPERAPLUS" + (d.numBadge ? " · " + d.numBadge : ""); }
-    else if (d.badge === "encours") { b.classList.add("status-encours"); b.textContent = "Badge en cours"; }
-    else if (d.badge === "non") { b.textContent = "Sans badge"; }
-    else { b.textContent = "Badge OPERAPLUS"; }
+    if (b) {
+      b.className = "tag";
+      if (d.badge === "oui") { b.classList.add("status-oui"); b.textContent = "Badge OPERAPLUS" + (d.numBadge ? " · " + d.numBadge : ""); }
+      else if (d.badge === "encours") { b.classList.add("status-encours"); b.textContent = "Badge en cours"; }
+      else if (d.badge === "non") { b.textContent = "Sans badge"; }
+      else { b.textContent = "Badge OPERAPLUS"; }
+    }
 
     const dom = $("previewDomaines");
-    dom.innerHTML = "";
-    const list = [d.expertiseMain, ...d.domaines].filter(Boolean);
-    dom.hidden = list.length === 0;
-    list.slice(0, 4).forEach(t => { const s = document.createElement("span"); s.textContent = t; dom.append(s); });
-    if (list.length > 4) { const s = document.createElement("span"); s.textContent = "+" + (list.length - 4); dom.append(s); }
+    if (dom) {
+      dom.innerHTML = "";
+      const list = [d.expertiseMain, ...d.domaines].filter(Boolean);
+      dom.hidden = list.length === 0;
+      list.slice(0, 4).forEach(t => { const s = document.createElement("span"); s.textContent = t; dom.append(s); });
+      if (list.length > 4) { const s = document.createElement("span"); s.textContent = "+" + (list.length - 4); dom.append(s); }
+    }
 
     const bio = $("previewBio");
-    bio.textContent = d.bio || "Votre présentation apparaîtra ici : vos domaines d'expertise et votre rôle au sein du réseau panafricain.";
-    bio.classList.toggle("placeholder", !d.bio);
-    $("bioCount").textContent = d.bio.length;
+    if (bio) {
+      bio.textContent = d.bio || "Votre présentation apparaîtra ici : vos domaines d'expertise et votre rôle au sein du réseau panafricain.";
+      bio.classList.toggle("placeholder", !d.bio);
+    }
+    if ($("bioCount")) $("bioCount").textContent = d.bio ? d.bio.length : 0;
+    
     updateBadgeExtras(d);
   }
 
-  function previewImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      photoData = e.target.result;
-      $("avatar").innerHTML = "";
-      const img = document.createElement("img");
-      img.src = photoData; img.alt = "";
-      $("avatar").append(img);
-      updatePreview();
-    };
-    reader.readAsDataURL(file);
-  }
-
-  let lastSeed = null;
   function drawBarcode(seed) {
-    if (seed === lastSeed) return;
-    lastSeed = seed;
+    const barcodeElem = $("barcode");
+    if (!barcodeElem) return;
     let h = 2166136261;
     for (const c of (seed || "MEAL")) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
     h = h || 1;
@@ -454,8 +609,8 @@ document.addEventListener("DOMContentLoaded", () => {
       bars += `<rect x="${x}" y="0" width="${w}" height="28"/>`;
       x += w + gap;
     }
-    $("barcode").innerHTML = bars;
-    flash($("barcode"));
+    barcodeElem.innerHTML = bars;
+    flash(barcodeElem);
   }
 
   function completeness(d) {
@@ -477,7 +632,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = (t) => {
       const k = Math.min(1, (t - start) / 450);
       shownPct = Math.round(from + (target - from) * (1 - Math.pow(1 - k, 3)));
-      $("pct").textContent = shownPct + "%";
+      if ($("pct")) $("pct").textContent = shownPct + "%";
       if (k < 1) pctRaf = requestAnimationFrame(step);
     };
     pctRaf = requestAnimationFrame(step);
@@ -486,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateBadgeExtras(d) {
     drawBarcode((d.nomComplet + "|" + d.email).trim());
     const p = completeness(d);
-    $("meterBar").style.setProperty("--p", p + "%");
+    if ($("meterBar")) $("meterBar").style.setProperty("--p", p + "%");
     if (p !== shownPct) tweenPct(p);
   }
 
@@ -518,6 +673,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initScroll() {
     const bar = $("scrollProgress"), stepper = $("stepper");
+    if (!bar || !stepper) return;
     let ticking = false;
     const update = () => {
       ticking = false;
@@ -530,20 +686,32 @@ document.addEventListener("DOMContentLoaded", () => {
     update();
   }
 
+  // --- Initialisation au chargement du DOM ---
   document.addEventListener("DOMContentLoaded", () => {
+    const countrySelect = document.getElementById('pays');
+    const villeSelect = document.getElementById('ville');
+    if (countrySelect && countrySelect.value && villeSelect) {
+      const savedVille = villeSelect.getAttribute('data-saved-ville');
+      onPaysChange(savedVille || null);
+    }
+
     const form = $("mealForm");
-    form.addEventListener("input", (e) => {
-      updatePreview();
-      if (e.target.id && $("err-" + e.target.id)?.textContent) setError(e.target.id, "");
-    });
-    form.addEventListener("change", (e) => {
-      updatePreview();
-      const n = e.target.name;
-      if (n && $("err-" + n)?.textContent) setError(n, "");
-    });
+    if (form) {
+      form.addEventListener("input", (e) => {
+        updatePreview();
+        if (e.target.id && $("err-" + e.target.id)?.textContent) setError(e.target.id, "");
+      });
+      form.addEventListener("change", (e) => {
+        updatePreview();
+        const n = e.target.name;
+        if (n && $("err-" + n)?.textContent) setError(n, "");
+      });
+    }
+
     document.querySelectorAll("#stepper [data-goto]").forEach(b =>
       b.addEventListener("click", () => jumpToStep(Number(b.dataset.goto)))
     );
+
     updatePreview();
     updateUI();
     initBadgeTilt();

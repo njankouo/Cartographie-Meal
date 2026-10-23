@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title>Votre code de vérification MEAL Afrique</title>
+    <!--[if mso]>
+    <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+    <![endif]-->
+    <style>
+        body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table { border-collapse: collapse; mso-table-lspace: 0; mso-table-rspace: 0; }
+        img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+        a { color: #0B2A5B; }
+
+        /* Petits écrans : les cases du code et les marges se resserrent */
+        @media only screen and (max-width: 520px) {
+            .wrap { width: 100% !important; }
+            .px { padding-left: 22px !important; padding-right: 22px !important; }
+            .digit { width: 40px !important; height: 52px !important; font-size: 26px !important; line-height: 52px !important; }
+            .gap { width: 6px !important; }
+            .h1 { font-size: 24px !important; }
+        }
+
+        /* Mode sombre (Apple Mail, iOS, Outlook.com…) */
+        @media (prefers-color-scheme: dark) {
+            .bg-page { background-color: #040E1D !important; }
+            .bg-card { background-color: #0A1B3A !important; }
+            .t-main { color: #F1F5FC !important; }
+            .t-soft { color: #A9B8D6 !important; }
+            .note { background-color: #1B2A12 !important; border-color: #D4AF37 !important; }
+            .note-t { color: #F5E6A8 !important; }
+            .hr { border-top-color: #1F3A66 !important; }
+        }
+    </style>
+</head>
+<body class="bg-page" style="margin:0; padding:0; background-color:#EEF2F8;">
+
+    <!-- Texte d'aperçu (visible dans la liste des e-mails, invisible dans le message) -->
+    <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#EEF2F8; opacity:0;">
+        Votre code MEAL Afrique : {{ code_genere }}. Valable {{ validite_minutes|default:"5" }} minutes.
+        &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-page" bgcolor="#EEF2F8" style="background-color:#EEF2F8;">
+        <tr>
+            <td align="center" style="padding:32px 12px;">
+
+                <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px;">
+
+                    <!-- En-tête : logo + nom -->
+                    <tr>
+                        <td bgcolor="#06152B" style="background-color:#06152B; border-radius:10px 10px 0 0; border-bottom:4px solid #D4AF37; padding:22px 36px;" class="px">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td valign="middle" style="padding-right:14px;">
+                                        {% if logo_url %}
+                                        <img src="{{ logo_url }}" width="44" height="44" alt="MEAL Afrique" style="display:block; width:44px; height:44px; border-radius:8px; background-color:#FFFFFF;">
+                                        {% else %}
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                            <tr><td width="44" height="44" align="center" valign="middle" bgcolor="#0B2A5B" style="width:44px; height:44px; background-color:#0B2A5B; border:1px solid #D4AF37; border-radius:8px; font-family:Georgia,'Times New Roman',serif; font-size:18px; font-weight:bold; color:#D4AF37; line-height:44px;">MA</td></tr>
+                                        </table>
+                                        {% endif %}
+                                    </td>
+                                    <td valign="middle" style="font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:bold; color:#FFFFFF; letter-spacing:-0.2px;">
+                                        MEAL <span style="color:#E5C158;">Afrique</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Corps -->
+                    <tr>
+                        <td class="bg-card px" bgcolor="#FFFFFF" style="background-color:#FFFFFF; padding:40px 36px 12px; border-radius:0;">
+
+                            <h1 class="h1 t-main" style="margin:0 0 6px; font-family:Georgia,'Times New Roman',serif; font-size:28px; line-height:1.2; font-weight:bold; color:#06152B;">
+                                Bonjour {{ nom_personnel }},
+                            </h1>
+                            <p class="t-soft" style="margin:0 0 28px; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; color:#4B5A78;">
+                                Voici votre code de vérification pour accéder à votre espace :
+                            </p>
+
+                            <!-- Le code : une case par chiffre -->
+                            <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                                <tr>
+                                    {% for chiffre in code_genere %}
+                                    {% if not forloop.first %}<td class="gap" width="8" style="width:8px; font-size:0; line-height:0;">&nbsp;</td>{% endif %}
+                                    <td class="digit" width="48" height="62" align="center" valign="middle" bgcolor="#0B2A5B" style="width:48px; height:62px; background-color:#0B2A5B; border-bottom:4px solid #D4AF37; border-radius:6px; font-family:'Courier New',Courier,monospace; font-size:32px; line-height:62px; font-weight:bold; color:#E5C158;">{{ chiffre }}</td>
+                                    {% endfor %}
+                                </tr>
+                            </table>
+
+                            <!-- Version texte du code : copier-coller et lecteurs d'écran -->
+                            <p class="t-soft" style="margin:16px 0 0; text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.5; color:#6B7A99;">
+                                Pour le copier : <strong style="font-family:'Courier New',Courier,monospace; font-size:15px; letter-spacing:2px; color:#06152B;" class="t-main">{{ code_genere }}</strong>
+                            </p>
+
+                            <!-- Durée de validité -->
+                            <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:22px auto 0;">
+                                <tr>
+                                    <td bgcolor="#FFF6D6" style="background-color:#FFF6D6; border-radius:99px; padding:8px 18px; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.4; color:#5A4400;">
+                                        &#9201;&nbsp; Ce code est valide pendant <strong>{{ validite_minutes|default:"5" }} minutes</strong>.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Sécurité -->
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:30px 0 0;">
+                                <tr>
+                                    <td class="note" bgcolor="#F4F7FC" style="background-color:#F4F7FC; border-left:4px solid #D4AF37; padding:16px 18px;">
+                                        <p class="note-t t-main" style="margin:0 0 6px; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.5; font-weight:bold; color:#06152B;">
+                                            Ce code est strictement personnel.
+                                        </p>
+                                        <p class="note-t t-soft" style="margin:0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.6; color:#4B5A78;">
+                                            Ne le communiquez à personne. Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet e-mail.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+
+                    <!-- Pied -->
+                    <tr>
+                        <td class="bg-card px" bgcolor="#FFFFFF" style="background-color:#FFFFFF; padding:8px 36px 34px; border-radius:0 0 10px 10px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr><td class="hr" style="border-top:1px solid #E3E9F3; font-size:0; line-height:0; height:22px;">&nbsp;</td></tr>
+                                <tr>
+                                    <td class="t-soft" style="font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.6; color:#4B5A78;">
+                                        Cordialement,<br>
+                                        <strong class="t-main" style="color:#06152B;">L'équipe MealAfrique.</strong>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" class="t-soft" style="padding:20px 12px 0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.5; color:#7C8AA8;">
+                            &copy; MEAL Afrique
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

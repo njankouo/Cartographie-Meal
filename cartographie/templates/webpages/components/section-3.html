@@ -187,6 +187,79 @@
 }
 </style>
 
+<style>
+/* ═════════ Étape 3 · Mise en page en 6 blocs numérotés (AJOUT CSS UNIQUEMENT)
+   Aucune classe, aucun attribut, aucun id ni script n'est modifié : ces règles
+   s'appuient sur la structure existante pour aérer et guider la lecture. ═════════ */
+.step[data-step="3"]{counter-reset:blk}
+.step[data-step="3"] > .field,
+.step[data-step="3"] > .grid2 > .field{counter-increment:blk}
+
+/* Chaque bloc devient un panneau distinct, avec de l'air autour */
+.step[data-step="3"] > fieldset.field,
+.step[data-step="3"] > .field,
+.step[data-step="3"] > .grid2 > fieldset.field{
+  background:#fff;padding:clamp(18px,3vw,28px);border-radius:14px;
+  box-shadow:0 0 0 1px var(--s-line),0 22px 40px -34px rgba(13,43,92,.45)}
+.step[data-step="3"] > fieldset.field,
+.step[data-step="3"] > .field,
+.step[data-step="3"] > .grid2{margin-top:22px}
+.step[data-step="3"] > .grid2{gap:22px;align-items:start}
+.step[data-step="3"] > fieldset.actuel{background:var(--s-bg-alt)}       /* bloc calculé automatiquement : fond crème */
+.step[data-step="3"] .actuel-card{background:#fff}
+
+/* Le titre (legend) reste à l'intérieur du panneau au lieu de chevaucher son bord */
+.step[data-step="3"] fieldset.field > legend{float:left;width:100%;padding:0}
+.step[data-step="3"] fieldset.field > legend + *{clear:both}
+
+/* Titres : un numéro par bloc, qui se coche quand le bloc est renseigné */
+.step[data-step="3"] > .field > legend,
+.step[data-step="3"] > .field > label,
+.step[data-step="3"] > .grid2 > .field > legend{
+  font-size:1.08rem;font-weight:700;color:var(--s-navy);line-height:1.3;margin-bottom:16px}
+.step[data-step="3"] > .field > legend::before,
+.step[data-step="3"] > .field > label::before,
+.step[data-step="3"] > .grid2 > .field > legend::before{
+  content:counter(blk);display:inline-grid;place-items:center;width:28px;height:28px;margin-right:12px;border-radius:50%;
+  background:var(--s-navy-soft);color:var(--s-navy);font-size:.82rem;font-weight:700;vertical-align:middle;
+  transition:background-color .3s,color .3s}
+.step[data-step="3"] :is(
+  #expertiseMain:has(.profil-checkbox:checked),
+  #profilActuel:has(.lvl-scale li.is-current),
+  .field:has(input[name="domaines"]:checked),
+  .field:has(input[name="secteurs"]:checked),
+  .field:has(input[name="is_speeck_french"]:checked,input[name="is_speeck_english"]:checked,input[name="langues_autres"]:checked),
+  .field:has(textarea:not(:placeholder-shown))
+) > :is(legend,label)::before{content:"✓";background:var(--s-navy);color:#fff}
+
+/* Libellés anglais : plus discrets, alignés sous le titre, masqués sur mobile pour alléger */
+.step[data-step="3"] .field > legend .en-label,
+.step[data-step="3"] .field > label .en-label{padding-left:40px;margin-top:3px;font-size:.76rem;font-weight:400}
+@media(max-width:600px){
+  .step[data-step="3"] .field > legend .en-label,
+  .step[data-step="3"] .field > label .en-label{display:none}
+}
+
+/* Bloc 1 : consigne alignée avec le titre, cartes plus respirables */
+.step[data-step="3"] .profils-top{padding-left:40px;margin:0 0 18px}
+.step[data-step="3"] .profils-container{gap:12px}
+.step[data-step="3"] .profil-head{flex-wrap:wrap;padding:16px 18px;row-gap:8px}
+.step[data-step="3"] .profil-name{min-width:0;font-size:.95rem}
+.step[data-step="3"] .profil-lvl{margin-left:32px}
+.step[data-step="3"] .profil-details-body{margin:0 18px 18px 50px}
+@media(max-width:600px){.step[data-step="3"] .profils-top{padding-left:0}}
+
+/* Blocs 3 à 5 : pastilles plus aérées + rappel du nombre de choix en bas du bloc */
+.step[data-step="3"] .chips{gap:10px;counter-reset:picked}
+.step[data-step="3"] .chips .chip input:checked{counter-increment:picked}
+.step[data-step="3"] .chips .chip span{padding:9px 16px 9px 12px}
+.step[data-step="3"] fieldset:has(.chips input:checked) .chips + .error:empty{display:block;margin-top:14px;padding-top:12px;border-top:1px dashed var(--s-line);font-size:.8rem;font-weight:600;color:var(--s-navy)}
+.step[data-step="3"] fieldset:has(.chips input:checked) .chips + .error:empty::before{content:"Sélection : " counter(picked)}
+
+/* Bloc 6 : zone de texte */
+.step[data-step="3"] > .field textarea{min-height:110px}
+</style>
+
 <section class="step" data-step="3" hidden aria-labelledby="h3">
   <header class="step-head">
     <span class="num">Étape 3 sur 5</span>
@@ -207,46 +280,64 @@
     </div>
 
     <div class="profils-container">
-      {% for profil in profils %}
-        <div class="profil-card">
-          <label class="profil-head">
-            <input type="checkbox" name="profils" value="{{ profil.id }}" class="profil-checkbox"
-                   aria-controls="details_{{ profil.id }}" aria-expanded="false">
-            <span class="profil-box" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-            </span>
-            <span class="profil-name">{{ profil.intitule }}</span>
-            <span class="profil-lvl" hidden></span>
-            <svg class="profil-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-          </label>
+  {% for profil in profils %}
+    <div class="profil-card">
+      <label class="profil-head">
+        <input type="checkbox" name="profils" value="{{ profil.id }}" class="profil-checkbox"
+               aria-controls="details_{{ profil.id }}" aria-expanded="false" 
+               {% if profil.id in user_profil_ids %}checked{% endif %}>
+        <span class="profil-box" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </span>
+        <span class="profil-name">{{ profil.intitule }}</span>
+        <span class="profil-lvl" hidden></span>
+        <svg class="profil-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </label>
 
-          <div class="profil-details" id="details_{{ profil.id }}">
-            <div class="profil-details-in">
-              <div class="profil-details-body">
-                {% if profil.description %}
-                  <p class="profil-description">{{ profil.description }}</p>
-                {% endif %}
-                <div class="experience-field">
-                  <label for="exp_{{ profil.id }}">Années d'expérience sur ce profil</label>
-                  <div class="exp-stepper">
-                    <button type="button" data-step="-1" aria-label="Retirer une année" tabindex="-1">−</button>
-                    <input type="number" id="exp_{{ profil.id }}" name="experience_{{ profil.id }}"
-                           min="0" max="50" step="1" inputmode="numeric" placeholder="0"
-                           class="input-experience" disabled>
-                    <span class="exp-unit">ans</span>
-                    <button type="button" data-step="1" aria-label="Ajouter une année" tabindex="-1">+</button>
-                  </div>
-                </div>
+      <div class="profil-details" id="details_{{ profil.id }}">
+        <div class="profil-details-in">
+          <div class="profil-details-body">
+            {% if profil.description %}
+              <p class="profil-description">{{ profil.description }}</p>
+            {% endif %}
+            <div class="experience-field">
+              <label for="exp_{{ profil.id }}">Années d'expérience sur ce profil</label>
+              <div class="exp-stepper">
+                <button type="button" data-step="-1" aria-label="Retirer une année" tabindex="-1">−</button>
+                <input type="number" id="exp_{{ profil.id }}" name="experience_{{ profil.id }}"
+                       min="0" max="50" step="1" inputmode="numeric" placeholder="0"
+                       class="input-experience" {% if profil.id not in user_profil_ids %}disabled{% endif %}>
+                <span class="exp-unit">ans</span>
+                <button type="button" data-step="1" aria-label="Ajouter une année" tabindex="-1">+</button>
               </div>
             </div>
           </div>
         </div>
-      {% endfor %}
+      </div>
     </div>
+  {% endfor %}
+</div>
 
     <p class="error" id="err-expertiseMain" role="alert"></p>
   </fieldset>
-
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+        // Récupération sécurisée du dictionnaire d'expériences transmis par Django
+        const savedExperiences = JSON.parse('{{ user_profil_experiences_json|safe }}');
+        
+        // Remplissage automatique des inputs correspondants
+        for (const [profilId, years] of Object.entries(savedExperiences)) {
+            const input = document.getElementById(`exp_${profilId}`);
+            if (input) {
+                input.value = years;
+            }
+        }
+    } catch (e) {
+        console.error("Erreur lors du chargement des années d'expérience :", e);
+    }
+});
+</script>
   <!-- Profil actuel : niveau et années calculés à partir des cartes ci-dessus -->
   <fieldset class="field actuel" id="profilActuel" aria-describedby="err-profilActuel">
     <legend>
@@ -287,42 +378,210 @@
 
     <p class="error" id="err-profilActuel" role="alert"></p>
   </fieldset>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // ── 1. Éléments du DOM ──
+    const actuelEmpty = document.getElementById('actuelEmpty');
+    const actuelBody = document.getElementById('actuelBody');
+    const profilActuelSelect = document.getElementById('profil_actuel');
+    const actuelYearsB = document.getElementById('actuelYears');
+    const actuelLevelB = document.getElementById('actuelLevel');
+    const inputNiveauExpertise = document.getElementById('niveauExpertise');
+    const inputAnneesActuel = document.getElementById('anneesActuel');
+    const lvlScaleItems = document.querySelectorAll('#lvlScale li');
 
-  <fieldset class="field">
-    <legend>Domaines MEAL maîtrisés<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">select all that apply</span></legend>
-    <div class="chips" style="margin-top:6px">
-      {% for domaine_expertises in domaine_expertise %}
-        <label class="chip"><input type="checkbox" name="domaines" value="{{ domaine_expertises.id }}"><span>{{ domaine_expertises.intitule }}</span></label>
-      {% endfor %}
-    </div>
-    <p class="error" id="err-domaines" role="alert"></p>
-  </fieldset>
+    // Récupérer le profil actuel déjà enregistré en BDD (si transmis par Django via le template)
+    const savedCurrentProfilId = "{{ personnel.current_profil_id|default:'' }}";
+
+    // ── 2. Fonction de calcul du niveau d'expertise selon les années ──
+    function getExpertiseLevel(years) {
+        if (isNaN(years) || years === null || years === '') return { key: '', label: '—' };
+        const y = parseInt(years, 10);
+        if (y <= 2) return { key: 'junior', label: 'Junior' };
+        if (y <= 5) return { key: 'intermediaire', label: 'Intermédiaire' };
+        if (y <= 10) return { key: 'confirme', label: 'Confirmé' };
+        return { key: 'senior', label: 'Senior' };
+    }
+
+    // ── 3. Fonction de mise à jour du profil actuel et des statistiques ──
+    function updateProfilActuelSection() {
+        const checkedProfils = Array.from(document.querySelectorAll('input[name="profils"]:checked'));
+
+        // S'il n'y a aucun profil coché
+        if (checkedProfils.length === 0) {
+            actuelEmpty.hidden = false;
+            actuelBody.hidden = true;
+            profilActuelSelect.disabled = true;
+            profilActuelSelect.innerHTML = '';
+            resetStats();
+            return;
+        }
+
+        // Sinon, on affiche le bloc d'options
+        actuelEmpty.hidden = true;
+        actuelBody.hidden = false;
+        profilActuelSelect.disabled = false;
+
+        // Conserver la sélection en cours
+        const currentSelectedId = profilActuelSelect.value;
+        profilActuelSelect.innerHTML = '<option value="">-- Sélectionnez votre profil actuel --</option>';
+
+        checkedProfils.forEach(cb => {
+            const pId = cb.value;
+            // Récupère l'intitulé du profil dans l'élément HTML parent
+            const card = cb.closest('.profil-card') || cb.closest('.profil-head');
+            const nameEl = card ? card.querySelector('.profil-name') : null;
+            const profilName = nameEl ? nameEl.textContent.trim() : `Profil #${pId}`;
+
+            const opt = document.createElement('option');
+            opt.value = pId;
+            opt.textContent = profilName;
+            profilActuelSelect.appendChild(opt);
+        });
+
+        // Restaurer la valeur sélectionnée ou utiliser le profil enregistré en BDD
+        if (currentSelectedId && Array.from(profilActuelSelect.options).some(o => o.value === currentSelectedId)) {
+            profilActuelSelect.value = currentSelectedId;
+        } else if (savedCurrentProfilId && Array.from(profilActuelSelect.options).some(o => o.value === savedCurrentProfilId)) {
+            profilActuelSelect.value = savedCurrentProfilId;
+        } else if (checkedProfils.length === 1) {
+            // S'il n'y a qu'un seul profil coché, on le sélectionne par défaut
+            profilActuelSelect.value = checkedProfils[0].value;
+        }
+
+        // Recalculer les stats du profil sélectionné
+        syncStatsForSelectedProfil();
+    }
+
+    // ── 4. Synchronisation des années et du niveau d'expertise ──
+    function syncStatsForSelectedProfil() {
+        const selectedProfilId = profilActuelSelect.value;
+
+        if (!selectedProfilId) {
+            resetStats();
+            return;
+        }
+
+        // Récupère l'input d'expérience associé au profil sélectionné
+        const expInput = document.getElementById(`exp_${selectedProfilId}`);
+        const yearsVal = expInput && expInput.value !== '' ? parseInt(expInput.value, 10) : 0;
+
+        // Calcul du niveau
+        const level = getExpertiseLevel(yearsVal);
+
+        // Affichage textuel
+        actuelYearsB.textContent = `${yearsVal} ans`;
+        actuelLevelB.textContent = level.label;
+
+        // Remplissage des inputs masqués pour la soumission Django
+        inputAnneesActuel.value = yearsVal;
+        inputNiveauExpertise.value = level.key;
+
+        // Mise en valeur de l'échelle d'expérience (lvl-scale)
+        lvlScaleItems.forEach(li => {
+            if (li.getAttribute('data-lvl') === level.key) {
+                li.classList.add('active');
+            } else {
+                li.classList.remove('active');
+            }
+        });
+    }
+
+    function resetStats() {
+        actuelYearsB.textContent = '—';
+        actuelLevelB.textContent = '—';
+        inputAnneesActuel.value = '';
+        inputNiveauExpertise.value = '';
+        lvlScaleItems.forEach(li => li.classList.remove('active'));
+    }
+
+    // ── 5. Écouteurs d'événements (Event Listeners) ──
+
+    // Changement sur les checkboxes "profils"
+    document.addEventListener('change', (e) => {
+        if (e.target.matches('input[name="profils"]')) {
+            updateProfilActuelSection();
+        }
+    });
+
+    // Modification du select "Profil exercé actuellement"
+    profilActuelSelect.addEventListener('change', syncStatsForSelectedProfil);
+
+    // Changement sur les inputs d'années d'expérience
+    document.addEventListener('input', (e) => {
+        if (e.target.matches('input[name^="experience_"]')) {
+            const profilId = e.target.name.split('_')[1];
+            if (profilActuelSelect.value === profilId) {
+                syncStatsForSelectedProfil();
+            }
+        }
+    });
+
+    // ── 6. Initialisation au chargement de la page ──
+    updateProfilActuelSection();
+});
+</script>
+<fieldset class="field">
+  <legend>Domaines MEAL maîtrisés<span class="req" aria-hidden="true">*</span><span class="en-label" lang="en">select all that apply</span></legend>
+  <div class="chips" style="margin-top:6px">
+    {% for domaine in domaine_expertise %}
+      <label class="chip">
+        <input type="checkbox" name="domaines" value="{{ domaine.id }}" 
+               {% if domaine.id in user_domaine_ids %}checked{% endif %}>
+        <span>{{ domaine.intitule }}</span>
+      </label>
+    {% endfor %}
+  </div>
+  <p class="error" id="err-domaines" role="alert"></p>
+</fieldset>
      <div class="grid2">
-            <fieldset class="field">
-            <legend>Secteurs d'intervention<span class="en-label" lang="en">Sectors of intervention · select all that apply</span></legend>
-            <div class="chips" style="margin-top:6px">
-              {%for secteur in secteurs%}
-              <label class="chip"><input type="checkbox" name="secteurs" value="{{secteur.id}}"><span>{{secteur.intitule}}</span></label>
-              {%endfor%}
-            
-            </div>
-            <p class="error" id="err-secteurs" role="alert"></p>
-            </fieldset>
-            <fieldset class="field">
-            <legend>Langues de travail<span class="en-label" lang="en">languages</span></legend>
-            <div class="chips" style="margin-top:6px">
-              <label class="chip"><input type="checkbox" name="langues" value="Français"><span>Français</span></label>
-              <label class="chip"><input type="checkbox" name="langues" value="English"><span>English</span></label>
-              <label class="chip"><input type="checkbox" name="langues" value="Português"><span>Português</span></label>
-              <label class="chip"><input type="checkbox" name="langues" value="العربية"><span>العربية</span></label>
-            </div>
-            </fieldset>
+           <fieldset class="field">
+  <legend>Secteurs d'intervention<span class="en-label" lang="en">Sectors of intervention · select all that apply</span></legend>
+  <div class="chips" style="margin-top:6px">
+    {% for secteur in secteurs %}
+      <label class="chip">
+        <input type="checkbox" name="secteurs" value="{{ secteur.id }}" 
+               {% if secteur.id in user_secteur_ids %}checked{% endif %}>
+        <span>{{ secteur.intitule }}</span>
+      </label>
+    {% endfor %}
+  </div>
+  <p class="error" id="err-secteurs" role="alert"></p>
+</fieldset>
+           <fieldset class="field">
+  <legend>Langues de travail<span class="en-label" lang="en">languages</span></legend>
+  <div class="chips" style="margin-top:6px">
+    <label class="chip">
+      <input type="checkbox" name="is_speeck_french" value="true"
+             {% if personnel.is_speeck_french %}checked{% endif %}>
+      <span>Français</span>
+    </label>
+
+    <label class="chip">
+      <input type="checkbox" name="is_speeck_english" value="true"
+             {% if personnel.is_speeck_english %}checked{% endif %}>
+      <span>English</span>
+    </label>
+
+    <label class="chip">
+      <input type="checkbox" name="langues_autres" value="Português"
+             {% if "Português" in personnel.other_language %}checked{% endif %}>
+      <span>Português</span>
+    </label>
+
+    <label class="chip">
+      <input type="checkbox" name="langues_autres" value="العربية"
+             {% if "العربية" in personnel.other_language %}checked{% endif %}>
+      <span>العربية</span>
+    </label>
+  </div>
+</fieldset>
           </div>
  
 
   <div class="field">
     <label for="bio">Présentation courte<span class="en-label" lang="en">short bio</span></label>
-    <textarea id="bio" name="bio" maxlength="280" placeholder="En quelques phrases : votre parcours, vos thématiques, votre apport au réseau."></textarea>
+    <textarea id="bio" name="bio" maxlength="280" placeholder="En quelques phrases : votre parcours, vos thématiques, votre apport au réseau.">{{personnel.bio}}</textarea>
     <div class="counter" aria-live="off"><span id="bioCount">0</span> / 280</div>
   </div>
 </section>

@@ -1,23 +1,26 @@
-  <section class="step" data-step="4" hidden aria-labelledby="h4">
-          <header class="step-head">
-            <span class="num">Étape 4 sur 5</span>
-            <h2 id="h4">Outils digitaux MEAL maîtrisés</h2>
-            <p class="en" lang="en">Digital MEAL tools you master</p>
-            <p class="lead">Cochez les outils que vous utilisez dans votre travail.</p>
-          </header>
+<section class="step" data-step="4" hidden aria-labelledby="h4">
+  <header class="step-head">
+    <span class="num">Étape 4 sur 5</span>
+    <h2 id="h4">Outils digitaux MEAL maîtrisés</h2>
+    <p class="en" lang="en">Digital MEAL tools you master</p>
+    <p class="lead">Cochez les outils que vous utilisez dans votre travail.</p>
+  </header>
 
-          <fieldset class="field">
-            <legend class="visually-hidden">Outils</legend>
-            <div class="chips">
-              {%for outil in outils%}
-              <label class="chip"><input type="checkbox" name="outils" value="{{outil.id}}"><span>{{outil.intitule}}</span></label>
-              {%endfor%}
-             
-            </div>
-          </fieldset>
+  <fieldset class="field">
+    <legend class="visually-hidden">Outils</legend>
+    <div class="chips">
+      {% for outil in outils %}
+        <label class="chip">
+          <input type="checkbox" name="outils" value="{{ outil.id }}" 
+                 {% if outil.id in user_outil_ids %}checked{% endif %}>
+          <span>{{ outil.intitule }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
 
-          <div class="field">
-            <label for="autresOutils">Autres outils<span class="en-label" lang="en">other tools</span></label>
-            <input type="text" id="autresOutils" placeholder="Séparez par des virgules">
-          </div>
-        </section>
+  <div class="field">
+    <label for="autresOutils">Autres outils<span class="en-label" lang="en">other tools</span></label>
+    <input type="text" id="autresOutils" name="autres_outils" placeholder="Séparez par des virgules">
+  </div>
+</section>

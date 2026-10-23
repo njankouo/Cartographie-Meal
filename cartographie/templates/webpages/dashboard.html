@@ -1,10 +1,10 @@
-{% load static %}<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>{% if edition %}Modifier une actualité{% else %}Actualités et débats{% endif %} · Espace admin MEAL Afrique</title>
+<title>Synchronisations · Espace admin MEAL Afrique</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -295,8 +295,65 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
+<style>
+/* ═════════ Ajout : menus de la barre admin (Communication, Données) ═════════ */
+.ab-menus{display:flex;align-items:center;gap:2px;margin-right:6px}
+.ab-top.is-current,.ab-top[aria-current]{background:rgba(255,255,255,.1);color:#fff}
+.ab-menu{position:relative}
+.ab-menu > summary{list-style:none;cursor:pointer}
+.ab-menu > summary::-webkit-details-marker{display:none}
+.ab-menu .chev{width:7px;height:7px;margin-left:2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translate(-2px,-2px);transition:transform .2s}
+.ab-menu[open] .chev{transform:rotate(-135deg) translate(-2px,-2px)}
+.ab-menu[open] > summary{background:rgba(255,255,255,.1);color:#fff}
+.ab-badge{min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--err);color:#fff;font-family:var(--mono);font-size:10.5px;font-weight:700;display:inline-grid;place-items:center}
+.ab-panel{position:absolute;left:0;top:calc(100% + 8px);z-index:70;min-width:290px;padding:8px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 28px 50px -24px rgba(8,28,61,.55);animation:slide .2s var(--ease) both}
+.ab-item{display:flex;align-items:flex-start;gap:12px;padding:11px 12px;border-radius:8px;transition:background .15s}
+.ab-item:hover,.ab-item:focus-visible{background:var(--navy-soft)}
+.ab-item svg{width:18px;height:18px;flex:none;margin-top:2px;color:var(--navy)}
+.ab-item b{display:block;font-size:14px;color:var(--ink)}
+.ab-item small{display:block;font-size:12.5px;color:var(--muted);line-height:1.35;margin-top:1px}
+.ab-item[aria-current]{background:var(--gold-soft)}
+@media(max-width:900px){.ab-menu .ab-panel{position:fixed;left:12px;right:12px;top:64px;min-width:0}}
+@media(max-width:640px){.ab-menu .chev{display:none}.ab-link span{display:none}.ab-brand > span:last-child{display:none}.ab-menus{margin-right:0;flex:none}.ab-right{gap:2px}.ab-user{display:none}}
+</style>
+<style>
+/* ═════════ Page : statuts de synchronisation ═════════ */
+.sy-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));margin-bottom:34px}
+.src{padding:20px 22px;border-left:5px solid var(--line);display:flex;flex-direction:column;gap:12px;transition:box-shadow .2s,transform .2s}
+.src:hover{box-shadow:0 18px 34px -24px rgba(8,28,61,.5);transform:translateY(-2px)}
+.src.s-ok{border-left-color:var(--ok)}.src.s-cours{border-left-color:var(--navy)}.src.s-attente{border-left-color:var(--gold)}.src.s-erreur{border-left-color:var(--err)}
+.src[hidden]{display:none}
+.src-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.src h3{font-size:17px;line-height:1.25}.src small{color:var(--muted)}
+.src dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px;margin:0}
+.src dt{color:var(--muted)}.src dd{margin:0;font-family:var(--mono);font-size:12.5px;text-align:right}
+.src .err{padding:9px 12px;border-radius:8px;background:var(--err-soft);color:var(--err);font-size:12.5px;font-family:var(--mono);word-break:break-word}
+.src form{margin-top:auto}
+.src .btn{min-height:40px;width:100%}
+.dot2{width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block}
+.s-cours .dot2{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25;transform:scale(.7)}}
+.st{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:11.5px;font-weight:700;border:1px solid;white-space:nowrap}
+.st-ok{color:var(--ok);background:var(--ok-soft);border-color:#B8DCC8}
+.st-cours{color:var(--navy);background:var(--navy-soft);border-color:#C5D2E6}
+.st-attente{color:var(--gold-txt);background:var(--gold-soft);border-color:#E3D3A0}
+.st-erreur{color:var(--err);background:var(--err-soft);border-color:#EBC4BC}
+.sy-tools{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sy-auto{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.hist{width:100%;border-collapse:collapse;font-size:14px}
+.hist th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line)}
+.hist td{padding:13px 16px;border-bottom:1px solid var(--line-2)}
+.hist tr:last-child td{border-bottom:0}
+.hist tr[hidden]{display:none}
+.tw{overflow-x:auto}
+.stats.sy{grid-template-columns:repeat(2,1fr)}@media(min-width:760px){.stats.sy{grid-template-columns:repeat(4,1fr)}}
+.stat.is-err b{color:var(--err)}
+@media(max-width:640px){.hist th:nth-child(4),.hist td:nth-child(4){display:none}}
+@media(prefers-reduced-motion:reduce){.s-cours .dot2{animation:none}.src{transition:none}}
+</style>
 </head>
 <body>
+
 
 <!-- ═════════ BARRE ADMIN ═════════ -->
 <header class="adminbar">
@@ -306,17 +363,36 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
       <span><b>MEAL Afrique</b><small>Espace admin</small></span>
     </a>
     <nav class="ab-right" aria-label="Navigation admin">
+
+      <div class="ab-menus">
+        <a class="ab-link ab-top" href="/actualite/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Actualités</span></a>
+        <details class="ab-menu">
+          <summary class="ab-link ab-top" title="Communication"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg><span>Communication</span><i class="chev" aria-hidden="true"></i></summary>
+          <div class="ab-panel">
+            <a class="ab-item" href="/send-mail/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg><span><b>Envoyer un mail groupé</b><small>Écrire à tout ou partie des membres.</small></span></a>
+            <a class="ab-item" href="/m/#envois"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><span><b>Historique des envois</b><small>Envois passés, programmés et en échec.</small></span></a>
+          </div>
+        </details>
+        <details class="ab-menu">
+          <summary class="ab-link ab-top is-current" title="Données"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5M3 12a9 9 0 0 0 15 6.7L21 16"/><path d="M16 16h5v5"/></svg><span>Données</span><b class="ab-badge" title="Synchronisations en échec">2</b><i class="chev" aria-hidden="true"></i></summary>
+          <div class="ab-panel">
+            <a class="ab-item" href="/s/" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5M3 12a9 9 0 0 0 15 6.7L21 16"/><path d="M16 16h5v5"/></svg><span><b>Statuts de synchronisation</b><small>État de chaque source de données.</small></span></a>
+            <a class="ab-item" href="/s/#journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span><b>Journal des synchronisations</b><small>Dernières exécutions et erreurs.</small></span></a>
+          </div>
+        </details>
+      </div>
       <a class="ab-link" href="/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>Voir le journal</span>
       </a>
-      <a class="ab-link" href="{% url 'admin:index' %}">
+      <a class="ab-link" href="/adm/">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
         <span>Admin Django</span>
       </a>
-      <span class="ab-user"><i aria-hidden="true">{{ request.user.get_username|slice:":1"|upper }}</i>{{ request.user.get_full_name|default:request.user.get_username }}</span>
-      <form method="post" action="{% url 'admin:logout' %}">
-        {% csrf_token %}
+      <span class="ab-user"><i aria-hidden="true">A</i>{{request.user.first_name}}.</span>
+      <form method="post" action="/logout_admin/">
+        
         <button type="submit" class="ab-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
           <span>Déconnexion</span>
@@ -325,489 +401,162 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
     </nav>
   </div>
 </header>
-
 <main class="wrap">
-
-  <!-- ═════════ EN-TÊTE ═════════ -->
   <div class="page-head">
     <div>
-      <span class="kicker">Contenus éditoriaux</span>
-      <h1>Actualités et débats</h1>
-      <p>Ajoutez un débat, une dépêche, un événement ou une ligne du fil d'actualité. Ce que vous publiez ici apparaît sur le journal MEAL Afrique.</p>
+      <span class="kicker">Données</span>
+      <h1>Statuts de synchronisation</h1>
+      <p>État de chaque source de données du journal et des espaces membres. Relancez une synchronisation en échec depuis sa carte.</p>
     </div>
-    <a href="#liste" class="btn btn-line">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-      Voir les {{ stats.total }} contenus
-    </a>
-  </div>
-
-  {% if messages %}
-  <div class="msgs" role="status">
-    {% for message in messages %}
-    <div class="msg msg-{{ message.tags|default:'info' }}">
-      {% if message.tags == 'error' %}
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-      {% else %}
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
-      {% endif %}
-      <span>{{ message }}</span>
-      <button type="button" aria-label="Fermer le message" onclick="this.parentNode.remove()">✕</button>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  <!-- ═════════ INDICATEURS ═════════ -->
-  <div class="stats">
-    <div class="stat"><b>{{ stats.total }}</b><span>contenus au total</span></div>
-    <div class="stat is-live"><b>{{ stats.publiees }}</b><span>publiés sur le journal</span></div>
-    <div class="stat is-draft"><b>{{ stats.brouillons }}</b><span>brouillons non visibles</span></div>
-    <div class="stat"><b>{{ stats.debats }}</b><span>débats en cours</span></div>
-  </div>
-
-  <!-- ═════════ ÉDITEUR + APERÇU ═════════ -->
-  <div class="editor">
-    <form method="post" enctype="multipart/form-data" novalidate
-          action=""
-          class="card form-card{% if edition %} is-edit{% endif %}" id="formulaire">
-      {% csrf_token %}
-
-      <div class="fc-head">
-        <h2>
-          {% if edition %}<small>Modification</small>{{ edition.titre_fr }}{% else %}<small>Nouveau contenu</small>Ajouter une actualité{% endif %}
-        </h2>
-        {% if edition %}<a href="{% url 'admin-actualites' %}">Annuler la modification</a>{% endif %}
-      </div>
-
-      {% if form.non_field_errors %}
-      <div class="step"><p class="err-txt">{{ form.non_field_errors.0 }}</p></div>
-      {% endif %}
-
-      <!-- 1. Type -->
-      <fieldset class="step">
-        <legend class="step-title"><i>1</i><span><h3>Type de contenu</h3><p>Il détermine où et comment le contenu apparaît sur le journal.</p></span></legend>
-        <div class="types">
-          {% for radio in form.type %}
-          <label class="type-opt">
-            {{ radio.tag }}
-            <span class="box">
-              {% if radio.data.value == 'debat' %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Grand bloc « À la une »</small>
-              {% elif radio.data.value == 'depeche' %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Liste « Dernières dépêches »</small>
-              {% elif radio.data.value == 'agenda' %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Encadré agenda, avec date</small>
-              {% else %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Une ligne dans le bandeau</small>
-              {% endif %}
-            </span>
-          </label>
-          {% endfor %}
-        </div>
-        {% if form.type.errors %}<p class="err-txt" style="margin-top:10px">{{ form.type.errors.0 }}</p>{% endif %}
-
-        <!-- Champs propres au débat -->
-        <div class="cond" data-for="debat" hidden>
-          <p class="cond-title">Détails du débat</p>
-          <div class="grid2">
-            <div class="f{% if form.numero.errors %} has-err{% endif %}">
-              <label for="{{ form.numero.id_for_label }}"><span>Numéro du débat<span class="req" aria-hidden="true">*</span></span></label>
-              {{ form.numero }}
-              {% if form.numero.errors %}<p class="err-txt">{{ form.numero.errors.0 }}</p>{% endif %}
-            </div>
-            <div class="f{% if form.statut.errors %} has-err{% endif %}">
-              <label for="{{ form.statut.id_for_label }}">Statut</label>
-              {{ form.statut }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Champs propres à l'événement -->
-        <div class="cond" data-for="agenda" hidden>
-          <p class="cond-title">Détails de l'événement</p>
-          <div class="grid2">
-            <div class="f{% if form.date_evenement.errors %} has-err{% endif %}">
-              <label for="{{ form.date_evenement.id_for_label }}"><span>Date<span class="req" aria-hidden="true">*</span></span></label>
-              {{ form.date_evenement }}
-              {% if form.date_evenement.errors %}<p class="err-txt">{{ form.date_evenement.errors.0 }}</p>{% endif %}
-            </div>
-            <div class="f">
-              <label for="{{ form.lieu.id_for_label }}">Lieu <em>facultatif</em></label>
-              {{ form.lieu }}
-            </div>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- 2. Contenu -->
-      <div class="step">
-        <div class="step-title"><i>2</i><span><h3>Contenu</h3><p>Le journal est bilingue : la version anglaise est facultative mais recommandée.</p></span></div>
-
-        <div class="tabs" role="tablist" aria-label="Langue du contenu">
-          <button type="button" class="tab" role="tab" id="tab-fr" aria-controls="panel-fr" aria-selected="true">Français</button>
-          <button type="button" class="tab" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false">English <span class="opt">facultatif</span><span class="dot" id="enErr" {% if not form.titre_en.errors and not form.resume_en.errors %}hidden{% endif %}></span></button>
-        </div>
-
-        <div class="panel" id="panel-fr" role="tabpanel" aria-labelledby="tab-fr">
-          <div class="f{% if form.titre_fr.errors %} has-err{% endif %}">
-            <label for="{{ form.titre_fr.id_for_label }}"><span>Titre<span class="req" aria-hidden="true">*</span></span> <span class="count" data-count-for="{{ form.titre_fr.id_for_label }}"></span></label>
-            {{ form.titre_fr }}
-            {% if form.titre_fr.errors %}<p class="err-txt">{{ form.titre_fr.errors.0 }}</p>{% endif %}
-          </div>
-          <div class="f{% if form.resume_fr.errors %} has-err{% endif %}">
-            <label for="{{ form.resume_fr.id_for_label }}">Résumé <span class="count" data-count-for="{{ form.resume_fr.id_for_label }}"></span></label>
-            {{ form.resume_fr }}
-            {% if form.resume_fr.errors %}<p class="err-txt">{{ form.resume_fr.errors.0 }}</p>{% endif %}
-          </div>
-        </div>
-
-        <div class="panel" id="panel-en" role="tabpanel" aria-labelledby="tab-en" hidden>
-          <div class="f{% if form.titre_en.errors %} has-err{% endif %}">
-            <label for="{{ form.titre_en.id_for_label }}">Title <span class="count" data-count-for="{{ form.titre_en.id_for_label }}"></span></label>
-            {{ form.titre_en }}
-            {% if form.titre_en.errors %}<p class="err-txt">{{ form.titre_en.errors.0 }}</p>{% endif %}
-          </div>
-          <div class="f{% if form.resume_en.errors %} has-err{% endif %}">
-            <label for="{{ form.resume_en.id_for_label }}">Summary <span class="count" data-count-for="{{ form.resume_en.id_for_label }}"></span></label>
-            {{ form.resume_en }}
-            {% if form.resume_en.errors %}<p class="err-txt">{{ form.resume_en.errors.0 }}</p>{% endif %}
-          </div>
-        </div>
-
-        <div class="grid2" style="margin-top:16px">
-          <div class="f{% if form.lien.errors %} has-err{% endif %}">
-            <label for="{{ form.lien.id_for_label }}">Lien <em>facultatif</em></label>
-            {{ form.lien }}
-            {% if form.lien.errors %}<p class="err-txt">{{ form.lien.errors.0 }}</p>{% else %}<span class="help">Page du débat, article, inscription…</span>{% endif %}
-          </div>
-          <div class="f{% if form.image.errors %} has-err{% endif %}">
-            <span class="lab">Image <em>facultative</em></span>
-            <label class="file" for="{{ form.image.id_for_label }}">
-              <span class="thumb" id="imgThumb" {% if edition and edition.image %}style="background-image:url('{{ edition.image.url }}')"{% endif %}>
-                {% if not edition or not edition.image %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>{% endif %}
-              </span>
-              <span class="meta"><b id="imgName">{% if edition and edition.image %}{{ edition.image.name|cut:"actualites/" }}{% else %}Choisir une image{% endif %}</b>JPG ou PNG, format paysage conseillé</span>
-            </label>
-            <input type="file" name="image" id="{{ form.image.id_for_label }}" accept="image/*" class="sr">
-            {% if edition and edition.image %}
-            <label class="file-current"><input type="checkbox" name="image-clear" id="image-clear_id"> Retirer l'image actuelle</label>
-            {% endif %}
-            {% if form.image.errors %}<p class="err-txt">{{ form.image.errors.0 }}</p>{% endif %}
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. Diffusion -->
-      <div class="step">
-        <div class="step-title"><i>3</i><span><h3>Diffusion</h3><p>Choisissez où et quand le contenu est visible.</p></span></div>
-        <div class="switches">
-          <label class="sw">
-            {{ form.publie }}<span class="track" aria-hidden="true"></span>
-            <span><b>Publier sur le journal</b><small>Désactivé, le contenu reste en brouillon, visible ici seulement.</small></span>
-          </label>
-          <label class="sw{% if form.a_la_une.errors %} has-err{% endif %}">
-            {{ form.a_la_une }}<span class="track" aria-hidden="true"></span>
-            <span><b>Mettre à la une</b><small>Remplace le contenu actuellement à la une. Un seul à la fois.</small>
-            {% if form.a_la_une.errors %}<span class="err-txt" style="margin-top:6px">{{ form.a_la_une.errors.0 }}</span>{% endif %}</span>
-          </label>
-          <label class="sw">
-            {{ form.dans_le_fil }}<span class="track" aria-hidden="true"></span>
-            <span><b>Afficher dans le fil défilant</b><small>Le titre défile dans le bandeau « En direct » en haut du journal.</small></span>
-          </label>
-        </div>
-
-        <details class="adv"{% if form.etiquette.errors or form.date_publication.errors %} open{% endif %}>
-          <summary>Options avancées</summary>
-          <div class="grid2">
-            <div class="f{% if form.etiquette.errors %} has-err{% endif %}">
-              <label for="{{ form.etiquette.id_for_label }}">Étiquette du fil</label>
-              {{ form.etiquette }}
-              <span class="help">Ex. DÉBAT N°13. Générée si vide.</span>
-            </div>
-            <div class="f{% if form.date_publication.errors %} has-err{% endif %}">
-              <label for="{{ form.date_publication.id_for_label }}">Date de publication</label>
-              {{ form.date_publication }}
-              {% if form.date_publication.errors %}<p class="err-txt">{{ form.date_publication.errors.0 }}</p>{% else %}<span class="help">Sert à l'ordre d'affichage.</span>{% endif %}
-            </div>
-          </div>
-        </details>
-      </div>
-
-      <div class="fc-foot">
-        <p id="submitHint">Le contenu sera visible immédiatement sur le journal.</p>
-        <button type="submit" class="btn btn-navy" id="submitBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
-          <span id="submitLabel">{% if edition %}Enregistrer les modifications{% else %}Publier{% endif %}</span>
-        </button>
-      </div>
+    <form method="post" action="">
+      <button class="btn btn-navy" type="submit"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/></svg>Tout synchroniser</button>
     </form>
-
-    <!-- Aperçu -->
-    <aside class="card preview" aria-labelledby="pv-title">
-      <div class="pv-head"><h2 id="pv-title">Aperçu sur le journal</h2><span class="pv-live">En direct</span></div>
-      <div class="pv-body">
-        <div>
-          <p class="pv-label">Fil défilant</p>
-          <div class="pv-ticker" id="pvTicker"><span>● EN DIRECT</span><span><b id="pvEtq">[DÉPÊCHE]</b><span id="pvTickTitle">Votre titre apparaîtra ici</span></span></div>
-        </div>
-        <div>
-          <p class="pv-label" id="pvPlace">Liste « Dernières dépêches »</p>
-          <div class="pv-card t-depeche" id="pvCard">
-            <div class="pv-img" id="pvImg" hidden></div>
-            <div class="pv-in">
-              <span class="pv-tag" id="pvTag">Dépêche</span>
-              <p class="pv-meta" id="pvMeta"></p>
-              <h3 class="pv-title" id="pvTitle">Votre titre apparaîtra ici</h3>
-              <p class="pv-text" id="pvText"></p>
-              <span class="pv-link" id="pvLink" hidden>En savoir plus →</span>
-            </div>
-          </div>
-        </div>
-        <div class="pv-state">
-          <span class="pill pill-live" id="pvLive">Publié</span>
-          <span class="pill pill-draft" id="pvDraft" hidden>Brouillon</span>
-          <span class="pill pill-une" id="pvUne" hidden>À la une</span>
-        </div>
-      </div>
-    </aside>
   </div>
 
-  <!-- ═════════ LISTE ═════════ -->
-  <section id="liste" aria-labelledby="liste-title">
-    <div class="list-head">
-      <h2 id="liste-title">Contenus publiés et brouillons</h2>
-      {% if actualites %}
-      <div class="tools">
-        <label class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <span class="sr">Rechercher</span>
-          <input type="search" id="search" placeholder="Rechercher un titre…">
-        </label>
-        <div class="chips" role="group" aria-label="Filtrer par type">
-          <button type="button" class="chip" data-filter="all" aria-pressed="true">Tous <b data-n="all"></b></button>
-          {% for value, label in types %}
-          <button type="button" class="chip" data-filter="{{ value }}" aria-pressed="false">{{ label }} <b data-n="{{ value }}"></b></button>
-          {% endfor %}
-          <button type="button" class="chip" data-filter="draft" aria-pressed="false">Brouillons <b data-n="draft"></b></button>
-        </div>
-      </div>
-      {% endif %}
-    </div>
+  
 
-    {% if actualites %}
-    <div class="rows" id="rows">
-      {% for a in actualites %}
-      <article class="row t-{{ a.type }}{% if not a.publie %} is-draft{% endif %}" id="ligne-{{ a.pk }}"
-               data-type="{{ a.type }}" data-draft="{% if a.publie %}0{% else %}1{% endif %}"
-               data-search="{{ a.titre_fr|lower }} {{ a.titre_en|lower }} {{ a.etiquette|lower }}">
-        <div>
-          <div class="r-top">
-            <span class="r-type">{{ a.get_type_display }}</span>
-            <span class="r-etq">[{{ a.etiquette }}]</span>
-            {% if a.type == 'debat' %}<span class="pill {% if a.statut == 'cloture' %}pill-draft{% else %}pill-live{% endif %}">{{ a.get_statut_display }}</span>{% endif %}
-          </div>
-          <h3 class="r-title">{{ a.titre_fr }}</h3>
-          <div class="r-sub">
-            <span>{% if a.publie %}Publié le{% else %}Créé le{% endif %} {{ a.date_publication|date:"d/m/Y à H:i" }}</span>
-            {% if a.type == 'agenda' and a.date_evenement %}<span>Événement : {{ a.date_evenement|date:"d/m/Y" }}{% if a.lieu %} · {{ a.lieu }}{% endif %}</span>{% endif %}
-            {% if a.auteur %}<span>Par {{ a.auteur.get_full_name|default:a.auteur.get_username }}</span>{% endif %}
-            {% if a.titre_en %}<span class="en" title="Version anglaise disponible">EN</span>{% endif %}
-          </div>
-        </div>
-        <div class="r-state">
-          {% if a.publie %}<span class="pill pill-live">Publié</span>{% else %}<span class="pill pill-draft">Brouillon</span>{% endif %}
-          {% if a.a_la_une %}<span class="pill pill-une">À la une</span>{% endif %}
-        </div>
-        <div class="r-actions">
-          <form method="post" action="{% url 'admin-actualite-basculer' a.pk %}">
-            {% csrf_token %}<input type="hidden" name="champ" value="a_la_une">
-            <button type="submit" class="ic{% if a.a_la_une %} is-on{% endif %}" data-tip="{% if a.a_la_une %}Retirer de la une{% else %}Mettre à la une{% endif %}" aria-label="{% if a.a_la_une %}Retirer de la une{% else %}Mettre à la une{% endif %} : {{ a.titre_fr }}">
-              <svg viewBox="0 0 24 24" fill="{% if a.a_la_une %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
-            </button>
-          </form>
-          <form method="post" action="{% url 'admin-actualite-basculer' a.pk %}">
-            {% csrf_token %}<input type="hidden" name="champ" value="publie">
-            <button type="submit" class="ic" data-tip="{% if a.publie %}Repasser en brouillon{% else %}Publier{% endif %}" aria-label="{% if a.publie %}Repasser en brouillon{% else %}Publier{% endif %} : {{ a.titre_fr }}">
-              {% if a.publie %}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.9 17.9A10 10 0 0 1 12 19c-6.5 0-10-7-10-7a18 18 0 0 1 5.1-5.9M9.9 4.2A9 9 0 0 1 12 4c6.5 0 10 7 10 7a18 18 0 0 1-2.2 3.2M1 1l22 22"/></svg>
-              {% else %}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-              {% endif %}
-            </button>
-          </form>
-          <a class="ic" href="?modifier={{ a.pk }}#formulaire" data-tip="Modifier" aria-label="Modifier : {{ a.titre_fr }}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-          </a>
-          <button type="button" class="ic danger" data-tip="Supprimer" aria-label="Supprimer : {{ a.titre_fr }}"
-                  data-delete-url="{% url 'admin-actualite-supprimer' a.pk %}" data-delete-title="{{ a.titre_fr }}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
-          </button>
-        </div>
-      </article>
-      {% endfor %}
+  <div class="stats sy" id="syStats">
+    <div class="stat"><b data-k="total">4</b><span>sources suivies</span></div>
+    <div class="stat is-live"><b data-k="ok">0</b><span>à jour</span></div>
+    <div class="stat"><b data-k="cours">0</b><span>en cours ou en attente</span></div>
+    <div class="stat is-err"><b data-k="erreur">0</b><span>en échec</span></div>
+  </div>
+
+  <div class="sy-tools">
+    <div class="chips" role="group" aria-label="Filtrer par statut">
+      <button type="button" class="chip" data-f="all" aria-pressed="true">Toutes</button>
+      <button type="button" class="chip" data-f="erreur" aria-pressed="false">En échec</button>
+      <button type="button" class="chip" data-f="cours" aria-pressed="false">En cours</button>
+      <button type="button" class="chip" data-f="ok" aria-pressed="false">À jour</button>
     </div>
-    <p class="no-result" id="noResult">Aucun contenu ne correspond à votre recherche.</p>
-    {% else %}
-    <div class="empty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-      <h3>Aucune actualité pour l'instant</h3>
-      <p>Commencez par annoncer le débat en cours : il apparaîtra en grand sur la page d'accueil du journal.</p>
-      <a href="#formulaire" class="btn btn-gold">Ajouter la première actualité</a>
+    <label class="sy-auto"><input type="checkbox" id="syAuto"> Actualiser toutes les 30 s</label>
+  </div>
+
+  <div class="sy-grid" id="syGrid">
+    
+    <article class="card src s-ok" data-s="ok">
+      <div class="src-top">
+        <div><h3>Annuaire des experts</h3><small>Profils et expertises</small></div>
+        <span class="st st-ok"><i class="dot2"></i>ok</span>
+      </div>
+      <dl>
+        <dt>Dernière synchro</dt><dd><time datetime="2026-10-19T09:30:00">19/10/2026 09:30</time></dd>
+        <dt>Enregistrements</dt><dd>214</dd>
+        <dt>Durée</dt><dd>12 s</dd>
+        <dt>Prochaine</dt><dd>19/10/2026 09:30</dd>
+      </dl>
+      
+      <form method="post" action="">
+        <button type="submit" class="btn btn-line">Synchroniser maintenant</button>
+      </form>
+    </article>
+    
+    <article class="card src s-erreur" data-s="erreur">
+      <div class="src-top">
+        <div><h3>Adhésions</h3><small>Membres et paiements</small></div>
+        <span class="st st-erreur"><i class="dot2"></i>erreur</span>
+      </div>
+      <dl>
+        <dt>Dernière synchro</dt><dd><time datetime="2026-10-19T09:30:00">19/10/2026 09:30</time></dd>
+        <dt>Enregistrements</dt><dd>0</dd>
+        <dt>Durée</dt><dd>3 s</dd>
+        <dt>Prochaine</dt><dd>—</dd>
+      </dl>
+      <div class="err" role="alert">ConnectionTimeout: api.partenaire.org:443</div>
+      <form method="post" action="">
+        <button type="submit" class="btn btn-gold">Relancer</button>
+      </form>
+    </article>
+    
+    <article class="card src s-cours" data-s="cours">
+      <div class="src-top">
+        <div><h3>Journal</h3><small>Actualités publiées</small></div>
+        <span class="st st-cours"><i class="dot2"></i>cours</span>
+      </div>
+      <dl>
+        <dt>Dernière synchro</dt><dd><time datetime="2026-10-19T09:30:00">19/10/2026 09:30</time></dd>
+        <dt>Enregistrements</dt><dd>0</dd>
+        <dt>Durée</dt><dd>—</dd>
+        <dt>Prochaine</dt><dd>—</dd>
+      </dl>
+      
+      <form method="post" action="">
+        <button type="submit" class="btn btn-line" disabled>Synchroniser maintenant</button>
+      </form>
+    </article>
+    
+    <article class="card src s-attente" data-s="attente">
+      <div class="src-top">
+        <div><h3>Statistiques</h3><small>Genre, pays</small></div>
+        <span class="st st-attente"><i class="dot2"></i>attente</span>
+      </div>
+      <dl>
+        <dt>Dernière synchro</dt><dd><time datetime="2026-10-19T09:30:00">19/10/2026 09:30</time></dd>
+        <dt>Enregistrements</dt><dd>1248</dd>
+        <dt>Durée</dt><dd>—</dd>
+        <dt>Prochaine</dt><dd>—</dd>
+      </dl>
+      
+      <form method="post" action="">
+        <button type="submit" class="btn btn-line">Synchroniser maintenant</button>
+      </form>
+    </article>
+    
+  </div>
+
+  <section id="journal" style="scroll-margin-top:90px;margin-bottom:60px">
+    <div class="page-head" style="padding:10px 0 16px"><div><span class="kicker">Historique</span><h2>Journal des synchronisations</h2></div></div>
+    <div class="card tw">
+      <table class="hist">
+        <thead><tr><th>Source</th><th>Statut</th><th>Enregistrements</th><th>Durée</th><th>Date</th></tr></thead>
+        <tbody>
+        
+          <tr><td><b>Adhésions</b><br><small class="mono" style="color:var(--err)">ConnectionTimeout</small></td>
+              <td><span class="st st-erreur">erreur</span></td>
+              <td class="mono">0</td><td class="mono">3 s</td>
+              <td class="mono">19/10/2026 09:30</td></tr>
+        
+          <tr><td><b>Annuaire des experts</b></td>
+              <td><span class="st st-ok">ok</span></td>
+              <td class="mono">214</td><td class="mono">12 s</td>
+              <td class="mono">19/10/2026 09:30</td></tr>
+        
+        </tbody>
+      </table>
     </div>
-    {% endif %}
   </section>
 </main>
-
-<footer>MEAL Afrique · Espace admin · OPERAPLUS / BeINfos+</footer>
-
-<!-- Confirmation de suppression -->
-<dialog id="dlgDelete" aria-labelledby="dlgTitle">
-  <form method="post" class="dlg" id="dlgForm">
-    {% csrf_token %}
-    <div class="dlg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></div>
-    <h2 id="dlgTitle">Supprimer ce contenu ?</h2>
-    <p><b id="dlgName"></b> sera retiré du journal et supprimé définitivement. Pour le masquer sans le perdre, repassez-le plutôt en brouillon.</p>
-    <div class="dlg-actions">
-      <button type="button" class="btn btn-line" id="dlgCancel">Annuler</button>
-      <button type="submit" class="btn btn-danger">Supprimer</button>
-    </div>
-  </form>
-</dialog>
-
+<script>
+/* Ajout : un seul menu ouvert à la fois ; fermeture au clic extérieur et à Échap */
+(function(){
+  const menus=[...document.querySelectorAll('.ab-menu')];
+  menus.forEach(m=>m.addEventListener('toggle',()=>{ if(m.open) menus.forEach(o=>{ if(o!==m) o.open=false; }); }));
+  document.addEventListener('click',e=>{ menus.forEach(m=>{ if(m.open && !m.contains(e.target)) m.open=false; }); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') menus.forEach(m=>{ if(m.open){ m.open=false; m.querySelector('summary').focus(); } }); });
+})();
+</script>
 <script>
 (function(){
-  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-  const form = $('#formulaire');
-  const val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-  const checked = id => { const el = document.getElementById(id); return !!(el && el.checked); };
-  const TYPE_INFO = {
-    debat:   {tag:'Débat structuré', place:'Bloc « À la une » du journal', etq:n => n ? 'DÉBAT N°'+n : 'DÉBAT'},
-    depeche: {tag:'Dépêche',         place:'Liste « Dernières dépêches »', etq:() => 'DÉPÊCHE'},
-    agenda:  {tag:'Événement',       place:'Encadré « Agenda »',            etq:() => 'AGENDA'},
-    fil:     {tag:"Fil d'actualité", place:'Bandeau défilant uniquement',   etq:() => "FIL D'ACTUALITÉ"}
-  };
-  const STATUTS = {a_venir:'À venir', en_cours:'En cours', cloture:'Clôturé'};
-  const curType = () => (form.querySelector('input[name="type"]:checked') || {}).value || 'depeche';
-
-  /* Champs conditionnels selon le type */
-  function syncType(){
-    const t = curType();
-    $$('.cond').forEach(c => c.hidden = c.dataset.for !== t);
-    preview();
+  'use strict';
+  var cards=[].slice.call(document.querySelectorAll('.src'));
+  function count(){
+    var c={ok:0,cours:0,erreur:0};
+    cards.forEach(function(x){var s=x.dataset.s;if(s==='ok')c.ok++;else if(s==='erreur')c.erreur++;else c.cours++;});
+    document.querySelector('[data-k="ok"]').textContent=c.ok;
+    document.querySelector('[data-k="cours"]').textContent=c.cours;
+    document.querySelector('[data-k="erreur"]').textContent=c.erreur;
   }
-
-  /* Compteurs de caractères */
-  $$('[data-count-for]').forEach(c => {
-    const el = document.getElementById(c.dataset.countFor); if (!el) return;
-    const max = +el.getAttribute('maxlength') || 0;
-    const upd = () => { const n = el.value.length; c.textContent = max ? n + ' / ' + max : n; c.classList.toggle('is-near', max && n > max * .85); };
-    el.addEventListener('input', upd); upd();
-  });
-
-  /* Onglets FR / EN */
-  const tabs = $$('.tab');
-  function selectTab(tab){
-    tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  }
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => selectTab(t));
-    t.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]; selectTab(n); n.focus(); } });
-  });
-  if (!$('#enErr').hidden && !document.querySelector('#panel-fr .has-err')) selectTab($('#tab-en'));
-
-  /* Image : nom + vignette */
-  const img = form.querySelector('input[name="image"]');
-  img && img.addEventListener('change', () => {
-    const f = img.files[0]; if (!f) return;
-    $('#imgName').textContent = f.name;
-    const url = URL.createObjectURL(f);
-    $('#imgThumb').style.backgroundImage = 'url(' + url + ')'; $('#imgThumb').innerHTML = '';
-    $('#pvImg').style.backgroundImage = 'url(' + url + ')'; $('#pvImg').hidden = false;
-  });
-  if ($('#imgThumb').style.backgroundImage) { $('#pvImg').style.backgroundImage = $('#imgThumb').style.backgroundImage; $('#pvImg').hidden = false; }
-
-  /* Aperçu en direct */
-  function preview(){
-    const t = curType(), info = TYPE_INFO[t];
-    const titre = val('id_titre_fr'), resume = val('id_resume_fr');
-    const etq = val('id_etiquette') || info.etq(val('id_numero'));
-    const card = $('#pvCard');
-    card.className = 'pv-card t-' + t;
-    $('#pvPlace').textContent = info.place;
-    $('#pvTag').textContent = t === 'debat' && STATUTS[val('id_statut')] ? info.tag + ' · ' + STATUTS[val('id_statut')] : info.tag;
-    let meta = '';
-    if (t === 'agenda') {
-      const d = val('id_date_evenement');
-      meta = d ? new Date(d + 'T00:00').toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) : 'Date à préciser';
-      if (val('id_lieu')) meta += ' · ' + val('id_lieu');
-    } else { meta = etq; }
-    $('#pvMeta').textContent = meta.toUpperCase();
-    $('#pvTitle').textContent = titre || 'Votre titre apparaîtra ici';
-    $('#pvTitle').classList.toggle('pv-empty', !titre);
-    $('#pvTickTitle').textContent = titre || 'Votre titre apparaîtra ici';
-    $('#pvText').textContent = resume;
-    $('#pvLink').hidden = !val('id_lien');
-    $('#pvEtq').textContent = '[' + etq.toUpperCase() + ']';
-    $('#pvTicker').classList.toggle('is-off', !checked('id_dans_le_fil'));
-    const pub = checked('id_publie');
-    $('#pvLive').hidden = !pub; $('#pvDraft').hidden = pub; $('#pvUne').hidden = !checked('id_a_la_une');
-    {% if not edition %}$('#submitLabel').textContent = pub ? 'Publier' : 'Enregistrer en brouillon';{% endif %}
-    $('#submitHint').textContent = pub
-      ? (checked('id_a_la_une') ? 'Le contenu sera visible immédiatement, en grand à la une.' : 'Le contenu sera visible immédiatement sur le journal.')
-      : 'Le contenu restera invisible pour les visiteurs.';
-  }
-
-  /* À la une implique publié */
-  const une = $('#id_a_la_une'), pub = $('#id_publie');
-  une && une.addEventListener('change', () => { if (une.checked && pub) pub.checked = true; });
-  pub && pub.addEventListener('change', () => { if (!pub.checked && une) une.checked = false; });
-
-  form.addEventListener('input', preview);
-  form.addEventListener('change', e => { e.target.name === 'type' ? syncType() : preview(); });
-  syncType();
-
-  /* Empêche le double envoi */
-  form.addEventListener('submit', () => { const b = $('#submitBtn'); b.disabled = true; b.style.opacity = .7; });
-
-  /* Filtres et recherche */
-  const rows = $$('.row');
-  if (rows.length) {
-    const count = k => rows.filter(r => k === 'all' ? true : k === 'draft' ? r.dataset.draft === '1' : r.dataset.type === k).length;
-    $$('[data-n]').forEach(b => b.textContent = count(b.dataset.n));
-    let filter = 'all';
-    const apply = () => {
-      const q = ($('#search').value || '').trim().toLowerCase();
-      let shown = 0;
-      rows.forEach(r => {
-        const okF = filter === 'all' || (filter === 'draft' ? r.dataset.draft === '1' : r.dataset.type === filter);
-        const ok = okF && (!q || r.dataset.search.includes(q));
-        r.hidden = !ok; if (ok) shown++;
-      });
-      $('#noResult').classList.toggle('show', shown === 0);
-    };
-    $$('.chip').forEach(c => c.addEventListener('click', () => {
-      filter = c.dataset.filter; $$('.chip').forEach(x => x.setAttribute('aria-pressed', x === c)); apply();
-    }));
-    $('#search').addEventListener('input', apply);
-  }
-
-  /* Suppression : confirmation */
-  const dlg = $('#dlgDelete');
-  $$('[data-delete-url]').forEach(b => b.addEventListener('click', () => {
-    $('#dlgForm').action = b.dataset.deleteUrl; $('#dlgName').textContent = '« ' + b.dataset.deleteTitle + ' »';
-    dlg.showModal(); $('#dlgCancel').focus();
-  }));
-  $('#dlgCancel').addEventListener('click', () => dlg.close());
-  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-
-  /* En cas d'erreur, amener au premier champ fautif */
-  const firstErr = form.querySelector('.has-err .fld, .has-err input');
-  if (firstErr) { firstErr.scrollIntoView({block:'center'}); firstErr.focus({preventScroll:true}); }
-  else if (location.search.includes('modifier=')) { form.scrollIntoView(); }
+  count();
+  var chips=[].slice.call(document.querySelectorAll('[data-f]'));
+  chips.forEach(function(ch){ch.addEventListener('click',function(){
+    chips.forEach(function(x){x.setAttribute('aria-pressed',x===ch)});
+    cards.forEach(function(x){var s=x.dataset.s,f=ch.dataset.f;
+      x.hidden=!(f==='all'||s===f||(f==='cours'&&s==='attente'));});
+  })});
+  var t=null,cb=document.getElementById('syAuto');
+  try{cb.checked=localStorage.getItem('ma-sync-auto')==='1'}catch(e){}
+  function arm(){clearInterval(t);if(cb.checked)t=setInterval(function(){location.reload()},30000);try{localStorage.setItem('ma-sync-auto',cb.checked?'1':'0')}catch(e){}}
+  cb.addEventListener('change',arm);arm();
 })();
 </script>
 </body>

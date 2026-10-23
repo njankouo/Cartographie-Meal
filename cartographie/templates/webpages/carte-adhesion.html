@@ -202,7 +202,7 @@
 
                     <div class="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/15 pt-3 mt-4">
                         <div><p class="label">Nationalité <em>/ Nationality</em></p><p class="value">{{ personnel.nationalite|default:"-" }}</p></div>
-                        <div><p class="label">Expertise</p><p class="value">{{ personnel.fonction|default:"MEAL"|truncatechars:28 }}</p></div>
+                        <div><p class="label">Expertise Actuelle</p><p class="value">{{ personnel.current_profil.nom|default:"--"|truncatechars:28 }}</p></div>
                     </div>
                 </div>
             </div>

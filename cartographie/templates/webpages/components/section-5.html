@@ -1,33 +1,36 @@
-  <section class="step" data-step="5" hidden aria-labelledby="h5">
-          <header class="step-head">
-            <span class="num">Étape 5 sur 5</span>
-            <h2 id="h5">Disponibilité et consentement</h2>
-            <p class="en" lang="en">Availability and consent</p>
-          </header>
+<section class="step" data-step="5" hidden aria-labelledby="h5">
+  <header class="step-head">
+    <span class="num">Étape 5 sur 5</span>
+    <h2 id="h5">Disponibilité et consentement</h2>
+    <p class="en" lang="en">Availability and consent</p>
+  </header>
 
-          <fieldset class="field">
-            <legend>Vous êtes disponible pour<span class="en-label" lang="en">available for</span></legend>
-            <div class="chips" style="margin-top:6px">
-              
-              
-              {%for types_disponibilites in types_disponibilite%}
-                <label class="chip"><input type="checkbox" name="dispo" value="{{types_disponibilites.id}}"><span>{{types_disponibilites.intitule}}</span></label>
-              {%endfor%}
-            </div>
-          </fieldset>
+  <fieldset class="field">
+    <legend>Vous êtes disponible pour<span class="en-label" lang="en">available for</span></legend>
+    <div class="chips" style="margin-top:6px">
+      {% for types_disponibilites in types_disponibilite %}
+        <label class="chip">
+          <input type="checkbox" name="dispo" value="{{ types_disponibilites.id }}"
+                 {% if types_disponibilites.id in user_disponibilite_ids %}checked{% endif %}>
+          <span>{{ types_disponibilites.intitule }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
 
-          <div>
-            <p class="legend" style="margin:0 0 8px;font-weight:600;font-size:.9rem">Récapitulatif</p>
-            <dl class="recap" id="recap"></dl>
-          </div>
+  <div>
+    <p class="legend" style="margin:0 0 8px;font-weight:600;font-size:.9rem">Récapitulatif</p>
+    <dl class="recap" id="recap"></dl>
+  </div>
 
-          <div class="field">
-            <div class="consent">
-              <input type="checkbox" id="consentement" required>
-              <label for="consentement">J'autorise MEAL Afrique et OPERAPLUS à publier ma fiche membre.
-                <span class="en-label" lang="en">I authorize MEAL Afrique and OPERAPLUS to publish my member profile.</span>
-              </label>
-            </div>
-            <p class="error" id="err-consentement" role="alert"></p>
-          </div>
-        </section>
+  <div class="field">
+    <div class="consent">
+      <input type="checkbox" id="consentement" name="consentement" 
+             {% if personnel.consentement %}checked{% endif %} required>
+      <label for="consentement">J'autorise MEAL Afrique et OPERAPLUS à publier ma fiche membre.
+        <span class="en-label" lang="en">I authorize MEAL Afrique and OPERAPLUS to publish my member profile.</span>
+      </label>
+    </div>
+    <p class="error" id="err-consentement" role="alert"></p>
+  </div>
+</section>

@@ -9,7 +9,8 @@
           <fieldset class="field">
             <legend>Disposez-vous déjà d'un badge MEAL Afrique (OPERAPLUS) ?<span class="req" aria-hidden="true">*</span></legend>
             <div class="choices stack" style="margin-top:6px">
-              <label class="choice"><input type="radio" name="badge" value="oui" onchange="toggleBadge()"><span><span class="choice-title">Oui<small>Yes</small></span></span></label>
+              <label class="choice"><input type="radio" name="badge" value="oui" onchange="toggleBadge()" {%if personnel.code%} 
+                checked  {%endif%}><span><span class="choice-title">Oui<small>Yes</small></span></span></label>
               <label class="choice"><input type="radio" name="badge" value="non" onchange="toggleBadge()"><span><span class="choice-title">Non<small>No</small></span></span></label>
               <label class="choice"><input type="radio" name="badge" value="encours" onchange="toggleBadge()"><span><span class="choice-title">En cours<small>In progress</small></span></span></label>
             </div>
@@ -18,7 +19,7 @@
 
           <div class="field" id="numBadgeField" hidden>
             <label for="numBadge">Numéro du badge<span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="numBadge" autocomplete="off">
+            <input type="text" id="numBadge" autocomplete="off" value="{{personnel.code}}">
             <p class="error" id="err-numBadge" role="alert"></p>
           </div>
         </section>

@@ -173,6 +173,21 @@
             .flip-mode .stage > .card-fit { transform: none !important; grid-area: auto; }
             .flip-hint, .qr-modal, .toast { display: none !important; }
         }
+
+        /* ═════════ AJOUT : années d'expérience et niveau d'expertise (recto) ═════════ */
+        .xs-xp { display: grid; grid-template-columns: auto 1fr; gap: 0 22px; margin-top: 10px; padding-top: 9px; border-top: 1px dashed rgba(var(--accent-rgb), .35); }
+        .xs-xp .value { margin-top: 2px; }
+        .xs-years { font-family: "Fraunces", Georgia, serif; font-size: 21px; font-weight: 900; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+        .xs-xp small { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.75); text-transform: uppercase; letter-spacing: .08em; }
+        .xs-xp-level .value { display: inline-block; vertical-align: middle; }
+        .xs-gauge { display: inline-flex; gap: 3px; margin-left: 9px; vertical-align: middle; }
+        .xs-gauge i { width: 16px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.16); }
+        .xs-gauge[data-level="1"] i:nth-child(-n+1),
+        .xs-gauge[data-level="2"] i:nth-child(-n+2),
+        .xs-gauge[data-level="3"] i:nth-child(-n+3),
+        .xs-gauge[data-level="4"] i:nth-child(-n+4) { background: var(--accent); box-shadow: 0 0 8px rgba(var(--accent-rgb), .55); }
+        .xs-xp-level .label { display: block; }
+        @media print { .xs-gauge i { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
     </style>
 </head>
 <body>
@@ -221,9 +236,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                 Badge PDF
             </button>
-            <a href="/cartographie-users/{{ personnel.code }}/" class="tb-btn">Cartographie</a>
-            <a href="/Edit-Profil/{{ personnel.code }}/" class="tb-btn">Mettre à jour</a>
-            <a href="/Inscription-meal-afrique/" class="tb-btn">← Accueil</a>
+            <a href="/cartographie-users/" class="tb-btn">Cartographie</a>
+             <a href="/profil-expert/" class="tb-btn">Profil Expert</a>
+            <a href="/Edition-Profil/" class="tb-btn">Mettre à jour</a>
+            <a href="/deconnexion-view/" class="tb-btn">← Deconexion</a>
         </div>
     </div>
 </nav>
@@ -266,14 +282,36 @@
                 </div>
 
                 <div class="flex-1 min-w-0">
-                    <p class="mono text-[9px] font-bold" style="color:var(--accent)">N° MA-{{ personnel.id|stringformat:"05d" }}</p>
+                    <p class="mono text-[9px] font-bold" style="color:var(--accent)">N° {{ personnel.code }}</p>
                     <h2 class="serif text-[25px] font-bold leading-[1.05] mt-1 tracking-tight">{{ personnel.nom }}</h2>
                     <p class="mono text-[8.5px] font-bold text-white/60 mt-1.5 uppercase tracking-[.16em]">Membre de la communauté MEAL Afrique</p>
 
                     <div class="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/15 pt-3 mt-4">
                         <div><p class="label">Nationalité <em>/ Nationality</em></p><p class="value">{{ personnel.nationalite|default:"-" }}</p></div>
-                        <div><p class="label">Expertise</p><p class="value">{{ personnel.skill|default:"MEAL"|truncatechars:28 }}</p></div>
+                        <div><p class="label">Expertise Actuelle</p><p class="value">{{personnel.current_profil.intitule|default:"--"|truncatechars:28 }}</p></div>
                     </div>
+
+                    <!-- AJOUT : années d'expérience et niveau d'expertise -->
+                    {% with y=personnel.years_expertise n=personnel.level_expertise %}
+                    <div class="xs-xp" aria-label="Expérience et niveau d'expertise">
+                        <div class="xs-xp-years">
+                            <p class="label">Expérience <em>/ Experience</em></p>
+                            <p class="value"><span class="xs-years">{% if y != None and y != '' %}{{ y }}{% else %}-{% endif %}</span>{% if y != None and y != '' %} <small>an{{ y|pluralize }}</small>{% endif %}</p>
+                        </div>
+                        <div class="xs-xp-level">
+                            <p class="label">Niveau d'expertise <em>/ Level</em></p>
+                            {% if n == 'senior' or not n and y > 10 %}
+                            <p class="value">Senior</p><span class="xs-gauge" data-level="4" role="img" aria-label="Niveau 4 sur 4"><i></i><i></i><i></i><i></i></span>
+                            {% elif n == 'confirme' or not n and y >= 6 %}
+                            <p class="value">Confirmé</p><span class="xs-gauge" data-level="3" role="img" aria-label="Niveau 3 sur 4"><i></i><i></i><i></i><i></i></span>
+                            {% elif n == 'intermediaire' or not n and y >= 3 %}
+                            <p class="value">Intermédiaire</p><span class="xs-gauge" data-level="2" role="img" aria-label="Niveau 2 sur 4"><i></i><i></i><i></i><i></i></span>
+                            {% elif n == 'junior' or not n and y >= 0 %}
+                            <p class="value">Junior</p><span class="xs-gauge" data-level="1" role="img" aria-label="Niveau 1 sur 4"><i></i><i></i><i></i><i></i></span>
+                            {% else %}<p class="value">-</p><span class="xs-gauge" data-level="0" aria-hidden="true"><i></i><i></i><i></i><i></i></span>{% endif %}
+                        </div>
+                    </div>
+                    {% endwith %}
                 </div>
             </div>
 

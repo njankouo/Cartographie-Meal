@@ -1,0 +1,68 @@
+{%load static%}
+<!-- Encodage et Responsive Design -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Titre SEO Optimisé -->
+<title>Journal MEAL Afrique | La Communauté Panafricaine du Suivi-Évaluation par OPERAPLUS</title>
+
+<!-- Métadonnées Principales SEO -->
+<meta name="description" content="Le journal de la communauté panafricaine MEAL Afrique (Suivi, Évaluation, Redevabilité, Apprentissage), propulsé par OPERAPLUS. Rejoignez le réseau des experts MEAL.">
+<meta name="keywords" content="MEAL Afrique, Suivi Évaluation, Redevabilité, Apprentissage, OPERAPLUS, Cartographie MEAL, Experts Afrique, Gestion de projet, PWA MEAL">
+<meta name="author" content="OPERAPLUS - MEAL Afrique">
+<meta name="robots" content="index, follow">
+
+<!-- Canonical URL (Évite le contenu dupliqué) -->
+<link rel="canonical" href="https://{{ request.get_host }}{{ request.path }}">
+
+<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://{{ request.get_host }}{{ request.path }}">
+<meta property="og:title" content="Journal MEAL Afrique | Communauté Panafricaine">
+<meta property="og:description" content="Découvrez le journal et la cartographie de la communauté panafricaine des experts en Suivi, Évaluation, Redevabilité et Apprentissage (MEAL).">
+<meta property="og:image" content="https://{{ request.get_host }}/static/images/og-cover.jpg">
+<meta property="og:site_name" content="MEAL Afrique">
+<meta property="og:locale" content="fr_FR">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Journal MEAL Afrique | Communauté Panafricaine">
+<meta name="twitter:description" content="Suivi, Évaluation, Redevabilité et Apprentissage en Afrique. Propulsé par OPERAPLUS.">
+<meta name="twitter:image" content="https://{{ request.get_host }}/static/images/og-cover.jpg">
+
+<!-- PWA & Mobile Optimization -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0B1A33">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MEAL Afrique">
+
+<!-- Favicons & Icônes -->
+<link rel="icon" type="image/png" sizes="32x32" href="{%static 'img/favicon_io/favicon-32x32.png'%}">
+<link rel="icon" type="image/png" sizes="16x16" href="{%static 'img/favicon_io/favicon-16x16.png'%}">
+<link rel="apple-touch-icon" sizes="180x180" href="{%static 'img/favicon_io/favicon-180x180.png'%}">
+
+<!-- Fonts Preconnect (Performances) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="{%static 'css/index.css'%}">
+
+<!-- Données Structurées JSON-LD pour Google Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "MEAL Afrique",
+  "url": "https://{{ request.get_host }}",
+  "logo": "https://{{ request.get_host }}/static/images/logo.png",
+  "description": "Le journal et la cartographie de la communauté panafricaine MEAL (Suivi, Évaluation, Redevabilité, Apprentissage).",
+  "sponsor": {
+    "@type": "Organization",
+    "name": "OPERAPLUS"
+  }
+}
+</script>

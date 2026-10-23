@@ -9,11 +9,19 @@ class ProfilMeal(models.Model):
     description_fr = models.TextField()
     description_en = models.TextField()
 class DomaineExpertise(models.Model):
+    code = models.CharField(max_length=100, unique=True)
     intitule = models.CharField(max_length=255)
-    description= models.TextField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.intitule
 class SecteurIntervention(models.Model):
+    code = models.CharField(max_length=100, unique=True)
     intitule = models.CharField(max_length=255)
-    description= models.TextField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.intitule
 class OutilsMeal(models.Model):
     code = models.CharField(max_length=255, null=True, blank=True)
     intitule = models.CharField(max_length=255)
@@ -23,8 +31,12 @@ class OutilsMeal(models.Model):
     def __str__(self):
         return self.intitule
 class DisponibilityType(models.Model):
+    code = models.CharField(max_length=100, unique=True)
     intitule = models.CharField(max_length=255)
-    description= models.TextField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.intitule
 class Personnel(models.Model):
     nom	= models.CharField(max_length=128,blank=True,null=True)
     prenom = models.CharField(max_length=128,blank=True,null=True)
@@ -66,7 +78,7 @@ class Personnel(models.Model):
 
     other_language = models.TextField(max_length=255)
 
-    describe_certification = models.TextField(null=True)
+    bio = models.TextField(null=True)
     
     profil_linkedin = models.URLField(max_length=255, null=True)
     
@@ -77,6 +89,10 @@ class Personnel(models.Model):
     
     
     cartographie_is_valid = models.BooleanField(default=False)
+
+    longitude = models.IntegerField(null=True)
+
+    lattitude = models.IntegerField(null=True)
 
     consentement = models.BooleanField(default=False)
 
@@ -170,5 +186,15 @@ class SousActualite(models.Model):
     def get_absolute_url(self):
       
         return reverse('article-connexe', kwargs={'slug': self.slug})
+
+class OtpPersonnel(models.Model):
+    personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)  # Enregistre automatiquement l'heure exacte de création
+    code = models.CharField(max_length=6)                 # CharField recommandé au cas où le code commence par '0'
+    expires_at = models.DateTimeField()                   # Stocke la date et l'heure exactes d'expiration
+    is_used = models.BooleanField(default=False)          # Pour s'assurer qu'un code ne sert qu'une seule fois
+
+    def __str__(self):
+        return f"OTP pour {self.personnel} - Expire à {self.expires_at}"
 
 

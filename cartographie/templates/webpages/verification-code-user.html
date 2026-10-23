@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vérification OTP — MEAL Afrique</title>
+{%load static%}
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20fill%3D%27%230B2A5B%27/%3E%3Crect%20x%3D%275%27%20y%3D%275%27%20width%3D%2754%27%20height%3D%2754%27%20fill%3D%27none%27%20stroke%3D%27%23D4AF37%27%20stroke-opacity%3D%27.55%27%20stroke-width%3D%271.5%27/%3E%3Ctext%20x%3D%2732%27%20y%3D%2742%27%20text-anchor%3D%27middle%27%20font-family%3D%27Georgia%2Cserif%27%20font-weight%3D%27900%27%20font-size%3D%2728%27%20fill%3D%27%23D4AF37%27%3EMA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0B2A5B;
+  --navy-2: #123A7A;
+  --navy-ink: #06152B;
+  --gold: #D4AF37;
+  --gold-2: #E5C158;
+  --gold-soft: rgba(212, 175, 55, 0.14);
+  --green: #10B981;
+  --red: #EF4444;
+  --paper: #F8FAFC;
+  --card: #FFFFFF;
+  --line: #E2E8F0;
+  --ink: #0F172A;
+  --muted: #64748B;
+  --night: #040E1D;
+  --night-2: #071A38;
+  --slot: #0B2347;
+  --slot-line: #24467F;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body {
+  font-family: var(--sans);
+  color: #E8EEF9;
+  background: var(--night);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* Bilingue : un seul des deux est visible */
+html[lang="fr"] [lang="en"], html[lang="en"] [lang="fr"] { display: none !important; }
+
+.top { background: var(--night); border-bottom: 1px solid rgba(255,255,255,.1); position: relative; z-index: 10; }
+.top-in { max-width: 1400px; margin: 0 auto; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { position: relative; font-family: var(--serif); font-weight: 700; font-size: 22px; color: #fff; text-decoration: none; letter-spacing: -0.01em; }
+.brand b { color: var(--gold-2); }
+.brand::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
+.brand:hover::after { transform: scaleX(1); }
+
+.langs { display: flex; }
+.langs button { font-family: var(--mono); font-size: 12px; font-weight: 700; color: #B9C6E2; background: transparent; border: 1px solid rgba(255,255,255,.25); padding: 6px 12px; cursor: pointer; transition: background-color .15s, color .15s; }
+.langs button + button { border-left: 0; }
+.langs button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--navy-ink); }
+.langs button:hover:not([aria-pressed="true"]) { background: rgba(255,255,255,.1); color: #fff; }
+.langs button:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 2px; }
+
+/* ─────────  Mise en page : saisie à gauche, cadran à droite  ───────── */
+main { flex: 1; display: grid; grid-template-columns: minmax(380px, 1fr) minmax(0, 1.15fr); }
+.card { grid-column: 1; grid-row: 1; align-self: center; justify-self: center; width: 100%; max-width: 500px; padding: 48px 36px; background: transparent; border: 0; }
+.side { grid-column: 2; grid-row: 1; position: relative; overflow: hidden; background: var(--night-2); border-left: 1px solid rgba(255,255,255,.08); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 28px 24px; }
+
+.seal { width: 44px; height: 44px; border-radius: 4px; background: var(--gold); display: grid; place-items: center; margin-bottom: 24px; }
+.seal svg { width: 24px; height: 24px; stroke: var(--navy-ink); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+h1 { font-family: var(--serif); font-size: clamp(34px, 3.6vw, 48px); line-height: 1.05; color: #fff; letter-spacing: -0.02em; margin-bottom: 14px; }
+.lead { font-size: 16px; color: #A9B8D6; line-height: 1.55; }
+.lead strong { color: #fff; font-weight: 600; overflow-wrap: anywhere; }
+
+.expiry { --pulse: rgba(16,185,129,.5); margin-top: 22px; font-size: 14px; color: #A9B8D6; }
+.expiry.low { --pulse: rgba(239,68,68,.55); }
+.expiry b { font-family: var(--mono); font-weight: 700; color: #fff; }
+.expiry::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 9px; border-radius: 50%; background: var(--green); animation: livePulse 2s ease-out infinite; }
+.expiry.low::before { background: var(--red); }
+.expiry .bar { display: block; height: 3px; background: rgba(255,255,255,.12); margin-top: 9px; }
+.expiry .bar i { display: block; height: 100%; width: 100%; background: var(--gold); transition: width 1s linear; }
+.expiry.low b { color: #FF8A82; }
+.expiry.low .bar i { background: var(--red); }
+.expiry[hidden] { display: none; }
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 var(--pulse); } 70%,100% { box-shadow: 0 0 0 7px transparent; } }
+
+.alert { margin-top: 20px; padding: 12px 16px; font-size: 14px; font-weight: 500; border-left: 4px solid var(--red); background: rgba(239,68,68,.14); color: #FFB9B3; }
+.alert.ok { border-left-color: var(--green); background: rgba(16,185,129,.14); color: #9BE8CC; }
+.alert[hidden] { display: none; }
+
+.otp { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 30px 0 14px; }
+.otp input {
+  width: 100%; aspect-ratio: 1/1.25; min-height: 58px; text-align: center;
+  font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--gold-2);
+  background: var(--slot); border: 1px solid var(--slot-line); border-radius: 6px; caret-color: var(--gold-2);
+  transition: border-color .15s, background-color .15s;
+}
+.otp input:hover:not(:focus) { border-color: var(--gold); }
+.otp input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: var(--gold); background: #0E2C58; }
+.otp input.filled { border-color: var(--gold); box-shadow: inset 0 -3px 0 var(--gold); }
+.otp input.pop { animation: keypop .28s var(--ease); }
+.otp input.wave { animation: wave .55s var(--ease) both; animation-delay: calc(var(--i) * 70ms); }
+.otp.err input { border-color: var(--red); animation: shake .4s ease-in-out; }
+@keyframes keypop { 0% { transform: scale(.86); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes wave { 0%,100% { transform: none; } 40% { transform: translateY(-10px); background: #14376C; } }
+@keyframes shake { 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
+
+.btn {
+  position: relative; overflow: hidden; width: 100%; margin-top: 16px; padding: 16px 20px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--navy-ink);
+  background-color: var(--gold);
+  border: none; border-radius: 6px; cursor: pointer;
+  transition: background-color .15s;
+}
+.btn:hover:not(:disabled) { background-color: var(--gold-2); }
+.btn:disabled { background-color: #1A3560; background-image: none; color: #6F84AB; cursor: not-allowed; }
+.btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.btn.loading::before { content: ""; position: absolute; right: 18px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border: 2px solid rgba(6,21,43,.3); border-top-color: var(--navy-ink); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.resend { margin-top: 28px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.12); font-size: 14px; color: #8FA1C6; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.link, .back a { position: relative; text-decoration: none; }
+.link { font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--gold-2); background: none; border: 0; padding: 2px 0; cursor: pointer; }
+.link::after, .back a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
+/* « Renvoyer » se souligne quand il devient utilisable */
+.link:not(:disabled)::after, .back a:hover::after, .back a:focus-visible::after { transform: scaleX(1); }
+.link:disabled { color: #566C96; cursor: not-allowed; }
+.link:disabled::after { display: none; }
+.link:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+#count { font-family: var(--mono); font-weight: 700; color: #fff; }
+.back { display: block; margin-top: 20px; font-size: 14px; }
+.back a { color: #fff; font-weight: 600; }
+
+.foot { padding: 18px 32px; text-align: center; font-size: 13px; color: #6F84AB; border-top: 1px solid rgba(255,255,255,.08); }
+
+/* ─────────  Panneau droit : cadran + parcours  ───────── */
+.side-title { order: 2; font-family: var(--serif); font-weight: 700; font-size: 26px; line-height: 1.15; letter-spacing: -0.01em; color: #fff; text-align: center; }
+.dial { order: 1; width: min(100%, 560px, max(300px, calc(100vh - 340px))); aspect-ratio: 1; flex: none; }
+.dial svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.steps { order: 3; list-style: none; counter-reset: s; display: flex; gap: 8px 28px; flex-wrap: wrap; justify-content: center; max-width: 640px; }
+.steps li { counter-increment: s; display: flex; align-items: center; gap: 10px; font-size: 14px; color: #8FA1C6; max-width: 200px; line-height: 1.35; }
+.steps li::before { content: counter(s); flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #3A5A94; font-family: var(--mono); font-weight: 700; font-size: 12px; color: #8FA1C6; transition: background-color .3s, color .3s, border-color .3s; }
+.steps li.done, .steps li.active { color: #fff; }
+.steps li.done::before { content: "✓"; background: var(--gold-2); border-color: var(--gold-2); color: var(--navy-ink); }
+.steps li.active::before { border-color: var(--gold-2); color: var(--gold-2); }
+.side-note { display: none; }
+
+/* éléments du cadran */
+.d-ring-faint { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 1; }
+.d-time { fill: none; stroke: var(--gold); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1872.3; stroke-dashoffset: 0; transform: rotate(-90deg); transform-origin: 300px 300px; transition: stroke-dashoffset 1s linear, stroke .4s; }
+.d-ticks line { stroke: rgba(255,255,255,.2); stroke-width: 1.4; }
+.d-ticks line.major { stroke: var(--gold); stroke-width: 2.4; }
+.d-band { fill: none; stroke: #0A2147; stroke-width: 74; }
+.d-edge { fill: none; stroke: #2B4C87; stroke-width: 1.5; transition: stroke .4s; }
+.d-ring { transform-origin: 300px 300px; transition: transform 1s var(--ease); }
+.d-ring text { font-family: var(--serif); font-weight: 700; font-size: 46px; fill: #DCE6F8; text-anchor: middle; dominant-baseline: central; }
+.d-ring text.hit { fill: var(--gold-2); }
+.d-marker { fill: var(--gold); transform-origin: 300px 40px; }
+.d-marker.tick { animation: markerTick .3s var(--ease); }
+@keyframes markerTick { 0% { transform: translateY(-9px); } 100% { transform: none; } }
+.d-hub { fill: var(--night); stroke: var(--gold); stroke-width: 2; transition: stroke-width .3s; }
+.d-hub-in { fill: none; stroke: rgba(255,255,255,.12); stroke-width: 1; }
+.d-led { fill: #12305F; stroke: #2B4C87; stroke-width: 1.5; transition: fill .3s, stroke .3s; }
+.d-led.on { fill: var(--gold-2); stroke: var(--gold-2); }
+.d-lock-body { fill: var(--gold); }
+.d-key { fill: var(--night); }
+.d-shackle { fill: none; stroke: var(--gold); stroke-width: 9; stroke-linecap: round; transition: transform .5s var(--ease); transform-box: fill-box; transform-origin: right bottom; }
+.d-count { font-family: var(--mono); font-weight: 700; font-size: 17px; fill: #8FA1C6; text-anchor: middle; }
+.dial.ready .d-edge { stroke: var(--gold); }
+.dial.ready .d-hub { stroke-width: 5; }
+.dial.ready .d-count { fill: var(--gold-2); }
+/* vérification en cours */
+.dial.verifying .d-edge { stroke: var(--gold-2); }
+/* code refusé par le serveur */
+.dial.denied { animation: shake .4s ease-in-out; }
+.dial.denied .d-edge, .dial.denied .d-hub { stroke: var(--red); }
+.dial.denied .d-count { fill: #FF8A82; }
+/* temps restant : moins d'une minute, puis code expiré */
+.dial.low .d-time { stroke: var(--red); }
+.dial.expired .d-time { stroke-dashoffset: 1872.3; }
+.dial.expired .d-hub, .dial.expired .d-shackle { stroke: #566C96; }
+.dial.expired .d-lock-body { fill: #566C96; }
+.dial.expired .d-led.on { fill: #566C96; stroke: #566C96; }
+
+@media(max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+  .side { grid-column: 1; grid-row: 1; border-left: 0; border-bottom: 1px solid rgba(255,255,255,.08); padding: 18px 12px 10px; }
+  .card { grid-column: 1; grid-row: 2; padding: 30px 22px 36px; }
+  .dial { width: min(72vw, 300px); }
+  .side-title, .steps { display: none; }
+  .top-in { padding: 12px 20px; }
+}
+@media(max-width: 480px) {
+  .otp { gap: 6px; }
+  .otp input { font-size: 22px; min-height: 48px; }
+}
+@media(prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ───── Ajout : logo et défilement ───── */
+.brand { display: inline-flex; align-items: center; gap: 12px; }
+.mark { width: 40px; height: 40px; flex: none; position: relative; display: grid; place-items: center; background: var(--navy); color: var(--gold); font-family: var(--serif); font-weight: 900; font-size: 16px; letter-spacing: -.02em; }
+.mark::after { content: ""; position: absolute; inset: 4px; border: 1px solid rgba(212,175,55,.5); }
+/* logo officiel : cadre et taille (la page n'utilise pas Tailwind) */
+.brand img { display: block; flex: none; width: 40px; height: 40px; border-radius: 8px; background: #fff; object-fit: cover; box-shadow: 0 0 0 2px var(--gold); }
+.mark-img { display: block; width: 40px; height: 40px; object-fit: contain; }
+
+:root { --hdr: 73px; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--hdr) + 16px); scrollbar-width: thin; scrollbar-color: #2B4C87 var(--night); overscroll-behavior-y: contain; }
+body { min-height: 100dvh; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--night); }
+::-webkit-scrollbar-thumb { background: #2B4C87; border: 2px solid var(--night); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+.top { position: sticky; top: 0; transition: border-color .3s, box-shadow .3s; }
+.top.scrolled { border-bottom-color: var(--gold); box-shadow: 0 10px 24px -16px rgba(0,0,0,.8); }
+.read-progress { position: fixed; left: 0; top: 0; width: 100%; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; z-index: 60; pointer-events: none; }
+
+.to-top { position: fixed; right: 20px; bottom: 20px; z-index: 50; width: 46px; height: 46px; display: grid; place-items: center; background: var(--night-2); color: var(--gold-2); border: 1px solid var(--gold); cursor: pointer; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .3s, transform .3s var(--ease), background-color .2s, color .2s; }
+.to-top svg { width: 20px; height: 20px; }
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { background: var(--gold); color: var(--navy-ink); }
+.to-top:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* bureau : le cadran reste en vue pendant qu'on fait défiler le formulaire */
+@media (min-width: 901px) {
+  .side { position: sticky; top: var(--hdr); align-self: start; height: calc(100dvh - var(--hdr)); }
+}
+@media (max-width: 900px) {
+  .dial { width: min(54vw, 230px); }
+  .side { padding: 14px 12px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .read-progress { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="read-progress" id="readProgress" aria-hidden="true"></div>
+
+<header class="top" id="topbar">
+  <div class="top-in">
+    <a class="brand" href="/">
+      <!-- Remplacer ce sigle par le logo MEAL Afrique officiel : <img class="mark-img" src="..." alt="" width="40" height="40"> -->
+     <img src="{% static 'img/logoOfficiel.jpg' %}" alt="" class="w-9 h-9 rounded-lg bg-white object-cover ring-2 ring-[#C9A227]"><span class="brand-name">MEAL <b>Afrique</b></span></a>
+    <div class="langs" role="group" aria-label="Langue / Language">
+      <button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+      <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <aside class="side">
+    <div class="dial" id="dial" aria-hidden="true">
+      <svg viewBox="0 0 600 600">
+        <circle class="d-ring-faint" cx="300" cy="300" r="296"/>
+        <circle class="d-time" id="dTime" cx="300" cy="300" r="298"/>
+        <circle class="d-ring-faint" cx="300" cy="300" r="340"/>
+        <circle class="d-ring-faint" cx="300" cy="300" r="390"/>
+        <g class="d-ticks" id="dTicks"></g>
+        <circle class="d-band" cx="300" cy="300" r="222"/>
+        <circle class="d-edge" cx="300" cy="300" r="259"/>
+        <circle class="d-edge" cx="300" cy="300" r="185"/>
+        <g class="d-ring" id="dRing"></g>
+        <polygon class="d-marker" id="dMarker" points="300,56 285,26 315,26"/>
+        <circle class="d-hub" cx="300" cy="300" r="150"/>
+        <circle class="d-hub-in" cx="300" cy="300" r="138"/>
+        <g id="dLeds"></g>
+        <g transform="translate(0,6)">
+          <path class="d-shackle" id="dShackle" d="M282 296 v-20 a18 18 0 0 1 36 0 v20"/>
+          <rect class="d-lock-body" x="268" y="296" width="64" height="50" rx="7"/>
+          <circle class="d-key" cx="300" cy="316" r="7"/>
+          <rect class="d-key" x="297" y="318" width="6" height="16" rx="2"/>
+        </g>
+        <text class="d-count" id="dCount" x="300" y="392">0 / 6</text>
+      </svg>
+    </div>
+    <p class="side-title"><span lang="fr">Dernière étape avant l'accès</span><span lang="en">Last step before access</span></p>
+    <ol class="steps">
+      <li class="done"><span lang="fr">Accès demandé à MEAL Afrique</span><span lang="en">Access requested on MEAL Afrique</span></li>
+      <li class="done"><span lang="fr">Code envoyé par e-mail</span><span lang="en">Code sent by email</span></li>
+      <li class="active" id="stepEnter"><span lang="fr">Saisissez-le avant expiration</span><span lang="en">Enter it before it expires</span></li>
+    </ol>
+    <p class="side-note"><span lang="fr">Rien dans votre boîte de réception ? Regardez dans les courriers indésirables.</span><span lang="en">Nothing in your inbox? Check your spam folder.</span></p>
+  </aside>
+
+  <section class="card" aria-labelledby="otp-title">
+    <div class="seal" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>
+    </div>
+
+    <h1 id="otp-title"><span lang="fr">Vérifiez votre compte</span><span lang="en">Verify your account</span></h1>
+    <p class="lead">
+      <span lang="fr">Saisissez le code à 6 chiffres envoyé à</span><span lang="en">Enter the 6-digit code sent to</span>
+      <strong>{{ email_masque|default:"votre adresse e-mail" }}</strong>.
+    </p>
+
+    <p class="expiry" id="expLine" aria-live="off">
+      <span lang="fr">Le code expire dans</span><span lang="en">The code expires in</span> <b id="expTime">10:00</b>
+      <span class="bar" aria-hidden="true"><i id="expBar"></i></span>
+    </p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}ok{% endif %}" role="alert" data-tag="{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    <div class="alert" id="otpError" role="alert" hidden>
+      <span lang="fr">Veuillez saisir les 6 chiffres du code.</span><span lang="en">Please enter all 6 digits.</span>
+    </div>
+    <div class="alert" id="otpExpired" role="alert" hidden>
+      <span lang="fr">Ce code a expiré. Demandez-en un nouveau avec « Renvoyer ».</span><span lang="en">This code has expired. Request a new one with “Resend”.</span>
+    </div>
+
+    <form method="post" id="otpForm" action="/verification_otp_view/" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="otp" id="otpValue">
+      <input type="hidden" name="action" value="verify">
+
+      <div class="otp" id="otpBoxes" role="group" aria-label="Code OTP à 6 chiffres">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" aria-label="Chiffre 1" autofocus>
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Chiffre 2">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Chiffre 3">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Chiffre 4">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Chiffre 5">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Chiffre 6">
+      </div>
+
+      <button type="submit" class="btn" id="otpSubmit" disabled>
+        <span lang="fr">Vérifier le code</span><span lang="en">Verify code</span><span class="arrow-anim" aria-hidden="true">→</span>
+      </button>
+    </form>
+
+    <div class="resend">
+      <span>
+        <span lang="fr">Code non reçu ?</span><span lang="en">Didn't get a code?</span>
+        <span id="timerWrap"><span lang="fr">Renvoi dans</span><span lang="en">Resend in</span> <span id="count">60</span>s</span>
+      </span>
+      <form method="post" id="resendForm">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="resend">
+        <button type="submit" class="link" id="resendBtn" disabled>
+          <span lang="fr">Renvoyer</span><span lang="en">Resend</span>
+        </button>
+      </form>
+    </div>
+
+    <p class="back">
+      <a href="{% url 'Inscription-meal-afrique' %}"><span lang="fr">← Retour à la connexion</span><span lang="en">← Back to sign in</span></a>
+    </p>
+  </section>
+</main>
+
+<footer class="foot">© MEAL Afrique · <span lang="fr">Ne partagez jamais ce code, il est strictement personnel.</span><span lang="en">Never share this code; it is strictly personal.</span></footer>
+
+<button type="button" class="to-top" id="toTop" aria-label="Retour en haut / Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+
+<script>
+(function(){
+  function setLang(l){
+    document.documentElement.lang=l;
+    try{localStorage.setItem('ma-lang',l)}catch(e){}
+    document.querySelectorAll('[data-set-lang]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.setLang===l)});
+    document.title=l==='fr'?'Vérification OTP — MEAL Afrique':'OTP verification — MEAL Afrique';
+  }
+  document.querySelectorAll('[data-set-lang]').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.setLang)})});
+  var saved='fr'; try{saved=localStorage.getItem('ma-lang')||'fr'}catch(e){}
+  setLang(saved==='en'?'en':'fr');
+
+  var boxes=[].slice.call(document.querySelectorAll('#otpBoxes input'));
+  var wrap=document.getElementById('otpBoxes');
+  var hidden=document.getElementById('otpValue');
+  var submit=document.getElementById('otpSubmit');
+  var form=document.getElementById('otpForm');
+  var errBox=document.getElementById('otpError');
+
+  function code(){return boxes.map(function(b){return b.value}).join('')}
+  function refresh(){
+    var c=code();
+    hidden.value=c;
+    boxes.forEach(function(b){b.classList.toggle('filled',!!b.value)});
+    submit.disabled=c.length!==6;
+    if(c.length===6){errBox.hidden=true;wrap.classList.remove('err')}
+  }
+  function fill(str,from){
+    var d=str.replace(/\D/g,'').split('');
+    for(var i=0;i<d.length&&from+i<6;i++) boxes[from+i].value=d[i];
+    refresh();
+    boxes[Math.min(from+d.length,5)].focus();
+  }
+  boxes.forEach(function(b,i){
+    b.addEventListener('input',function(){
+      var v=b.value.replace(/\D/g,'');
+      if(v.length>1){b.value='';fill(v,i);return}
+      b.value=v; refresh();
+      if(v&&i<5) boxes[i+1].focus();
+    });
+    b.addEventListener('keydown',function(e){
+      if(e.key==='Backspace'&&!b.value&&i>0){boxes[i-1].value='';boxes[i-1].focus();refresh();e.preventDefault()}
+      else if(e.key==='ArrowLeft'&&i>0){boxes[i-1].focus();e.preventDefault()}
+      else if(e.key==='ArrowRight'&&i<5){boxes[i+1].focus();e.preventDefault()}
+    });
+    b.addEventListener('focus',function(){b.select()});
+    b.addEventListener('paste',function(e){
+      e.preventDefault();
+      fill((e.clipboardData||window.clipboardData).getData('text'),0);
+    });
+  });
+  form.addEventListener('submit',function(e){
+    if(code().length!==6){
+      e.preventDefault();errBox.hidden=false;wrap.classList.add('err');
+      var first=boxes.filter(function(b){return !b.value})[0]; if(first) first.focus();
+      return;
+    }
+    submit.disabled=true;
+  });
+
+  var left=parseInt('{{ delai_renvoi|default:60 }}',10); if(isNaN(left)) left=60;
+  var cnt=document.getElementById('count'), tw=document.getElementById('timerWrap'), rb=document.getElementById('resendBtn');
+  function tick(){
+    if(left<=0){tw.hidden=true;rb.disabled=false;return}
+    cnt.textContent=left--; setTimeout(tick,1000);
+  }
+  tick();
+})();
+</script>
+
+<script>
+/* Ajout : compte à rebours de validité du code (durée fournie par Django : expiration_secondes, 600 par défaut) */
+(function(){
+  var total=parseInt('{{ expiration_secondes|default:600 }}',10); if(isNaN(total)||total<=0) total=600;
+  var remain=total;
+  var line=document.getElementById('expLine'), time=document.getElementById('expTime'), bar=document.getElementById('expBar');
+  var expired=document.getElementById('otpExpired'), submit=document.getElementById('otpSubmit');
+  var tw=document.getElementById('timerWrap'), rb=document.getElementById('resendBtn');
+  function paint(){
+    var m=Math.floor(remain/60), s=remain%60;
+    time.textContent=m+':'+(s<10?'0':'')+s;
+    bar.style.width=(remain/total*100)+'%';
+    line.classList.toggle('low',remain<=60);
+    var dl=document.getElementById('dial'), dt=document.getElementById('dTime');
+    if(dl&&dt){dt.style.strokeDashoffset=1872.3*(1-remain/total);dl.classList.toggle('low',remain<=60&&remain>0)}
+  }
+  paint();
+  document.getElementById('otpForm').addEventListener('submit',function(e){
+    if(remain<=0){e.preventDefault();submit.disabled=true}
+  });
+  var t=setInterval(function(){
+    remain--; paint();
+    if(remain<=0){
+      clearInterval(t);
+      line.hidden=true; expired.hidden=false;
+      document.getElementById('dial').classList.add('expired');
+      submit.disabled=true; tw.hidden=true; rb.disabled=false;
+    }
+  },1000);
+})();
+</script>
+
+<script>
+/* Ajout : le cadran de coffre-fort. Chaque chiffre saisi le fait tourner, chaque case remplie allume un voyant. */
+(function(){
+  var NS='http://www.w3.org/2000/svg', CX=300, CY=300;
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
+
+  var dial=document.getElementById('dial'), ring=document.getElementById('dRing'), ticks=document.getElementById('dTicks');
+  var leds=document.getElementById('dLeds'), marker=document.getElementById('dMarker'), count=document.getElementById('dCount');
+  var step=document.getElementById('stepEnter'), submit=document.getElementById('otpSubmit'), form=document.getElementById('otpForm');
+  var boxes=[].slice.call(document.querySelectorAll('#otpBoxes input'));
+
+  /* graduations : 120 traits, un repère doré toutes les 10 */
+  for(var i=0;i<120;i++){
+    var a=i*3*Math.PI/180, major=i%10===0, r1=major?276:282, r2=292;
+    ticks.appendChild(el('line',{x1:CX+r1*Math.sin(a),y1:CY-r1*Math.cos(a),x2:CX+r2*Math.sin(a),y2:CY-r2*Math.cos(a),'class':major?'major':''}));
+  }
+  /* couronne de chiffres 0-9, un tous les 36° */
+  var digits=[];
+  for(var d=0;d<10;d++){
+    var ang=d*36, rad=ang*Math.PI/180;
+    var t=el('text',{x:CX+222*Math.sin(rad),y:CY-222*Math.cos(rad),transform:'rotate('+ang+' '+(CX+222*Math.sin(rad))+' '+(CY-222*Math.cos(rad))+')'});
+    t.textContent=d; ring.appendChild(t); digits.push(t);
+  }
+  /* 6 voyants, un par case */
+  var ledEls=[];
+  for(var k=0;k<6;k++){
+    var la=(-75+k*30)*Math.PI/180;
+    var c=el('circle',{cx:CX+118*Math.sin(la),cy:CY-118*Math.cos(la),r:7,'class':'d-led'});
+    leds.appendChild(c); ledEls.push(c);
+  }
+
+  var A=0; /* rotation cumulée de la couronne */
+  ring.style.transform='rotate(0deg)';
+
+  /* code refusé : le serveur a renvoyé un message d'erreur, le cadran passe au rouge */
+  if([].some.call(document.querySelectorAll('.alert[data-tag]'),function(a){return a.dataset.tag&&a.dataset.tag!=='success'})){
+    dial.classList.add('denied');
+  }
+
+  function spinTo(dg){
+    var T=-dg*36, x=A-T, n=Math.floor((x-180)/360);
+    A=T+360*n;                        /* toujours dans le même sens, 1/2 à 1,5 tour */
+    ring.style.transform='rotate('+A+'deg)';
+    marker.classList.remove('tick'); void marker.getBoundingClientRect(); marker.classList.add('tick');
+    digits.forEach(function(t,i){t.classList.toggle('hit',i===dg)});
+  }
+
+  boxes.forEach(function(b){b.addEventListener('animationend',function(){b.classList.remove('pop','wave')})});
+  marker.addEventListener('animationend',function(){marker.classList.remove('tick')});
+
+  var last=boxes.map(function(){return ''});
+  function sync(){
+    var cur=boxes.map(function(b){return b.value});
+    if(cur.join('|')===last.join('|')) return;
+    var n=cur.filter(Boolean).length, was=last.filter(Boolean).length, changed=-1;
+
+    cur.forEach(function(v,i){
+      if(v&&v!==last[i]){changed=i;boxes[i].classList.remove('pop');void boxes[i].offsetWidth;boxes[i].classList.add('pop')}
+    });
+    ledEls.forEach(function(l,i){l.classList.toggle('on',!!cur[i])});
+    count.textContent=n+' / 6';
+
+    /* chiffre à aligner : le dernier saisi, ou le dernier restant si on efface */
+    var lastIdx=changed>=0?changed:(function(){for(var i=5;i>=0;i--) if(cur[i]) return i;return -1})();
+    spinTo(lastIdx>=0?parseInt(cur[lastIdx],10):0);
+
+    if(n===6&&was<6){
+      boxes.forEach(function(b,i){b.style.setProperty('--i',i);b.classList.remove('pop','wave');void b.offsetWidth;b.classList.add('wave')});
+      dial.classList.add('ready'); step.classList.remove('active'); step.classList.add('done');
+    }else if(n<6&&was===6){
+      dial.classList.remove('ready'); step.classList.remove('done'); step.classList.add('active');
+    }
+    last=cur;
+  }
+  setInterval(sync,80);
+
+  /* Envoi : la couronne tourne en continu tant que le serveur vérifie, le cadenas reste fermé jusqu'à la réponse */
+  var sending=false;
+  form.addEventListener('submit',function(e){
+    if(e.defaultPrevented||sending) return;
+    sending=true; e.preventDefault();
+    submit.classList.add('loading'); dial.classList.add('verifying');
+    A-=3600; ring.style.transition='transform 6s linear'; ring.style.transform='rotate('+A+'deg)';
+    setTimeout(function(){form.submit()},450);
+  });
+})();
+</script>
+<script>
+/* Ajout : confort de défilement (progression, en-tête, retour en haut, saisie toujours visible sur mobile) */
+(function(){
+  var bar=document.getElementById('readProgress'), top=document.getElementById('topbar'), btn=document.getElementById('toTop');
+  var boxes=document.getElementById('otpBoxes'), submit=document.getElementById('otpSubmit'), first=boxes.querySelector('input');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, mobile=matchMedia('(max-width: 900px)');
+  var smooth=reduce?'auto':'smooth', ticking=false;
+
+  function measure(){document.documentElement.style.setProperty('--hdr',top.offsetHeight+'px')}
+  function onScroll(){
+    var y=window.scrollY, max=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.transform='scaleX('+(max>4?Math.min(1,y/max):0)+')';
+    top.classList.toggle('scrolled',y>8);
+    btn.classList.toggle('show',y>240);
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(onScroll)}},{passive:true});
+  window.addEventListener('resize',function(){measure();onScroll()});
+  measure(); onScroll();
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:smooth})});
+
+  /* mobile : on ramène la saisie à l'écran quand on touche une case, sauf à l'ouverture de la page */
+  var touched=false;
+  ['pointerdown','keydown'].forEach(function(ev){document.addEventListener(ev,function(){touched=true},{once:true,passive:true})});
+  [].forEach.call(boxes.querySelectorAll('input'),function(b){
+    b.addEventListener('focus',function(){
+      if(touched&&mobile.matches) boxes.scrollIntoView({behavior:smooth,block:'center'});
+    });
+  });
+  /* code complet : on s'assure que le bouton est visible */
+  var wasFull=false;
+  setInterval(function(){
+    var full=[].every.call(boxes.querySelectorAll('input'),function(b){return b.value});
+    if(full&&!wasFull&&mobile.matches) submit.scrollIntoView({behavior:smooth,block:'nearest'});
+    wasFull=full;
+  },150);
+})();
+</script>
+</body>
+</html>
