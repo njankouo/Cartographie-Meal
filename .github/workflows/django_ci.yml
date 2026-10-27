@@ -16,14 +16,6 @@ jobs:
   test-django:
     runs-on: ubuntu-latest # Utilise l'environnement virtuel Linux le plus récent
 
-    # Déclaration des variables d'environnement globales pour le job, 
-    # permettant d'injecter les secrets de manière sécurisée ici.
-    env:
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-
     # ==========================================================================
     # Services associés : Lance un conteneur PostgreSQL éphémère pour les tests
     # ==========================================================================
@@ -31,15 +23,15 @@ jobs:
       postgres:
         image: postgres:15-alpine # Utilise une image alpine légère et sécurisée
         env:
-          # Récupération depuis les variables d'environnement définies juste au-dessus
-          POSTGRES_DB: ${{ env.DB_NAME }}
-          POSTGRES_USER: ${{ env.DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          # Valeurs directes (standard et sécurisées pour un conteneur de test éphémère)
+          POSTGRES_DB: django_test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432 # Expose le port standard de PostgreSQL
-        # Commande de santé (health check) utilisant les variables d'environnement du job
+        # Commande de santé (health check) pour s'assurer que la base est prête
         options: >-
-          --health-cmd "pg_isready -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }}"
+          --health-cmd "pg_isready -U postgres -d django_test_db"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -81,13 +73,22 @@ jobs:
         run: |
           python manage.py makemigrations --check --dry-run
         env:
+          DB_NAME: django_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgres
           DB_HOST: localhost
           DB_PORT: 5432
+          # Si vous utilisez un secret pour la clé secrète Django, vous pouvez le garder ainsi :
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
       # 6. Exécute la suite de tests unitaires et d'intégration Django
       - name: Lancer les tests Django
         run: |
           python manage.py test
         env:
+          DB_NAME: django_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgres
           DB_HOST: localhost
           DB_PORT: 5432
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
