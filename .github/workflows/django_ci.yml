@@ -62,8 +62,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Vérifier qu'aucune migration n'a été oubliée
-        run:  python manage.py makemigrations --check --dry-run
+      # CORRIGÉ : on ne vérifie que NOS applications, pas les bibliothèques installées (ex. cities_light).
+      # Remplacez « cartographie » par le nom de votre application (voir apps.py) ; plusieurs : séparées par des espaces.
+      - name: Vérifier qu'aucune migration n'a été oubliée (nos applications uniquement)
+        run: python manage.py makemigrations cartographie --check --dry-run
 
       - name: Exécuter les tests Django
         run: python manage.py test
