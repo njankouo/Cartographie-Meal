@@ -88,14 +88,18 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Chemin absolu exact trouvé sur votre serveur
+            # Chemin absolu exact sur votre serveur
             cd /home/Cartographie-Meal
             
             git pull origin main
+            
+            # Activation du venv et mise à jour des paquets
             source venv/bin/activate
             pip install -r requirements.txt
-            python manage.py migrate
-            python manage.py collectstatic --noinput
             
-            # Ajustez 'gunicorn' si le nom de votre service systemd est différent
+            # Utilisation explicite du binaire python du venv pour éviter les erreurs de chemin/versions
+            /home/Cartographie-Meal/venv/bin/python manage.py migrate
+            /home/Cartographie-Meal/venv/bin/python manage.py collectstatic --noinput
+            
+            # Redémarrage du service Gunicorn (ajustez le nom si nécessaire)
             sudo systemctl restart gunicorn
