@@ -36,10 +36,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # 5. Installer les dépendances Python
+      # 5. Installer les dépendances Python (avec le chemin pkg-config explicite)
       - name: Installer les dépendances
         run: |
           python -m pip install --upgrade pip
+          export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # 6. Vérifier les migrations manquantes
