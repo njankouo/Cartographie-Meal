@@ -1,7 +1,7 @@
 # ==============================================================================
 # Nom du workflow CI/CD pour Django
 # ==============================================================================
-name: Django CI
+name: Django CI/CD
 
 # Déclencheurs : s'exécute à chaque push ou pull request sur main ou master
 on:
@@ -89,3 +89,27 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+
+  # ==========================================================================
+  # Second Job : Déploiement Continu (CD) sur le serveur de production
+  # ==========================================================================
+  deploy:
+    needs: test-django # S'exécute uniquement si le job 'test-django' réussit
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Uniquement sur main lors d'un push
+
+    steps:
+      - name: Connexion au serveur et déploiement via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}         # Adresse IP de votre VPS
+          username: ${{ secrets.SERVER_USER }}      # Nom d'utilisateur (ex: ubuntu ou root)
+          key: ${{ secrets.SSH_PRIVATE_KEY }}       # Votre clé SSH privée
+          script: |
+            cd /chemin/vers/votre/projet/sur/le/serveur
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            sudo systemctl restart gunicorn          # Redémarre votre application
