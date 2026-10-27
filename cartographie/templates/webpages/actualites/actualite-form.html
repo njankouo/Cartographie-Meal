@@ -415,6 +415,16 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
 .xa-pv span.r{background:var(--navy);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
 .xa-time{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 </style>
+<style>
+/* ───── Ajout : vrais champs de saisie (style identique à .fld, y compris pour les widgets Django sans classe) ───── */
+.f input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]):not(.fld):not(.sr),
+.f textarea:not(.fld),.f select:not(.fld),.grid2 .f input[type=date]:not(.fld){width:100%;min-height:46px;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);font:inherit;font-size:15px;color:var(--ink);transition:border-color .15s,box-shadow .15s,background .15s}
+.f textarea:not(.fld){min-height:110px;resize:vertical;line-height:1.55}
+.f input:not([type=checkbox]):not([type=radio]):not(.fld):focus,.f textarea:not(.fld):focus,.f select:not(.fld):focus{outline:none;border-color:var(--navy);background:#fff;box-shadow:0 0 0 3px rgba(201,162,39,.28)}
+.fld[type=date],.fld[type=time],.fld[type=datetime-local]{font-family:var(--mono);font-size:14px}
+.fld:invalid:not(:placeholder-shown):not(:focus){border-color:var(--err)}
+.xa-body textarea:not(.fld){min-height:240px;font-size:15.5px;line-height:1.7}
+</style>
 </head>
 <body>
 {% url 'admin-actualites' as u_actu %}{% url 'admin-mail-groupe' as u_mail %}{% url 'admin-synchronisations' as u_sync %}
@@ -525,49 +535,33 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
         {% if edition %}<a href="{% url 'admin-actualites' %}">Annuler la modification</a>{% endif %}
       </div>
 
-      {% if form.non_field_errors %}
-      <div class="step"><p class="err-txt">{{ form.non_field_errors.0 }}</p></div>
+      {% if erreurs.general %}
+      <div class="step"><p class="err-txt">{{ erreurs.general }}</p></div>
       {% endif %}
 
       <!-- 1. Type -->
       <fieldset class="step">
         <legend class="step-title"><i>1</i><span><h3>Type de contenu</h3><p>Il détermine où et comment le contenu apparaît sur le journal.</p></span></legend>
         <div class="types">
-          {% for radio in form.type %}
-          <label class="type-opt">
-            {{ radio.tag }}
-            <span class="box">
-              {% if radio.data.value == 'debat' %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Grand bloc « À la une »</small>
-              {% elif radio.data.value == 'depeche' %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Liste « Dernières dépêches »</small>
-              {% elif radio.data.value == 'agenda' %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Encadré agenda, avec date</small>
-              {% else %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-                <b>{{ radio.choice_label }}</b><small>Une ligne dans le bandeau</small>
-              {% endif %}
-            </span>
-          </label>
-          {% endfor %}
+          <label class="type-opt"><input type="radio" name="type" value="debat" id="id_type_0"{% if request.POST.type == "debat" or not request.POST.type and edition.type == "debat" %} checked{% endif %} required><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><b>Débat structuré</b><small>Grand bloc « À la une »</small></span></label>
+          <label class="type-opt"><input type="radio" name="type" value="depeche" id="id_type_1"{% if request.POST.type == "depeche" or not request.POST.type and edition.type == "depeche" or not request.POST.type and not edition.type %} checked{% endif %} required><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><b>Dépêche</b><small>Liste « Dernières dépêches »</small></span></label>
+          <label class="type-opt"><input type="radio" name="type" value="agenda" id="id_type_2"{% if request.POST.type == "agenda" or not request.POST.type and edition.type == "agenda" %} checked{% endif %} required><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><b>Événement</b><small>Encadré agenda, avec date</small></span></label>
+          <label class="type-opt"><input type="radio" name="type" value="fil" id="id_type_3"{% if request.POST.type == "fil" or not request.POST.type and edition.type == "fil" %} checked{% endif %} required><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg><b>Fil d’actualité</b><small>Une ligne dans le bandeau</small></span></label>
         </div>
-        {% if form.type.errors %}<p class="err-txt" style="margin-top:10px">{{ form.type.errors.0 }}</p>{% endif %}
+        {% if erreurs.type %}<p class="err-txt" style="margin-top:10px">{{ erreurs.type }}</p>{% endif %}
 
         <!-- Champs propres au débat -->
         <div class="cond" data-for="debat" hidden>
           <p class="cond-title">Détails du débat</p>
           <div class="grid2">
-            <div class="f{% if form.numero.errors %} has-err{% endif %}">
-              <label for="{{ form.numero.id_for_label }}"><span>Numéro du débat<span class="req" aria-hidden="true">*</span></span></label>
-              {{ form.numero }}
-              {% if form.numero.errors %}<p class="err-txt">{{ form.numero.errors.0 }}</p>{% endif %}
+            <div class="f{% if erreurs.numero %} has-err{% endif %}">
+              <label for="id_numero"><span>Numéro du débat<span class="req" aria-hidden="true">*</span></span></label>
+              <input type="number" name="numero" id="id_numero" class="fld" value="{% if request.POST.numero %}{{ request.POST.numero }}{% elif edition %}{{ edition.numero|default:'' }}{% endif %}" min="1" step="1" inputmode="numeric" placeholder="Ex. 13">
+              {% if erreurs.numero %}<p class="err-txt">{{ erreurs.numero }}</p>{% endif %}
             </div>
-            <div class="f{% if form.statut.errors %} has-err{% endif %}">
-              <label for="{{ form.statut.id_for_label }}">Statut</label>
-              {{ form.statut }}
+            <div class="f{% if erreurs.statut %} has-err{% endif %}">
+              <label for="id_statut">Statut</label>
+              <select name="statut" id="id_statut" class="fld"><option value="a_venir"{% if request.POST.statut == "a_venir" or not request.POST.statut and edition.statut == "a_venir" %} selected{% endif %}>À venir</option><option value="en_cours"{% if request.POST.statut == "en_cours" or not request.POST.statut and edition.statut == "en_cours" %} selected{% endif %}>En cours</option><option value="cloture"{% if request.POST.statut == "cloture" or not request.POST.statut and edition.statut == "cloture" %} selected{% endif %}>Clôturé</option></select>
             </div>
           </div>
         </div>
@@ -576,40 +570,40 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
         <div class="cond" data-for="agenda" hidden>
           <p class="cond-title">Détails de l'événement</p>
           <div class="grid2">
-            <div class="f{% if form.date_evenement.errors %} has-err{% endif %}">
-              <label for="{{ form.date_evenement.id_for_label }}"><span>Date<span class="req" aria-hidden="true">*</span></span></label>
-              {{ form.date_evenement }}
-              {% if form.date_evenement.errors %}<p class="err-txt">{{ form.date_evenement.errors.0 }}</p>{% endif %}
+            <div class="f{% if erreurs.date_evenement %} has-err{% endif %}">
+              <label for="id_date_evenement"><span>Date<span class="req" aria-hidden="true">*</span></span></label>
+              <input type="date" name="date_evenement" id="id_date_evenement" class="fld" value="{% if request.POST.date_evenement %}{{ request.POST.date_evenement }}{% elif edition %}{{ edition.date_evenement|date:"Y-m-d" }}{% endif %}">
+              {% if erreurs.date_evenement %}<p class="err-txt">{{ erreurs.date_evenement }}</p>{% endif %}
             </div>
             <div class="f">
-              <label for="{{ form.lieu.id_for_label }}">Lieu <em>facultatif</em></label>
-              {{ form.lieu }}
+              <label for="id_lieu">Lieu <em>facultatif</em></label>
+              <input type="text" name="lieu" id="id_lieu" class="fld" value="{% if request.POST.lieu %}{{ request.POST.lieu }}{% elif edition %}{{ edition.lieu|default:'' }}{% endif %}" maxlength="150" placeholder="Ex. Yaoundé, Hôtel Hilton ou En ligne">
             </div>
           </div>
           <div class="xa-sub" style="margin-top:16px;padding-top:14px">
             <div class="grid2">
-              <div class="f{% if form.date_fin_evenement.errors %} has-err{% endif %}">
-              <label for="{{ form.date_fin_evenement.id_for_label }}"><span>Date de fin</span> <em>facultatif</em></label>
-              {{ form.date_fin_evenement }}
-              {% if form.date_fin_evenement.errors %}<p class="err-txt">{{ form.date_fin_evenement.errors.0 }}</p>{% else %}<span class="help">Laissez vide pour un événement d’un seul jour.</span>{% endif %}
+              <div class="f{% if erreurs.date_fin_evenement %} has-err{% endif %}">
+              <label for="id_date_fin_evenement"><span>Date de fin</span> <em>facultatif</em></label>
+              <input type="date" name="date_fin_evenement" id="id_date_fin_evenement" class="fld" value="{% if request.POST.date_fin_evenement %}{{ request.POST.date_fin_evenement }}{% elif edition %}{{ edition.date_fin_evenement|date:"Y-m-d" }}{% endif %}">
+              {% if erreurs.date_fin_evenement %}<p class="err-txt">{{ erreurs.date_fin_evenement }}</p>{% else %}<span class="help">Laissez vide pour un événement d’un seul jour.</span>{% endif %}
             </div>
               <div class="xa-time">
-                <div class="f{% if form.heure_debut.errors %} has-err{% endif %}">
-              <label for="{{ form.heure_debut.id_for_label }}"><span>Début</span> <em>facultatif</em></label>
-              {{ form.heure_debut }}
-              {% if form.heure_debut.errors %}<p class="err-txt">{{ form.heure_debut.errors.0 }}</p>{% else %}{% endif %}
+                <div class="f{% if erreurs.heure_debut %} has-err{% endif %}">
+              <label for="id_heure_debut"><span>Début</span> <em>facultatif</em></label>
+              <input type="time" name="heure_debut" id="id_heure_debut" class="fld" value="{% if request.POST.heure_debut %}{{ request.POST.heure_debut }}{% elif edition %}{{ edition.heure_debut|time:"H:i" }}{% endif %}">
+              {% if erreurs.heure_debut %}<p class="err-txt">{{ erreurs.heure_debut }}</p>{% else %}{% endif %}
             </div>
-                <div class="f{% if form.heure_fin.errors %} has-err{% endif %}">
-              <label for="{{ form.heure_fin.id_for_label }}"><span>Fin</span> <em>facultatif</em></label>
-              {{ form.heure_fin }}
-              {% if form.heure_fin.errors %}<p class="err-txt">{{ form.heure_fin.errors.0 }}</p>{% else %}{% endif %}
+                <div class="f{% if erreurs.heure_fin %} has-err{% endif %}">
+              <label for="id_heure_fin"><span>Fin</span> <em>facultatif</em></label>
+              <input type="time" name="heure_fin" id="id_heure_fin" class="fld" value="{% if request.POST.heure_fin %}{{ request.POST.heure_fin }}{% elif edition %}{{ edition.heure_fin|time:"H:i" }}{% endif %}">
+              {% if erreurs.heure_fin %}<p class="err-txt">{{ erreurs.heure_fin }}</p>{% else %}{% endif %}
             </div>
               </div>
             </div>
-            <div class="f{% if form.lien_inscription.errors %} has-err{% endif %}" style="margin-top:16px">
-              <label for="{{ form.lien_inscription.id_for_label }}">Lien d’inscription <em>facultatif</em></label>
-              {{ form.lien_inscription }}
-              {% if form.lien_inscription.errors %}<p class="err-txt">{{ form.lien_inscription.errors.0 }}</p>{% else %}<span class="help">Formulaire ou page où les membres s’inscrivent.</span>{% endif %}
+            <div class="f{% if erreurs.lien_inscription %} has-err{% endif %}" style="margin-top:16px">
+              <label for="id_lien_inscription">Lien d’inscription <em>facultatif</em></label>
+              <input type="url" name="lien_inscription" id="id_lien_inscription" class="fld" value="{% if request.POST.lien_inscription %}{{ request.POST.lien_inscription }}{% elif edition %}{{ edition.lien_inscription|default:'' }}{% endif %}" placeholder="https://">
+              {% if erreurs.lien_inscription %}<p class="err-txt">{{ erreurs.lien_inscription }}</p>{% else %}<span class="help">Formulaire ou page où les membres s’inscrivent.</span>{% endif %}
             </div>
           </div>
         </div>
@@ -621,64 +615,64 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
 
         <div class="tabs" role="tablist" aria-label="Langue du contenu">
           <button type="button" class="tab" role="tab" id="tab-fr" aria-controls="panel-fr" aria-selected="true">Français</button>
-          <button type="button" class="tab" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false">English <span class="opt">facultatif</span><span class="dot" id="enErr" {% if not form.titre_en.errors and not form.resume_en.errors %}hidden{% endif %}></span></button>
+          <button type="button" class="tab" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false">English <span class="opt">facultatif</span><span class="dot" id="enErr" {% if not erreurs.titre_en and not erreurs.resume_en %}hidden{% endif %}></span></button>
         </div>
 
         <div class="panel" id="panel-fr" role="tabpanel" aria-labelledby="tab-fr">
-          <div class="f{% if form.titre_fr.errors %} has-err{% endif %}">
-            <label for="{{ form.titre_fr.id_for_label }}"><span>Titre<span class="req" aria-hidden="true">*</span></span> <span class="count" data-count-for="{{ form.titre_fr.id_for_label }}"></span></label>
-            {{ form.titre_fr }}
-            {% if form.titre_fr.errors %}<p class="err-txt">{{ form.titre_fr.errors.0 }}</p>{% endif %}
+          <div class="f{% if erreurs.titre_fr %} has-err{% endif %}">
+            <label for="id_titre_fr"><span>Titre<span class="req" aria-hidden="true">*</span></span> <span class="count" data-count-for="id_titre_fr"></span></label>
+            <input type="text" name="titre_fr" id="id_titre_fr" class="fld" value="{% if request.POST.titre_fr %}{{ request.POST.titre_fr }}{% elif edition %}{{ edition.titre_fr|default:'' }}{% endif %}" maxlength="160" required placeholder="Ex. Débat n°13 : la redevabilité envers les communautés">
+            {% if erreurs.titre_fr %}<p class="err-txt">{{ erreurs.titre_fr }}</p>{% endif %}
           </div>
-          <div class="f{% if form.resume_fr.errors %} has-err{% endif %}">
-            <label for="{{ form.resume_fr.id_for_label }}">Résumé <span class="count" data-count-for="{{ form.resume_fr.id_for_label }}"></span></label>
-            {{ form.resume_fr }}
-            {% if form.resume_fr.errors %}<p class="err-txt">{{ form.resume_fr.errors.0 }}</p>{% endif %}
+          <div class="f{% if erreurs.resume_fr %} has-err{% endif %}">
+            <label for="id_resume_fr">Résumé <span class="count" data-count-for="id_resume_fr"></span></label>
+            <textarea name="resume_fr" id="id_resume_fr" class="fld" rows="3" maxlength="400" placeholder="2 à 3 phrases qui donnent envie de lire.">{% if request.POST.resume_fr %}{{ request.POST.resume_fr }}{% elif edition %}{{ edition.resume_fr|default:'' }}{% endif %}</textarea>
+            {% if erreurs.resume_fr %}<p class="err-txt">{{ erreurs.resume_fr }}</p>{% endif %}
           </div>
-          <div class="f xa-body{% if form.contenu_fr.errors %} has-err{% endif %}">
-            <label for="{{ form.contenu_fr.id_for_label }}"><span>Contenu complet <em>facultatif</em></span> <span class="xa-read" id="xaReadFr"></span></label>
-            {{ form.contenu_fr }}
-            {% if form.contenu_fr.errors %}<p class="err-txt">{{ form.contenu_fr.errors.0 }}</p>{% else %}<span class="help">Texte de l’article. Séparez les paragraphes par une ligne vide.</span>{% endif %}
+          <div class="f xa-body{% if erreurs.contenu_fr %} has-err{% endif %}">
+            <label for="id_contenu_fr"><span>Contenu complet <em>facultatif</em></span> <span class="xa-read" id="xaReadFr"></span></label>
+            <textarea name="contenu_fr" id="id_contenu_fr" class="fld" rows="10" placeholder="Texte complet de l’article.">{% if request.POST.contenu_fr %}{{ request.POST.contenu_fr }}{% elif edition %}{{ edition.contenu_fr|default:'' }}{% endif %}</textarea>
+            {% if erreurs.contenu_fr %}<p class="err-txt">{{ erreurs.contenu_fr }}</p>{% else %}<span class="help">Texte de l’article. Séparez les paragraphes par une ligne vide.</span>{% endif %}
           </div>
         </div>
 
         <div class="panel" id="panel-en" role="tabpanel" aria-labelledby="tab-en" hidden>
-          <div class="f{% if form.titre_en.errors %} has-err{% endif %}">
-            <label for="{{ form.titre_en.id_for_label }}">Title <span class="count" data-count-for="{{ form.titre_en.id_for_label }}"></span></label>
-            {{ form.titre_en }}
-            {% if form.titre_en.errors %}<p class="err-txt">{{ form.titre_en.errors.0 }}</p>{% endif %}
+          <div class="f{% if erreurs.titre_en %} has-err{% endif %}">
+            <label for="id_titre_en">Title <span class="count" data-count-for="id_titre_en"></span></label>
+            <input type="text" name="titre_en" id="id_titre_en" class="fld" value="{% if request.POST.titre_en %}{{ request.POST.titre_en }}{% elif edition %}{{ edition.titre_en|default:'' }}{% endif %}" maxlength="160" placeholder="English title">
+            {% if erreurs.titre_en %}<p class="err-txt">{{ erreurs.titre_en }}</p>{% endif %}
           </div>
-          <div class="f{% if form.resume_en.errors %} has-err{% endif %}">
-            <label for="{{ form.resume_en.id_for_label }}">Summary <span class="count" data-count-for="{{ form.resume_en.id_for_label }}"></span></label>
-            {{ form.resume_en }}
-            {% if form.resume_en.errors %}<p class="err-txt">{{ form.resume_en.errors.0 }}</p>{% endif %}
+          <div class="f{% if erreurs.resume_en %} has-err{% endif %}">
+            <label for="id_resume_en">Summary <span class="count" data-count-for="id_resume_en"></span></label>
+            <textarea name="resume_en" id="id_resume_en" class="fld" rows="3" maxlength="400" placeholder="Short summary in English.">{% if request.POST.resume_en %}{{ request.POST.resume_en }}{% elif edition %}{{ edition.resume_en|default:'' }}{% endif %}</textarea>
+            {% if erreurs.resume_en %}<p class="err-txt">{{ erreurs.resume_en }}</p>{% endif %}
           </div>
-          <div class="f xa-body{% if form.contenu_en.errors %} has-err{% endif %}">
-            <label for="{{ form.contenu_en.id_for_label }}"><span>Full text <em>optional</em></span> <span class="xa-read" id="xaReadEn"></span></label>
-            {{ form.contenu_en }}
-            {% if form.contenu_en.errors %}<p class="err-txt">{{ form.contenu_en.errors.0 }}</p>{% endif %}
+          <div class="f xa-body{% if erreurs.contenu_en %} has-err{% endif %}">
+            <label for="id_contenu_en"><span>Full text <em>optional</em></span> <span class="xa-read" id="xaReadEn"></span></label>
+            <textarea name="contenu_en" id="id_contenu_en" class="fld" rows="10" placeholder="Full text in English.">{% if request.POST.contenu_en %}{{ request.POST.contenu_en }}{% elif edition %}{{ edition.contenu_en|default:'' }}{% endif %}</textarea>
+            {% if erreurs.contenu_en %}<p class="err-txt">{{ erreurs.contenu_en }}</p>{% endif %}
           </div>
         </div>
 
         <div class="grid2" style="margin-top:16px">
-          <div class="f{% if form.lien.errors %} has-err{% endif %}">
-            <label for="{{ form.lien.id_for_label }}">Lien <em>facultatif</em></label>
-            {{ form.lien }}
-            {% if form.lien.errors %}<p class="err-txt">{{ form.lien.errors.0 }}</p>{% else %}<span class="help">Page du débat, article, inscription…</span>{% endif %}
+          <div class="f{% if erreurs.lien %} has-err{% endif %}">
+            <label for="id_lien">Lien <em>facultatif</em></label>
+            <input type="url" name="lien" id="id_lien" class="fld" value="{% if request.POST.lien %}{{ request.POST.lien }}{% elif edition %}{{ edition.lien|default:'' }}{% endif %}" placeholder="https://">
+            {% if erreurs.lien %}<p class="err-txt">{{ erreurs.lien }}</p>{% else %}<span class="help">Page du débat, article, inscription…</span>{% endif %}
           </div>
-          <div class="f{% if form.image.errors %} has-err{% endif %}">
+          <div class="f{% if erreurs.image %} has-err{% endif %}">
             <span class="lab">Image <em>facultative</em></span>
-            <label class="file" for="{{ form.image.id_for_label }}">
+            <label class="file" for="id_image">
               <span class="thumb" id="imgThumb" {% if edition and edition.image %}style="background-image:url('{{ edition.image.url }}')"{% endif %}>
                 {% if not edition or not edition.image %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>{% endif %}
               </span>
               <span class="meta"><b id="imgName">{% if edition and edition.image %}{{ edition.image.name|cut:"actualites/" }}{% else %}Choisir une image{% endif %}</b>JPG ou PNG, format paysage conseillé</span>
             </label>
-            <input type="file" name="image" id="{{ form.image.id_for_label }}" accept="image/*" class="sr">
+            <input type="file" name="image" id="id_image" accept="image/*" class="sr">
             {% if edition and edition.image %}
             <label class="file-current"><input type="checkbox" name="image-clear" id="image-clear_id"> Retirer l'image actuelle</label>
             {% endif %}
-            {% if form.image.errors %}<p class="err-txt">{{ form.image.errors.0 }}</p>{% endif %}
+            {% if erreurs.image %}<p class="err-txt">{{ erreurs.image }}</p>{% endif %}
           </div>
         </div>
 
@@ -686,18 +680,18 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
         <div class="xa-sub" id="xaClass">
           <p class="xa-sub-t">Classement et références</p>
           <div class="grid2">
-            <div class="f{% if form.rubrique.errors %} has-err{% endif %}">
-              <label for="{{ form.rubrique.id_for_label }}"><span>Rubrique</span> <em>facultatif</em></label>
-              {{ form.rubrique }}
-              {% if form.rubrique.errors %}<p class="err-txt">{{ form.rubrique.errors.0 }}</p>{% else %}<span class="help">Sert au filtre du journal et à l’aperçu.</span>{% endif %}
+            <div class="f{% if erreurs.rubrique %} has-err{% endif %}">
+              <label for="id_rubrique"><span>Rubrique</span> <em>facultatif</em></label>
+              <select name="rubrique" id="id_rubrique" class="fld"><option value=""{% if request.POST.rubrique == "" or not request.POST.rubrique and edition.rubrique == "" %} selected{% endif %}>Choisir une rubrique</option><option value="redevabilite"{% if request.POST.rubrique == "redevabilite" or not request.POST.rubrique and edition.rubrique == "redevabilite" %} selected{% endif %}>Redevabilité</option><option value="suivi_evaluation"{% if request.POST.rubrique == "suivi_evaluation" or not request.POST.rubrique and edition.rubrique == "suivi_evaluation" %} selected{% endif %}>Suivi-évaluation</option><option value="apprentissage"{% if request.POST.rubrique == "apprentissage" or not request.POST.rubrique and edition.rubrique == "apprentissage" %} selected{% endif %}>Apprentissage</option><option value="sante"{% if request.POST.rubrique == "sante" or not request.POST.rubrique and edition.rubrique == "sante" %} selected{% endif %}>Santé</option><option value="education"{% if request.POST.rubrique == "education" or not request.POST.rubrique and edition.rubrique == "education" %} selected{% endif %}>Éducation</option><option value="gouvernance"{% if request.POST.rubrique == "gouvernance" or not request.POST.rubrique and edition.rubrique == "gouvernance" %} selected{% endif %}>Gouvernance</option><option value="humanitaire"{% if request.POST.rubrique == "humanitaire" or not request.POST.rubrique and edition.rubrique == "humanitaire" %} selected{% endif %}>Humanitaire</option><option value="formation"{% if request.POST.rubrique == "formation" or not request.POST.rubrique and edition.rubrique == "formation" %} selected{% endif %}>Formation</option><option value="vie_du_reseau"{% if request.POST.rubrique == "vie_du_reseau" or not request.POST.rubrique and edition.rubrique == "vie_du_reseau" %} selected{% endif %}>Vie du réseau</option></select>
+              {% if erreurs.rubrique %}<p class="err-txt">{{ erreurs.rubrique }}</p>{% else %}<span class="help">Sert au filtre du journal et à l’aperçu.</span>{% endif %}
             </div>
-            <div class="f{% if form.source_nom.errors %} has-err{% endif %}">
-              <label for="{{ form.source_nom.id_for_label }}"><span>Source ou signature</span> <em>facultatif</em></label>
-              {{ form.source_nom }}
-              {% if form.source_nom.errors %}<p class="err-txt">{{ form.source_nom.errors.0 }}</p>{% else %}<span class="help">Ex. Rédaction MEAL Afrique, nom de l’auteur invité.</span>{% endif %}
+            <div class="f{% if erreurs.source_nom %} has-err{% endif %}">
+              <label for="id_source_nom"><span>Source ou signature</span> <em>facultatif</em></label>
+              <input type="text" name="source_nom" id="id_source_nom" class="fld" value="{% if request.POST.source_nom %}{{ request.POST.source_nom }}{% elif edition %}{{ edition.source_nom|default:'' }}{% endif %}" maxlength="150" placeholder="Ex. Rédaction MEAL Afrique">
+              {% if erreurs.source_nom %}<p class="err-txt">{{ erreurs.source_nom }}</p>{% else %}<span class="help">Ex. Rédaction MEAL Afrique, nom de l’auteur invité.</span>{% endif %}
             </div>
           </div>
-          <div class="f{% if form.pays.errors %} has-err{% endif %}">
+          <div class="f{% if erreurs.pays %} has-err{% endif %}">
             <label for="xaPaysQ"><span>Pays concernés <em>facultatif</em></span> <span class="count" id="xaPaysN"></span></label>
             <div class="xa-pick">
               <input type="search" class="fld" id="xaPaysQ" placeholder="Rechercher un pays africain…" autocomplete="off" aria-controls="xaPaysL" aria-expanded="false">
@@ -705,51 +699,51 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
             </div>
             <div class="xa-chips" id="xaPaysC" aria-live="polite"></div>
             <div class="xa-quick" id="xaPaysQ2"><button type="button" data-all="1">Toute l’Afrique</button><button type="button" data-clear="1">Effacer</button></div>
-            {{ form.pays }}
-            {% if form.pays.errors %}<p class="err-txt">{{ form.pays.errors.0 }}</p>{% else %}<span class="help">Relie l’actualité aux pays de la carte MEAL Afrique / OPERAPLUS.</span>{% endif %}
+            <input type="text" name="pays" id="id_pays" class="fld" value="{% if request.POST.pays %}{{ request.POST.pays }}{% elif edition %}{{ edition.pays|default:'' }}{% endif %}" placeholder="Codes pays séparés par des virgules : CM,SN,CI">
+            {% if erreurs.pays %}<p class="err-txt">{{ erreurs.pays }}</p>{% else %}<span class="help">Relie l’actualité aux pays de la carte MEAL Afrique / OPERAPLUS.</span>{% endif %}
           </div>
-          <div class="f{% if form.tags.errors %} has-err{% endif %}">
-            <label for="{{ form.tags.id_for_label }}"><span>Mots-clés <em>facultatif</em></span> <span class="count" id="xaTagN"></span></label>
-            {{ form.tags }}
+          <div class="f{% if erreurs.tags %} has-err{% endif %}">
+            <label for="id_tags"><span>Mots-clés <em>facultatif</em></span> <span class="count" id="xaTagN"></span></label>
+            <input type="text" name="tags" id="id_tags" class="fld" value="{% if request.POST.tags %}{{ request.POST.tags }}{% elif edition %}{{ edition.tags|default:'' }}{% endif %}" maxlength="300" placeholder="redevabilité, santé, Cameroun">
             <div class="xa-chips" id="xaTagC"></div>
-            {% if form.tags.errors %}<p class="err-txt">{{ form.tags.errors.0 }}</p>{% else %}<span class="help">Séparés par des virgules. Ex. redevabilité, santé, Cameroun.</span>{% endif %}
+            {% if erreurs.tags %}<p class="err-txt">{{ erreurs.tags }}</p>{% else %}<span class="help">Séparés par des virgules. Ex. redevabilité, santé, Cameroun.</span>{% endif %}
           </div>
         </div>
 
         <div class="xa-sub">
           <p class="xa-sub-t">Médias et pièce jointe</p>
           <div class="grid2">
-            <div class="f{% if form.legende_image.errors %} has-err{% endif %}">
-              <label for="{{ form.legende_image.id_for_label }}"><span>Légende de l’image</span> <em>facultatif</em></label>
-              {{ form.legende_image }}
-              {% if form.legende_image.errors %}<p class="err-txt">{{ form.legende_image.errors.0 }}</p>{% else %}<span class="help">Une phrase qui décrit la photo.</span>{% endif %}
+            <div class="f{% if erreurs.legende_image %} has-err{% endif %}">
+              <label for="id_legende_image"><span>Légende de l’image</span> <em>facultatif</em></label>
+              <input type="text" name="legende_image" id="id_legende_image" class="fld" value="{% if request.POST.legende_image %}{{ request.POST.legende_image }}{% elif edition %}{{ edition.legende_image|default:'' }}{% endif %}" maxlength="200">
+              {% if erreurs.legende_image %}<p class="err-txt">{{ erreurs.legende_image }}</p>{% else %}<span class="help">Une phrase qui décrit la photo.</span>{% endif %}
             </div>
-            <div class="f{% if form.credit_image.errors %} has-err{% endif %}">
-              <label for="{{ form.credit_image.id_for_label }}"><span>Crédit photo</span> <em>facultatif</em></label>
-              {{ form.credit_image }}
-              {% if form.credit_image.errors %}<p class="err-txt">{{ form.credit_image.errors.0 }}</p>{% else %}<span class="help">Ex. © Nom du photographe.</span>{% endif %}
+            <div class="f{% if erreurs.credit_image %} has-err{% endif %}">
+              <label for="id_credit_image"><span>Crédit photo</span> <em>facultatif</em></label>
+              <input type="text" name="credit_image" id="id_credit_image" class="fld" value="{% if request.POST.credit_image %}{{ request.POST.credit_image }}{% elif edition %}{{ edition.credit_image|default:'' }}{% endif %}" maxlength="120" placeholder="© Nom du photographe">
+              {% if erreurs.credit_image %}<p class="err-txt">{{ erreurs.credit_image }}</p>{% else %}<span class="help">Ex. © Nom du photographe.</span>{% endif %}
             </div>
           </div>
-          <div class="f{% if form.lien_video.errors %} has-err{% endif %}" style="margin-top:16px">
-            <label for="{{ form.lien_video.id_for_label }}">Lien vidéo <em>facultatif</em></label>
-            {{ form.lien_video }}
-            {% if form.lien_video.errors %}<p class="err-txt">{{ form.lien_video.errors.0 }}</p>{% else %}<span class="help">YouTube, Vimeo ou lien direct.</span>{% endif %}
+          <div class="f{% if erreurs.lien_video %} has-err{% endif %}" style="margin-top:16px">
+            <label for="id_lien_video">Lien vidéo <em>facultatif</em></label>
+            <input type="url" name="lien_video" id="id_lien_video" class="fld" value="{% if request.POST.lien_video %}{{ request.POST.lien_video }}{% elif edition %}{{ edition.lien_video|default:'' }}{% endif %}" placeholder="https://www.youtube.com/watch?v=…">
+            {% if erreurs.lien_video %}<p class="err-txt">{{ erreurs.lien_video }}</p>{% else %}<span class="help">YouTube, Vimeo ou lien direct.</span>{% endif %}
           </div>
           <div class="grid2" style="margin-top:16px">
-            <div class="f{% if form.piece_jointe.errors %} has-err{% endif %}">
+            <div class="f{% if erreurs.piece_jointe %} has-err{% endif %}">
               <span class="lab">Document à télécharger <em>facultatif</em></span>
-              <label class="xa-file" for="{{ form.piece_jointe.id_for_label }}">
+              <label class="xa-file" for="id_piece_jointe">
                 <i id="xaPjExt">PDF</i>
                 <span><b id="xaPjName">{% if edition and edition.piece_jointe %}{{ edition.piece_jointe.name|cut:"actualites/pj/" }}{% else %}Choisir un fichier{% endif %}</b><small>PDF, Word ou Excel, 10 Mo maximum</small></span>
               </label>
-              <input type="file" name="piece_jointe" id="{{ form.piece_jointe.id_for_label }}" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" class="sr">
+              <input type="file" name="piece_jointe" id="id_piece_jointe" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" class="sr">
               {% if edition and edition.piece_jointe %}<label class="file-current"><input type="checkbox" name="piece_jointe-clear" id="piece_jointe-clear_id"> Retirer le document actuel</label>{% endif %}
-              {% if form.piece_jointe.errors %}<p class="err-txt">{{ form.piece_jointe.errors.0 }}</p>{% endif %}
+              {% if erreurs.piece_jointe %}<p class="err-txt">{{ erreurs.piece_jointe }}</p>{% endif %}
             </div>
-            <div class="f{% if form.piece_jointe_titre.errors %} has-err{% endif %}">
-              <label for="{{ form.piece_jointe_titre.id_for_label }}"><span>Titre du document</span> <em>facultatif</em></label>
-              {{ form.piece_jointe_titre }}
-              {% if form.piece_jointe_titre.errors %}<p class="err-txt">{{ form.piece_jointe_titre.errors.0 }}</p>{% else %}<span class="help">Ex. Rapport annuel 2025 (PDF).</span>{% endif %}
+            <div class="f{% if erreurs.piece_jointe_titre %} has-err{% endif %}">
+              <label for="id_piece_jointe_titre"><span>Titre du document</span> <em>facultatif</em></label>
+              <input type="text" name="piece_jointe_titre" id="id_piece_jointe_titre" class="fld" value="{% if request.POST.piece_jointe_titre %}{{ request.POST.piece_jointe_titre }}{% elif edition %}{{ edition.piece_jointe_titre|default:'' }}{% endif %}" maxlength="150" placeholder="Ex. Rapport annuel 2025 (PDF)">
+              {% if erreurs.piece_jointe_titre %}<p class="err-txt">{{ erreurs.piece_jointe_titre }}</p>{% else %}<span class="help">Ex. Rapport annuel 2025 (PDF).</span>{% endif %}
             </div>
           </div>
         </div>
@@ -760,55 +754,55 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
         <div class="step-title"><i>3</i><span><h3>Diffusion</h3><p>Choisissez où et quand le contenu est visible.</p></span></div>
         <div class="switches">
           <label class="sw">
-            {{ form.publie }}<span class="track" aria-hidden="true"></span>
+            <input type="checkbox" name="publie" id="id_publie"{% if request.POST.publie or request.method != 'POST' and edition and edition.publie or request.method != 'POST' and not edition %} checked{% endif %}><span class="track" aria-hidden="true"></span>
             <span><b>Publier sur le journal</b><small>Désactivé, le contenu reste en brouillon, visible ici seulement.</small></span>
           </label>
-          <label class="sw{% if form.a_la_une.errors %} has-err{% endif %}">
-            {{ form.a_la_une }}<span class="track" aria-hidden="true"></span>
+          <label class="sw{% if erreurs.a_la_une %} has-err{% endif %}">
+            <input type="checkbox" name="a_la_une" id="id_a_la_une"{% if request.POST.a_la_une or request.method != 'POST' and edition and edition.a_la_une %} checked{% endif %}><span class="track" aria-hidden="true"></span>
             <span><b>Mettre à la une</b><small>Remplace le contenu actuellement à la une. Un seul à la fois.</small>
-            {% if form.a_la_une.errors %}<span class="err-txt" style="margin-top:6px">{{ form.a_la_une.errors.0 }}</span>{% endif %}</span>
+            {% if erreurs.a_la_une %}<span class="err-txt" style="margin-top:6px">{{ erreurs.a_la_une }}</span>{% endif %}</span>
           </label>
           <label class="sw">
-            {{ form.dans_le_fil }}<span class="track" aria-hidden="true"></span>
+            <input type="checkbox" name="dans_le_fil" id="id_dans_le_fil"{% if request.POST.dans_le_fil or request.method != 'POST' and edition and edition.dans_le_fil or request.method != 'POST' and not edition %} checked{% endif %}><span class="track" aria-hidden="true"></span>
             <span><b>Afficher dans le fil défilant</b><small>Le titre défile dans le bandeau « En direct » en haut du journal.</small></span>
           </label>
         </div>
 
-        <details class="adv"{% if form.etiquette.errors or form.date_publication.errors %} open{% endif %}>
+        <details class="adv"{% if erreurs.etiquette or erreurs.date_publication %} open{% endif %}>
           <summary>Options avancées</summary>
           <div class="grid2">
-            <div class="f{% if form.etiquette.errors %} has-err{% endif %}">
-              <label for="{{ form.etiquette.id_for_label }}">Étiquette du fil</label>
-              {{ form.etiquette }}
+            <div class="f{% if erreurs.etiquette %} has-err{% endif %}">
+              <label for="id_etiquette">Étiquette du fil</label>
+              <input type="text" name="etiquette" id="id_etiquette" class="fld" value="{% if request.POST.etiquette %}{{ request.POST.etiquette }}{% elif edition %}{{ edition.etiquette|default:'' }}{% endif %}" maxlength="40" placeholder="Ex. DÉBAT N°13">
               <span class="help">Ex. DÉBAT N°13. Générée si vide.</span>
             </div>
-            <div class="f{% if form.date_publication.errors %} has-err{% endif %}">
-              <label for="{{ form.date_publication.id_for_label }}">Date de publication</label>
-              {{ form.date_publication }}
-              {% if form.date_publication.errors %}<p class="err-txt">{{ form.date_publication.errors.0 }}</p>{% else %}<span class="help">Sert à l'ordre d'affichage.</span>{% endif %}
+            <div class="f{% if erreurs.date_publication %} has-err{% endif %}">
+              <label for="id_date_publication">Date de publication</label>
+              <input type="datetime-local" name="date_publication" id="id_date_publication" class="fld" value="{% if request.POST.date_publication %}{{ request.POST.date_publication }}{% elif edition %}{{ edition.date_publication|date:"Y-m-d\TH:i" }}{% endif %}">
+              {% if erreurs.date_publication %}<p class="err-txt">{{ erreurs.date_publication }}</p>{% else %}<span class="help">Sert à l'ordre d'affichage.</span>{% endif %}
             </div>
           </div>
         </details>
 
         <!-- Ajout : retrait automatique et référencement -->
-        <details class="adv"{% if form.date_expiration.errors or form.slug.errors or form.meta_description.errors %} open{% endif %}>
+        <details class="adv"{% if erreurs.date_expiration or erreurs.slug or erreurs.meta_description %} open{% endif %}>
           <summary>Retrait automatique et référencement</summary>
           <div class="grid2">
-            <div class="f{% if form.date_expiration.errors %} has-err{% endif %}">
-              <label for="{{ form.date_expiration.id_for_label }}"><span>Retirer du journal le</span> <em>facultatif</em></label>
-              {{ form.date_expiration }}
-              {% if form.date_expiration.errors %}<p class="err-txt">{{ form.date_expiration.errors.0 }}</p>{% else %}<span class="help">Laissez vide pour garder le contenu en ligne.</span>{% endif %}
+            <div class="f{% if erreurs.date_expiration %} has-err{% endif %}">
+              <label for="id_date_expiration"><span>Retirer du journal le</span> <em>facultatif</em></label>
+              <input type="datetime-local" name="date_expiration" id="id_date_expiration" class="fld" value="{% if request.POST.date_expiration %}{{ request.POST.date_expiration }}{% elif edition %}{{ edition.date_expiration|date:"Y-m-d\TH:i" }}{% endif %}">
+              {% if erreurs.date_expiration %}<p class="err-txt">{{ erreurs.date_expiration }}</p>{% else %}<span class="help">Laissez vide pour garder le contenu en ligne.</span>{% endif %}
             </div>
-            <div class="f{% if form.slug.errors %} has-err{% endif %}">
-              <label for="{{ form.slug.id_for_label }}"><span>Adresse (slug)</span> <em>facultatif</em></label>
-              {{ form.slug }}
-              {% if form.slug.errors %}<p class="err-txt">{{ form.slug.errors.0 }}</p>{% else %}<span class="help">Générée à partir du titre si vide.</span>{% endif %}
+            <div class="f{% if erreurs.slug %} has-err{% endif %}">
+              <label for="id_slug"><span>Adresse (slug)</span> <em>facultatif</em></label>
+              <input type="text" name="slug" id="id_slug" class="fld" value="{% if request.POST.slug %}{{ request.POST.slug }}{% elif edition %}{{ edition.slug|default:'' }}{% endif %}" maxlength="80" pattern="[a-z0-9-]+" placeholder="genere-depuis-le-titre">
+              {% if erreurs.slug %}<p class="err-txt">{{ erreurs.slug }}</p>{% else %}<span class="help">Générée à partir du titre si vide.</span>{% endif %}
             </div>
           </div>
-          <div class="f{% if form.meta_description.errors %} has-err{% endif %}" style="margin-top:16px">
-            <label for="{{ form.meta_description.id_for_label }}"><span>Description pour Google <em>facultatif</em></span> <span class="count" data-count-for="{{ form.meta_description.id_for_label }}"></span></label>
-            {{ form.meta_description }}
-            {% if form.meta_description.errors %}<p class="err-txt">{{ form.meta_description.errors.0 }}</p>{% else %}<span class="help">150 caractères environ. Reprend le résumé si vide.</span>{% endif %}
+          <div class="f{% if erreurs.meta_description %} has-err{% endif %}" style="margin-top:16px">
+            <label for="id_meta_description"><span>Description pour Google <em>facultatif</em></span> <span class="count" data-count-for="id_meta_description"></span></label>
+            <textarea name="meta_description" id="id_meta_description" class="fld" rows="2" maxlength="160">{% if request.POST.meta_description %}{{ request.POST.meta_description }}{% elif edition %}{{ edition.meta_description|default:'' }}{% endif %}</textarea>
+            {% if erreurs.meta_description %}<p class="err-txt">{{ erreurs.meta_description }}</p>{% else %}<span class="help">150 caractères environ. Reprend le résumé si vide.</span>{% endif %}
           </div>
         </details>
       </div>
