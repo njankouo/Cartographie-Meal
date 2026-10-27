@@ -3,33 +3,31 @@
 # ==============================================================================
 name: Django CI
 
-# Déclencheurs : le workflow s'exécute à chaque push ou pull request 
-# sur les branches principales (main ou master)
+# Déclencheurs : s'exécute à chaque push ou pull request sur main ou master
 on:
   push:
     branches: [ "main", "master" ]
   pull_request:
     branches: [ "main", "master" ]
 
-# Définition des tâches (jobs) à exécuter
+# Définition des tâches (jobs)
 jobs:
   test-django:
-    runs-on: ubuntu-latest # Utilise l'environnement virtuel Linux le plus récent
+    runs-on: ubuntu-latest
 
     # ==========================================================================
-    # Services associés : Lance un conteneur PostgreSQL éphémère pour les tests
+    # Service PostgreSQL éphémère pour les tests (valeurs de test standard)
     # ==========================================================================
     services:
       postgres:
-        image: postgres:15-alpine # Utilise une image alpine légère et sécurisée
+        image: postgres:15-alpine
         env:
-          # Valeurs directes (standard et sécurisées pour un conteneur de test éphémère)
           POSTGRES_DB: django_test_db
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
-          - 5432:5432 # Expose le port standard de PostgreSQL
-        # Commande de santé (health check) pour s'assurer que la base est prête
+          - 5432:5432
+        # Health check pour s'assurer que la base est prête avant les tests
         options: >-
           --health-cmd "pg_isready -U postgres -d django_test_db"
           --health-interval 10s
@@ -40,12 +38,12 @@ jobs:
     # Étapes de la tâche (Steps)
     # ==========================================================================
     steps:
-      # 1. Télécharge le code source du dépôt dans l'environnement de test
+      # 1. Récupération du code source
       - name: Récupérer le code
         uses: actions/checkout@v4
 
-      # 2. Installe les dépendances système requises (notamment Cairo pour pycairo/reportlab)
-      - name: Installer les dépendances système (Cairo, PostgreSQL dev, etc.)
+      # 2. Installation des dépendances système (nécessaires pour Cairo / pycairo / PostgreSQL)
+      - name: Installer les dépendances système
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -55,33 +53,32 @@ jobs:
             libffi-dev \
             libpq-dev
 
-      # 3. Configure l'environnement Python version 3.11
+      # 3. Configuration de Python 3.11 avec cache pip activé
       - name: Installer Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip' # Active le cache pip pour accélérer les installations futures
+          cache: 'pip'
 
-      # 4. Met à jour pip et installe toutes les dépendances Python du projet
+      # 4. Mise à jour de pip et installation des dépendances du projet
       - name: Installer les dépendances Python
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 5. Vérifie la validité des migrations Django sans les appliquer (Dry-run)
-      - name: Vérifier les migrations Django
+      # 5. Application des migrations sur la base de données de test
+      - name: Appliquer les migrations Django
         run: |
-          python manage.py makemigrations --check --dry-run
+          python manage.py migrate
         env:
           DB_NAME: django_test_db
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_HOST: localhost
           DB_PORT: 5432
-          # Si vous utilisez un secret pour la clé secrète Django, vous pouvez le garder ainsi :
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
-      # 6. Exécute la suite de tests unitaires et d'intégration Django
+      # 6. Exécution des tests unitaires et d'intégration
       - name: Lancer les tests Django
         run: |
           python manage.py test
