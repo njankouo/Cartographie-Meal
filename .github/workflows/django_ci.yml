@@ -16,6 +16,14 @@ jobs:
   test-django:
     runs-on: ubuntu-latest # Utilise l'environnement virtuel Linux le plus récent
 
+    # Déclaration des variables d'environnement globales pour le job, 
+    # permettant d'injecter les secrets de manière sécurisée ici.
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+
     # ==========================================================================
     # Services associés : Lance un conteneur PostgreSQL éphémère pour les tests
     # ==========================================================================
@@ -23,16 +31,15 @@ jobs:
       postgres:
         image: postgres:15-alpine # Utilise une image alpine légère et sécurisée
         env:
-          # Récupération sécurisée des identifiants depuis les Secrets du dépôt GitHub
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # Récupération depuis les variables d'environnement définies juste au-dessus
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
         ports:
           - 5432:5432 # Expose le port standard de PostgreSQL
-        # Commande de santé (health check) pour s'assurer que la base est prête 
-        # avant de lancer les tests (évite les erreurs "Connection refused")
+        # Commande de santé (health check) utilisant les variables d'environnement du job
         options: >-
-          --health-cmd "pg_isready -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }}"
+          --health-cmd "pg_isready -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }}"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -74,23 +81,13 @@ jobs:
         run: |
           python manage.py makemigrations --check --dry-run
         env:
-          # Injection des variables de configuration de la base de données
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: localhost
           DB_PORT: 5432
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
       # 6. Exécute la suite de tests unitaires et d'intégration Django
       - name: Lancer les tests Django
         run: |
           python manage.py test
         env:
-          # Injection sécurisée des variables d'environnement nécessaires à l'application
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: localhost
           DB_PORT: 5432
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
