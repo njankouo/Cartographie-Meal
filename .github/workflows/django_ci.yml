@@ -104,7 +104,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}         # Adresse IP de votre VPS
           username: ${{ secrets.SERVER_USER }}      # Nom d'utilisateur (ex: ubuntu ou root)
-          key: ${{ secrets.SSH_PRIVATE_KEY }}       # Votre clé SSH privée
+          key: ${{ secrets.SSH_PRIVATE_KEY }}       # Votre clé SSH privée générée
           script: |
             cd /chemin/vers/votre/projet/sur/le/serveur
             git pull origin main
