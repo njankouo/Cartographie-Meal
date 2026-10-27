@@ -62,8 +62,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Vérifier qu'aucune migration n'a été oubliée      # CORRIGÉ : ajouté
-        run: python manage.py makemigrations --check --dry-run
+      - name: Vérifier qu'aucune migration n'a été oubliée
+        run:  python manage.py makemigrations --check --dry-run
 
       - name: Exécuter les tests Django
         run: python manage.py test
