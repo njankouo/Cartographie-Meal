@@ -93,13 +93,21 @@ jobs:
             
             git pull origin main
             
-            # Activation du venv et mise à jour des paquets
+            # S'assure qu'on utilise un venv avec un python récent s'il existe, sinon python3
+            if command -v python3.11 &> /dev/null; then
+                python3.11 -m venv venv
+            else
+                python3 -m venv venv
+            fi
+            
+            # Activation et installation forcée des dépendances dans le venv
             source venv/bin/activate
+            pip install --upgrade pip
             pip install -r requirements.txt
             
-            # Utilisation explicite du binaire python du venv pour éviter les erreurs de chemin/versions
-            /home/Cartographie-Meal/venv/bin/python manage.py migrate
-            /home/Cartographie-Meal/venv/bin/python manage.py collectstatic --noinput
+            # Exécution explicite des commandes Django via le venv
+            ./venv/bin/python manage.py migrate
+            ./venv/bin/python manage.py collectstatic --noinput
             
-            # Redémarrage du service Gunicorn (ajustez le nom si nécessaire)
-            sudo systemctl restart gunicorn
+            # Redémarrage du service Gunicorn (remplacez 'gunicorn' par le nom exact de votre service si besoin)
+            sudo systemctl restart gunicorn || sudo systemctl restart gunicorn.service
