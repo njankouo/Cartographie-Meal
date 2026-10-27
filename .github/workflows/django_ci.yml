@@ -1,6 +1,5 @@
 name: Django CI
 
-# Le pipeline se lance à chaque push ou pull request sur main/master
 on:
   push:
     branches: [ "main", "master" ]
@@ -16,11 +15,11 @@ jobs:
       - name: Récupérer le code
         uses: actions/checkout@v4
 
-      # 2. Installer les dépendances système nécessaires (ex: Cairo pour pycairo)
-      - name: Installer les bibliothèques système
+      # 2. Installer les dépendances système et outils de compilation pour Cairo
+      - name: Installer les bibliothèques et outils système pour Pycairo
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcairo2-dev pkg-config
+          sudo apt-get install -y libcairo2-dev pkg-config meson ninja-build python3-dev
 
       # 3. Configurer Python sur la machine virtuelle
       - name: Installer Python 3.11
@@ -43,7 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # 6. Vérifier les migrations manquantes (optionnel mais très recommandé)
+      # 6. Vérifier les migrations manquantes
       - name: Vérifier les migrations Django
         run: |
           python manage.py makemigrations --check --dry-run
