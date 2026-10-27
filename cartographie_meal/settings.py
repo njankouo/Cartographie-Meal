@@ -14,26 +14,23 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
+
 # Initialisation de environ
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://meal-afrique.operaplus.org',
+]
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,9 +41,8 @@ INSTALLED_APPS = [
     'cartographie',
     'django_celery_beat',
     'django_countries',
-   
     'cities_light',
-    
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -55,12 +51,17 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'cartographie_meal.urls'
-
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost",
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -78,18 +79,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cartographie_meal.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+DB_NAME = os.getenv('DB_NAME', 'meal_json')
+DB_USER = os.getenv('DB_USER', 'postgres')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'corporate2019')
+DB_HOST = os.getenv('DB_HOST', 'meal-afrique-app-db')
+DB_PORT = os.getenv('DB_PORT', '5432')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cartographie_meal',
-        'USER': 'postgres',
-        'PASSWORD': 'corporate2019',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
 
@@ -100,19 +104,12 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'beininfoplus.operaplus@gmail.com'
 EMAIL_HOST_PASSWORD = 'kqxd gklc qhji ysab'
 
-# settings.py
-
 # Durée de vie du cookie de session en secondes (ex: 30 minutes = 1800 secondes)
-SESSION_COOKIE_AGE = 1800 
-
-# Forcer l'expiration du cookie à la fermeture du navigateur (optionnel, mais renforce la sécurité OTP)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True 
-
-# Assure-toi que la session se vide bien en base de données quand elle expire
+SESSION_COOKIE_AGE = 1800  
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  
 SESSION_SAVE_EVERY_REQUEST = True
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -128,33 +125,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+# Static files (CSS, JavaScript, Images) & Media
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-CITIES_LIGHT_TRANSLATION_LANGUAGES = ['fr', 'en']
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['fr', 'en']
+
+# Celery Configuration (Corrigé pour pointer vers le conteneur Redis Docker)
+#CELERY_BROKER_URL = "redis://meal-afrique-app-redis:6379/0"
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

@@ -381,6 +381,40 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
 @media(max-width:900px){.ab-menu .ab-panel{position:fixed;left:12px;right:12px;top:64px;min-width:0}}
 @media(max-width:640px){.ab-menu .chev{display:none}.ab-link span{display:none}.ab-brand > span:last-child{display:none}.ab-menus{margin-right:0;flex:none}.ab-right{gap:2px}.ab-user{display:none}}
 </style>
+<style>
+/* ───── Ajout : champs supplémentaires de publication ───── */
+.xa-sub{margin-top:22px;padding-top:18px;border-top:1px solid var(--line-2)}
+.xa-sub-t{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-txt);margin-bottom:14px}
+.xa-sub-t::after{content:"";flex:1;height:1px;background:var(--line-2)}
+.xa-sub .f + .f{margin-top:16px}.xa-sub .grid2 > .f + .f,.xa-time > .f + .f{margin-top:0}.xa-sub .grid2 + .grid2,.xa-sub .grid2 + .f,.xa-sub .f + .grid2{margin-top:16px}
+.xa-body textarea.fld{min-height:240px;font-size:15.5px;line-height:1.7}
+.xa-read{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.xa-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:6px}
+.xa-chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 6px 0 12px;border-radius:99px;background:var(--navy-soft);color:var(--navy);border:1px solid #D5DDEC;font-size:13px;font-weight:600;animation:slide .25s var(--ease) both}
+.xa-chip button{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:15px;line-height:1;color:var(--navy);opacity:.6}
+.xa-chip button:hover{opacity:1;background:rgba(13,43,92,.1)}
+.xa-chip.tag{background:var(--gold-soft);border-color:#E6D6A3;color:var(--gold-txt)}
+.xa-chip.tag button{color:var(--gold-txt)}
+.xa-pick{position:relative}
+.xa-list{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);max-height:260px;overflow:auto;background:var(--card);border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 18px 36px -18px rgba(8,28,61,.45);padding:6px}
+.xa-list[hidden]{display:none}
+.xa-list b.xa-reg{display:block;padding:8px 10px 4px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-txt)}
+.xa-list button{display:flex;width:100%;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:7px;font-size:14px;text-align:left}
+.xa-list button:hover,.xa-list button.on{background:var(--navy-soft)}
+.xa-list button small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.xa-quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.xa-quick button{min-height:30px;padding:0 12px;border:1.5px dashed var(--line);border-radius:99px;font-size:12.5px;font-weight:600;color:var(--navy)}
+.xa-quick button:hover{border-color:var(--navy);background:var(--navy-soft)}
+.xa-file{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1.5px dashed var(--line);border-radius:10px;background:var(--paper);cursor:pointer;transition:border-color .2s}
+.xa-file:hover{border-color:var(--navy)}
+.xa-file i{width:40px;height:40px;border-radius:8px;background:var(--navy);color:var(--gold);display:grid;place-items:center;flex:none;font-style:normal;font-family:var(--mono);font-size:10px;font-weight:700}
+.xa-file b{display:block;font-size:14px;word-break:break-all}.xa-file small{color:var(--muted);font-size:12.5px}
+.xa-pv{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.xa-pv span{padding:2px 8px;border-radius:99px;background:var(--navy-soft);color:var(--navy);font-weight:600}
+.xa-pv span.t{background:var(--gold-soft);color:var(--gold-txt)}
+.xa-pv span.r{background:var(--navy);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.xa-time{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
 </head>
 <body>
 {% url 'admin-actualites' as u_actu %}{% url 'admin-mail-groupe' as u_mail %}{% url 'admin-synchronisations' as u_sync %}
@@ -552,6 +586,32 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
               {{ form.lieu }}
             </div>
           </div>
+          <div class="xa-sub" style="margin-top:16px;padding-top:14px">
+            <div class="grid2">
+              <div class="f{% if form.date_fin_evenement.errors %} has-err{% endif %}">
+              <label for="{{ form.date_fin_evenement.id_for_label }}"><span>Date de fin</span> <em>facultatif</em></label>
+              {{ form.date_fin_evenement }}
+              {% if form.date_fin_evenement.errors %}<p class="err-txt">{{ form.date_fin_evenement.errors.0 }}</p>{% else %}<span class="help">Laissez vide pour un événement d’un seul jour.</span>{% endif %}
+            </div>
+              <div class="xa-time">
+                <div class="f{% if form.heure_debut.errors %} has-err{% endif %}">
+              <label for="{{ form.heure_debut.id_for_label }}"><span>Début</span> <em>facultatif</em></label>
+              {{ form.heure_debut }}
+              {% if form.heure_debut.errors %}<p class="err-txt">{{ form.heure_debut.errors.0 }}</p>{% else %}{% endif %}
+            </div>
+                <div class="f{% if form.heure_fin.errors %} has-err{% endif %}">
+              <label for="{{ form.heure_fin.id_for_label }}"><span>Fin</span> <em>facultatif</em></label>
+              {{ form.heure_fin }}
+              {% if form.heure_fin.errors %}<p class="err-txt">{{ form.heure_fin.errors.0 }}</p>{% else %}{% endif %}
+            </div>
+              </div>
+            </div>
+            <div class="f{% if form.lien_inscription.errors %} has-err{% endif %}" style="margin-top:16px">
+              <label for="{{ form.lien_inscription.id_for_label }}">Lien d’inscription <em>facultatif</em></label>
+              {{ form.lien_inscription }}
+              {% if form.lien_inscription.errors %}<p class="err-txt">{{ form.lien_inscription.errors.0 }}</p>{% else %}<span class="help">Formulaire ou page où les membres s’inscrivent.</span>{% endif %}
+            </div>
+          </div>
         </div>
       </fieldset>
 
@@ -575,6 +635,11 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
             {{ form.resume_fr }}
             {% if form.resume_fr.errors %}<p class="err-txt">{{ form.resume_fr.errors.0 }}</p>{% endif %}
           </div>
+          <div class="f xa-body{% if form.contenu_fr.errors %} has-err{% endif %}">
+            <label for="{{ form.contenu_fr.id_for_label }}"><span>Contenu complet <em>facultatif</em></span> <span class="xa-read" id="xaReadFr"></span></label>
+            {{ form.contenu_fr }}
+            {% if form.contenu_fr.errors %}<p class="err-txt">{{ form.contenu_fr.errors.0 }}</p>{% else %}<span class="help">Texte de l’article. Séparez les paragraphes par une ligne vide.</span>{% endif %}
+          </div>
         </div>
 
         <div class="panel" id="panel-en" role="tabpanel" aria-labelledby="tab-en" hidden>
@@ -587,6 +652,11 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
             <label for="{{ form.resume_en.id_for_label }}">Summary <span class="count" data-count-for="{{ form.resume_en.id_for_label }}"></span></label>
             {{ form.resume_en }}
             {% if form.resume_en.errors %}<p class="err-txt">{{ form.resume_en.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="f xa-body{% if form.contenu_en.errors %} has-err{% endif %}">
+            <label for="{{ form.contenu_en.id_for_label }}"><span>Full text <em>optional</em></span> <span class="xa-read" id="xaReadEn"></span></label>
+            {{ form.contenu_en }}
+            {% if form.contenu_en.errors %}<p class="err-txt">{{ form.contenu_en.errors.0 }}</p>{% endif %}
           </div>
         </div>
 
@@ -609,6 +679,78 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
             <label class="file-current"><input type="checkbox" name="image-clear" id="image-clear_id"> Retirer l'image actuelle</label>
             {% endif %}
             {% if form.image.errors %}<p class="err-txt">{{ form.image.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <!-- Ajout : classement, médias, pièce jointe -->
+        <div class="xa-sub" id="xaClass">
+          <p class="xa-sub-t">Classement et références</p>
+          <div class="grid2">
+            <div class="f{% if form.rubrique.errors %} has-err{% endif %}">
+              <label for="{{ form.rubrique.id_for_label }}"><span>Rubrique</span> <em>facultatif</em></label>
+              {{ form.rubrique }}
+              {% if form.rubrique.errors %}<p class="err-txt">{{ form.rubrique.errors.0 }}</p>{% else %}<span class="help">Sert au filtre du journal et à l’aperçu.</span>{% endif %}
+            </div>
+            <div class="f{% if form.source_nom.errors %} has-err{% endif %}">
+              <label for="{{ form.source_nom.id_for_label }}"><span>Source ou signature</span> <em>facultatif</em></label>
+              {{ form.source_nom }}
+              {% if form.source_nom.errors %}<p class="err-txt">{{ form.source_nom.errors.0 }}</p>{% else %}<span class="help">Ex. Rédaction MEAL Afrique, nom de l’auteur invité.</span>{% endif %}
+            </div>
+          </div>
+          <div class="f{% if form.pays.errors %} has-err{% endif %}">
+            <label for="xaPaysQ"><span>Pays concernés <em>facultatif</em></span> <span class="count" id="xaPaysN"></span></label>
+            <div class="xa-pick">
+              <input type="search" class="fld" id="xaPaysQ" placeholder="Rechercher un pays africain…" autocomplete="off" aria-controls="xaPaysL" aria-expanded="false">
+              <div class="xa-list" id="xaPaysL" role="listbox" hidden></div>
+            </div>
+            <div class="xa-chips" id="xaPaysC" aria-live="polite"></div>
+            <div class="xa-quick" id="xaPaysQ2"><button type="button" data-all="1">Toute l’Afrique</button><button type="button" data-clear="1">Effacer</button></div>
+            {{ form.pays }}
+            {% if form.pays.errors %}<p class="err-txt">{{ form.pays.errors.0 }}</p>{% else %}<span class="help">Relie l’actualité aux pays de la carte MEAL Afrique / OPERAPLUS.</span>{% endif %}
+          </div>
+          <div class="f{% if form.tags.errors %} has-err{% endif %}">
+            <label for="{{ form.tags.id_for_label }}"><span>Mots-clés <em>facultatif</em></span> <span class="count" id="xaTagN"></span></label>
+            {{ form.tags }}
+            <div class="xa-chips" id="xaTagC"></div>
+            {% if form.tags.errors %}<p class="err-txt">{{ form.tags.errors.0 }}</p>{% else %}<span class="help">Séparés par des virgules. Ex. redevabilité, santé, Cameroun.</span>{% endif %}
+          </div>
+        </div>
+
+        <div class="xa-sub">
+          <p class="xa-sub-t">Médias et pièce jointe</p>
+          <div class="grid2">
+            <div class="f{% if form.legende_image.errors %} has-err{% endif %}">
+              <label for="{{ form.legende_image.id_for_label }}"><span>Légende de l’image</span> <em>facultatif</em></label>
+              {{ form.legende_image }}
+              {% if form.legende_image.errors %}<p class="err-txt">{{ form.legende_image.errors.0 }}</p>{% else %}<span class="help">Une phrase qui décrit la photo.</span>{% endif %}
+            </div>
+            <div class="f{% if form.credit_image.errors %} has-err{% endif %}">
+              <label for="{{ form.credit_image.id_for_label }}"><span>Crédit photo</span> <em>facultatif</em></label>
+              {{ form.credit_image }}
+              {% if form.credit_image.errors %}<p class="err-txt">{{ form.credit_image.errors.0 }}</p>{% else %}<span class="help">Ex. © Nom du photographe.</span>{% endif %}
+            </div>
+          </div>
+          <div class="f{% if form.lien_video.errors %} has-err{% endif %}" style="margin-top:16px">
+            <label for="{{ form.lien_video.id_for_label }}">Lien vidéo <em>facultatif</em></label>
+            {{ form.lien_video }}
+            {% if form.lien_video.errors %}<p class="err-txt">{{ form.lien_video.errors.0 }}</p>{% else %}<span class="help">YouTube, Vimeo ou lien direct.</span>{% endif %}
+          </div>
+          <div class="grid2" style="margin-top:16px">
+            <div class="f{% if form.piece_jointe.errors %} has-err{% endif %}">
+              <span class="lab">Document à télécharger <em>facultatif</em></span>
+              <label class="xa-file" for="{{ form.piece_jointe.id_for_label }}">
+                <i id="xaPjExt">PDF</i>
+                <span><b id="xaPjName">{% if edition and edition.piece_jointe %}{{ edition.piece_jointe.name|cut:"actualites/pj/" }}{% else %}Choisir un fichier{% endif %}</b><small>PDF, Word ou Excel, 10 Mo maximum</small></span>
+              </label>
+              <input type="file" name="piece_jointe" id="{{ form.piece_jointe.id_for_label }}" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" class="sr">
+              {% if edition and edition.piece_jointe %}<label class="file-current"><input type="checkbox" name="piece_jointe-clear" id="piece_jointe-clear_id"> Retirer le document actuel</label>{% endif %}
+              {% if form.piece_jointe.errors %}<p class="err-txt">{{ form.piece_jointe.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="f{% if form.piece_jointe_titre.errors %} has-err{% endif %}">
+              <label for="{{ form.piece_jointe_titre.id_for_label }}"><span>Titre du document</span> <em>facultatif</em></label>
+              {{ form.piece_jointe_titre }}
+              {% if form.piece_jointe_titre.errors %}<p class="err-txt">{{ form.piece_jointe_titre.errors.0 }}</p>{% else %}<span class="help">Ex. Rapport annuel 2025 (PDF).</span>{% endif %}
+            </div>
           </div>
         </div>
       </div>
@@ -645,6 +787,28 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
               {{ form.date_publication }}
               {% if form.date_publication.errors %}<p class="err-txt">{{ form.date_publication.errors.0 }}</p>{% else %}<span class="help">Sert à l'ordre d'affichage.</span>{% endif %}
             </div>
+          </div>
+        </details>
+
+        <!-- Ajout : retrait automatique et référencement -->
+        <details class="adv"{% if form.date_expiration.errors or form.slug.errors or form.meta_description.errors %} open{% endif %}>
+          <summary>Retrait automatique et référencement</summary>
+          <div class="grid2">
+            <div class="f{% if form.date_expiration.errors %} has-err{% endif %}">
+              <label for="{{ form.date_expiration.id_for_label }}"><span>Retirer du journal le</span> <em>facultatif</em></label>
+              {{ form.date_expiration }}
+              {% if form.date_expiration.errors %}<p class="err-txt">{{ form.date_expiration.errors.0 }}</p>{% else %}<span class="help">Laissez vide pour garder le contenu en ligne.</span>{% endif %}
+            </div>
+            <div class="f{% if form.slug.errors %} has-err{% endif %}">
+              <label for="{{ form.slug.id_for_label }}"><span>Adresse (slug)</span> <em>facultatif</em></label>
+              {{ form.slug }}
+              {% if form.slug.errors %}<p class="err-txt">{{ form.slug.errors.0 }}</p>{% else %}<span class="help">Générée à partir du titre si vide.</span>{% endif %}
+            </div>
+          </div>
+          <div class="f{% if form.meta_description.errors %} has-err{% endif %}" style="margin-top:16px">
+            <label for="{{ form.meta_description.id_for_label }}"><span>Description pour Google <em>facultatif</em></span> <span class="count" data-count-for="{{ form.meta_description.id_for_label }}"></span></label>
+            {{ form.meta_description }}
+            {% if form.meta_description.errors %}<p class="err-txt">{{ form.meta_description.errors.0 }}</p>{% else %}<span class="help">150 caractères environ. Reprend le résumé si vide.</span>{% endif %}
           </div>
         </details>
       </div>
@@ -1106,6 +1270,145 @@ footer{padding:28px 0 40px;font-family:var(--mono);font-size:11px;color:var(--mu
   menus.forEach(m=>m.addEventListener('toggle',()=>{ if(m.open) menus.forEach(o=>{ if(o!==m) o.open=false; }); }));
   document.addEventListener('click',e=>{ menus.forEach(m=>{ if(m.open && !m.contains(e.target)) m.open=false; }); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') menus.forEach(m=>{ if(m.open){ m.open=false; m.querySelector('summary').focus(); } }); });
+})();
+</script>
+
+<script>
+/* Ajout : champs supplémentaires de publication (pays, mots-clés, durée de lecture, aperçu, contrôle).
+   Lit et complète le formulaire existant, sans modifier ses champs ni ses fonctions. */
+(function(){
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const form = $('#formulaire'); if (!form) return;
+  const PAYS = [["DZ","Algérie","Afrique du Nord"],["EG","Égypte","Afrique du Nord"],["LY","Libye","Afrique du Nord"],["MA","Maroc","Afrique du Nord"],["MR","Mauritanie","Afrique du Nord"],["EH","Sahara occidental","Afrique du Nord"],["TN","Tunisie","Afrique du Nord"],["BJ","Bénin","Afrique de l’Ouest"],["BF","Burkina Faso","Afrique de l’Ouest"],["CV","Cap-Vert","Afrique de l’Ouest"],["CI","Côte d’Ivoire","Afrique de l’Ouest"],["GM","Gambie","Afrique de l’Ouest"],["GH","Ghana","Afrique de l’Ouest"],["GN","Guinée","Afrique de l’Ouest"],["GW","Guinée-Bissau","Afrique de l’Ouest"],["LR","Libéria","Afrique de l’Ouest"],["ML","Mali","Afrique de l’Ouest"],["NE","Niger","Afrique de l’Ouest"],["NG","Nigeria","Afrique de l’Ouest"],["SN","Sénégal","Afrique de l’Ouest"],["SL","Sierra Leone","Afrique de l’Ouest"],["TG","Togo","Afrique de l’Ouest"],["CM","Cameroun","Afrique centrale"],["CF","Centrafrique","Afrique centrale"],["CG","Congo","Afrique centrale"],["GA","Gabon","Afrique centrale"],["GQ","Guinée équatoriale","Afrique centrale"],["CD","RD Congo","Afrique centrale"],["ST","Sao Tomé-et-Príncipe","Afrique centrale"],["TD","Tchad","Afrique centrale"],["BI","Burundi","Afrique de l’Est"],["KM","Comores","Afrique de l’Est"],["DJ","Djibouti","Afrique de l’Est"],["ER","Érythrée","Afrique de l’Est"],["ET","Éthiopie","Afrique de l’Est"],["KE","Kenya","Afrique de l’Est"],["MG","Madagascar","Afrique de l’Est"],["MU","Maurice","Afrique de l’Est"],["UG","Ouganda","Afrique de l’Est"],["RW","Rwanda","Afrique de l’Est"],["SC","Seychelles","Afrique de l’Est"],["SO","Somalie","Afrique de l’Est"],["SD","Soudan","Afrique de l’Est"],["SS","Soudan du Sud","Afrique de l’Est"],["TZ","Tanzanie","Afrique de l’Est"],["ZA","Afrique du Sud","Afrique australe"],["AO","Angola","Afrique australe"],["BW","Botswana","Afrique australe"],["SZ","Eswatini","Afrique australe"],["LS","Lesotho","Afrique australe"],["MW","Malawi","Afrique australe"],["MZ","Mozambique","Afrique australe"],["NA","Namibie","Afrique australe"],["ZM","Zambie","Afrique australe"],["ZW","Zimbabwe","Afrique australe"]];
+  const val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const NAME = {}; PAYS.forEach(p => NAME[p[0]] = p[1]);
+
+  /* Pays : champ caché + puces + recherche */
+  const hid = $('#id_pays'), q = $('#xaPaysQ'), list = $('#xaPaysL'), chips = $('#xaPaysC');
+  if (hid && q) {
+    hid.type = 'hidden';
+    let sel = hid.value.split(',').map(x => x.trim().toUpperCase()).filter(x => NAME[x]);
+    const sync = () => { hid.value = sel.join(','); hid.dispatchEvent(new Event('input', {bubbles:true})); };
+    const draw = () => {
+      chips.innerHTML = sel.map(c => '<span class="xa-chip">' + esc(NAME[c]) + '<button type="button" data-rm="' + c + '" aria-label="Retirer ' + esc(NAME[c]) + '">×</button></span>').join('');
+      $('#xaPaysN').textContent = sel.length ? sel.length + ' pays' : '';
+    };
+    const open = () => {
+      const t = norm(q.value), rows = PAYS.filter(p => sel.indexOf(p[0]) < 0 && (!t || norm(p[1]).indexOf(t) > -1 || p[0].toLowerCase() === t));
+      let h = '', last = '';
+      rows.forEach(p => { if (p[2] !== last) { last = p[2]; h += '<b class="xa-reg">' + esc(last) + '</b>'; } h += '<button type="button" role="option" data-add="' + p[0] + '">' + esc(p[1]) + '<small>' + p[0] + '</small></button>'; });
+      list.innerHTML = h || '<b class="xa-reg">Aucun résultat</b>'; list.hidden = false; q.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); };
+    q.addEventListener('input', open); q.addEventListener('focus', open);
+    q.addEventListener('keydown', e => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'Enter') { e.preventDefault(); const b = list.querySelector('[data-add]'); if (b) b.click(); }
+    });
+    list.addEventListener('click', e => { const b = e.target.closest('[data-add]'); if (!b) return; sel.push(b.dataset.add); q.value = ''; draw(); sync(); open(); q.focus(); });
+    chips.addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (!b) return; sel = sel.filter(c => c !== b.dataset.rm); draw(); sync(); });
+    $('#xaPaysQ2').addEventListener('click', e => {
+      if (e.target.dataset.all) sel = PAYS.map(p => p[0]); else if (e.target.dataset.clear) sel = []; else return;
+      draw(); sync();
+    });
+    document.addEventListener('click', e => { if (!e.target.closest('.xa-pick')) close(); });
+    /* reprise de brouillon : le champ caché est rempli par le script existant */
+    form.addEventListener('input', e => { if (e.target === hid) { const n = hid.value.split(',').map(x => x.trim().toUpperCase()).filter(x => NAME[x]); if (n.join() !== sel.join()) { sel = n; draw(); } } });
+    draw();
+  }
+
+  /* Mots-clés : puces en lecture */
+  const tg = $('#id_tags');
+  const tagList = () => (tg ? tg.value.split(',').map(x => x.trim()).filter(Boolean) : []);
+  const drawTags = () => { const t = tagList(); $('#xaTagC').innerHTML = t.slice(0, 12).map(x => '<span class="xa-chip tag">' + esc(x) + '</span>').join(''); $('#xaTagN').textContent = t.length ? t.length + ' / 12' : ''; };
+  tg && tg.addEventListener('input', drawTags); drawTags();
+
+  /* Durée de lecture */
+  [['id_contenu_fr', 'xaReadFr'], ['id_contenu_en', 'xaReadEn']].forEach(p => {
+    const el = document.getElementById(p[0]), out = document.getElementById(p[1]); if (!el || !out) return;
+    const upd = () => { const n = (el.value.trim().match(/\S+/g) || []).length; out.textContent = n ? n + ' mots · ' + Math.max(1, Math.round(n / 200)) + ' min de lecture' : ''; };
+    el.addEventListener('input', upd); upd();
+  });
+
+  /* Slug automatique tant que l'utilisateur ne l'a pas modifié */
+  const slug = $('#id_slug'), tt = $('#id_titre_fr');
+  const mk = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+  if (slug && tt) {
+    let manual = !!slug.value;
+    slug.addEventListener('input', () => { manual = !!slug.value; });
+    tt.addEventListener('input', () => { if (!manual) slug.value = mk(tt.value); });
+  }
+
+  /* Document joint : nom et extension. La valeur d'un champ fichier ne peut pas être restaurée : on l'ignore pour la reprise de brouillon. */
+  const pj = $('#id_piece_jointe');
+  if (pj) {
+    try { Object.defineProperty(pj, 'value', {get(){ return ''; }, set(){} }); } catch(e) {}
+    pj.classList.add('sr');
+    pj.addEventListener('change', () => {
+      const f = pj.files && pj.files[0]; if (!f) return;
+      $('#xaPjName').textContent = f.name;
+      const ext = (f.name.split('.').pop() || '').slice(0, 4).toUpperCase(); $('#xaPjExt').textContent = ext || 'FILE';
+      if (f.size > 10 * 1048576) $('#xaPjName').textContent = f.name + ' (trop lourd : 10 Mo maximum)';
+    });
+  }
+
+  /* Aperçu : rubrique, pays, mots-clés, horaires */
+  const pvIn = $('.pv-in');
+  let ex = null;
+  if (pvIn) { ex = document.createElement('div'); ex.className = 'xa-pv'; ex.id = 'xaPv'; pvIn.insertBefore(ex, $('#pvText')); }
+  const hm = id => val(id).slice(0, 5).replace(':', 'h');
+  const sel2 = () => { const el = $('#id_rubrique'); return el && el.value ? el.options[el.selectedIndex].text : ''; };
+  const drawPv = () => {
+    if (!ex) return;
+    const r = sel2(), p = ($('#id_pays') ? $('#id_pays').value.split(',').filter(Boolean) : []), t = tagList();
+    let h = r ? '<span class="r">' + esc(r) + '</span>' : '';
+    if (p.length) h += '<span>' + (p.length > 2 ? esc(NAME[p[0]] || p[0]) + ' +' + (p.length - 1) : p.map(c => esc(NAME[c] || c)).join(', ')) + '</span>';
+    const a = hm('id_heure_debut'), b = hm('id_heure_fin');
+    if (a) h += '<span class="t">' + a + (b ? ' – ' + b : '') + '</span>';
+    t.slice(0, 3).forEach(x => h += '<span class="t">#' + esc(x) + '</span>');
+    ex.innerHTML = h; ex.hidden = !h;
+  };
+  form.addEventListener('input', () => setTimeout(drawPv, 2));
+  form.addEventListener('change', () => setTimeout(drawPv, 2));
+  drawPv();
+
+  /* Contrôle avant publication : points supplémentaires ajoutés à la liste existante */
+  const qcl = $('#qcList');
+  const extra = () => {
+    const out = [], t = (form.querySelector('input[name="type"]:checked') || {}).value || 'depeche';
+    const body = val('id_contenu_fr');
+    if (t !== 'fil') out.push(body ? {s:'ok', l:'Contenu complet', m:(body.match(/\S+/g) || []).length + ' mots.'} : {s:'warn', l:'Contenu complet', m:'Recommandé pour une actualité : ajoutez le texte de l’article.'});
+    out.push(val('id_rubrique') ? {s:'ok', l:'Rubrique', m:sel2() + '.'} : {s:'warn', l:'Rubrique', m:'Recommandée pour le classement du journal.'});
+    const np = ($('#id_pays') && $('#id_pays').value) ? $('#id_pays').value.split(',').filter(Boolean).length : 0;
+    out.push(np ? {s:'ok', l:'Pays concernés', m:np + ' pays liés à la carte.'} : {s:'warn', l:'Pays concernés', m:'Recommandé : relie l’actualité à la carte MEAL Afrique.'});
+    if (val('id_lien_video')) { let u = null; try { u = new URL(val('id_lien_video')); } catch(e) {} out.push(u && /^https?:$/.test(u.protocol) ? {s:'ok', l:'Lien vidéo', m:u.hostname + '.'} : {s:'bad', l:'Lien vidéo', m:'Adresse invalide : commencez par https://.'}); }
+    if (val('id_lien_inscription') && t === 'agenda') { let u = null; try { u = new URL(val('id_lien_inscription')); } catch(e) {} out.push(u && /^https?:$/.test(u.protocol) ? {s:'ok', l:'Lien d’inscription', m:u.hostname + '.'} : {s:'bad', l:'Lien d’inscription', m:'Adresse invalide : commencez par https://.'}); }
+    if (t === 'agenda') {
+      const a = val('id_date_evenement'), b = val('id_date_fin_evenement');
+      if (a && b && b < a) out.push({s:'bad', l:'Date de fin', m:'Elle précède la date de début.'});
+      if ((!a || !b || a === b) && val('id_heure_debut') && val('id_heure_fin') && val('id_heure_fin') <= val('id_heure_debut')) out.push({s:'bad', l:'Horaires', m:'L’heure de fin précède l’heure de début.'});
+    }
+    const ex2 = val('id_date_expiration'), dp = val('id_date_publication');
+    if (ex2) out.push(new Date(ex2) < new Date() ? {s:'bad', l:'Retrait automatique', m:'La date de retrait est déjà passée : le contenu serait invisible.'} : dp && new Date(ex2) <= new Date(dp) ? {s:'bad', l:'Retrait automatique', m:'Le retrait précède la publication.'} : {s:'ok', l:'Retrait automatique', m:'Prévu le ' + new Date(ex2).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}) + '.'});
+    return out;
+  };
+  const ICON = {ok:'✓', warn:'!', bad:'×', info:'•'};
+  const renderExtra = () => {
+    if (!qcl) return;
+    const c = extra();
+    c.forEach(x => {
+      const li = document.createElement('li'); li.className = x.s;
+      li.innerHTML = '<i aria-hidden="true">' + ICON[x.s] + '</i><span><b></b>' + (x.s === 'warn' ? '<em>Recommandé</em>' : '') + '<small></small></span>';
+      li.querySelector('b').textContent = x.l; li.querySelector('small').textContent = x.m; qcl.appendChild(li);
+    });
+    if (c.some(x => x.s === 'bad')) { const qc = $('#qc'); qc.classList.add('has-bad'); qc.classList.remove('is-ready'); $('#qcState').textContent = 'Champs obligatoires manquants'; }
+    else if (c.some(x => x.s === 'warn')) { $('#qc').classList.remove('is-ready'); if (!$('#qc').classList.contains('has-bad')) $('#qcState').textContent = 'Publiable, des améliorations sont possibles'; }
+  };
+  form.addEventListener('input', () => setTimeout(renderExtra, 3));
+  form.addEventListener('change', () => setTimeout(renderExtra, 3));
+  setTimeout(renderExtra, 3);
 })();
 </script>
 </body>

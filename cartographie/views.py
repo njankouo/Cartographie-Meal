@@ -452,28 +452,122 @@ def memberscountry(request, country):
     
     return render(request, template, context)
 
+from django_countries import countries as dj_countries   # seulement utile si country contient des codes (« CM »)
 
 def ProfilExpert(request):
     code_personnel = request.session.get('personnel_code')
-    
+
     expert = Personnel.objects.get(code=code_personnel)
     context = {
         'expert': expert,
-        
+
         'xs_extra': construire_xs_extra(expert),
     }
     if expert.cartographie_is_valid:
         return render(request, 'webpages/profil_expert.html', context)
     return render(request, 'webpages/cartographie.html', context)
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django_countries import countries
+from django_countries.fields import Country as DjCountry      # alias : ne masque plus votre modèle Country
+
+from .models import Personnel, ZoneINterventionPersonnel
 
 
 def construire_xs_extra(expert):
-    """Retourne {} tant que les modèles correspondants n'existent pas : aucune section n'apparaît."""
+    """Retourne {} tant qu'il n'y a rien à afficher : aucune section n'apparaît."""
     extra = {}
 
-   
+    zones = []
+    for z in ZoneINterventionPersonnel.objects.filter(personnel=expert):
+        pays = (z.country or '').strip()
+        if len(pays) == 2:                                   # code ISO → nom (« CM » → « Cameroun »)
+            pays = str(countries.name(pays.upper()) or pays)  # (corrigé : dj_countries n'existait pas ici)
+        if pays and pays not in zones:
+            zones.append(pays)
+    if zones:
+        extra['zones'] = zones
+
     return extra
 
+
+# Dictionnaire des régions d'Afrique
+AFRICA_REGIONS = {
+    'Afrique de l\'Ouest': ['BJ', 'BF', 'CV', 'CI', 'GM', 'GH', 'GN', 'GW', 'LR', 'ML', 'MR', 'NE', 'NG', 'SN', 'SL', 'TG', 'SH'],
+    'Afrique Centrale': ['AO', 'CM', 'CF', 'TD', 'CG', 'CD', 'GQ', 'GA', 'ST'],
+    'Afrique de l\'Est': ['BI', 'KM', 'DJ', 'ER', 'ET', 'KE', 'MG', 'MW', 'MU', 'YT', 'MZ', 'RE', 'RW', 'SC', 'SO', 'SS', 'TZ', 'UG', 'ZM', 'ZW'],
+    'Afrique du Nord': ['DZ', 'EG', 'LY', 'MA', 'SD', 'TN', 'EH'],
+    'Afrique Australe': ['BW', 'SZ', 'LS', 'NA', 'ZA'],
+}
+# libellé court des onglets (le template l'affiche) + ordre d'affichage des régions
+REGION_COURT = {'Afrique du Nord': 'Nord', 'Afrique de l\'Ouest': 'Ouest', 'Afrique Centrale': 'Centre',
+                'Afrique de l\'Est': 'Est', 'Afrique Australe': 'Sud'}
+REGION_ORDRE = list(REGION_COURT)
+
+
+def get_africa_region(code):
+    for region, codes in AFRICA_REGIONS.items():
+        if code in codes:
+            return region
+    return 'Autres zones'
+
+
+def zone_intervention(request):
+    personnel_code = request.session.get('personnel_code')
+    personnel = None
+
+    if personnel_code:
+        personnel = Personnel.objects.filter(code=personnel_code).first()
+
+    # 1. TRAITEMENT DU POST (Enregistrement)
+    if request.method == 'POST':
+        codes_valides = {c for codes in AFRICA_REGIONS.values() for c in codes}
+        selected_pays = []
+        for c in request.POST.getlist('pays'):
+            c = c.strip().upper()
+            if c in codes_valides and c not in selected_pays:
+                selected_pays.append(c)
+
+        if personnel:
+            ZoneINterventionPersonnel.objects.filter(personnel=personnel).delete()
+
+            nouvelles_zones = [
+                ZoneINterventionPersonnel(country=code_iso, personnel=personnel)
+                for code_iso in selected_pays
+            ]
+            ZoneINterventionPersonnel.objects.bulk_create(nouvelles_zones)
+
+            messages.success(request, "Vos zones d'intervention ont été enregistrées avec succès.")
+            return redirect('profil-expert')
+        else:
+            messages.error(request, "Session expirée ou utilisateur introuvable.")
+
+    # 2. TRAITEMENT DU GET (Affichage)
+    selected_codes = []
+    if personnel:
+        selected_codes = [str(c).strip().upper() for c in
+                          ZoneINterventionPersonnel.objects.filter(personnel=personnel).values_list('country', flat=True) if c]
+
+    countries_data = []
+    for code, name in countries:
+        region_name = get_africa_region(code)
+        if region_name != 'Autres zones':
+            countries_data.append({
+                'code': code,
+                'nom': str(name),
+                'court': REGION_COURT[region_name],           # « Nord », « Ouest »… pour les onglets
+                'flag': DjCountry(code=code).flag,            # drapeau django_countries
+                'region': region_name,
+            })
+
+    countries_data.sort(key=lambda x: (REGION_ORDRE.index(x['region']), x['nom']))
+
+    context = {
+        'personnel': personnel,
+        'countries': countries_data,
+        'selected': selected_codes,
+    }
+    return render(request, 'webpages/zone_intervention.html', context)
 import json
 from django.http import JsonResponse
 from django.db import transaction

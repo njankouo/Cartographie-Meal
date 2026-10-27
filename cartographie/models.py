@@ -148,8 +148,8 @@ class Actualite(models.Model):
     description = models.TextField(null=True,blank=True)
     photos = models.FileField(null=True,blank=True)
     documents = models.FileField(null=True,blank=True)
-    rubrique = models.ForeignKey(Rubrique,on_delete = models.SET_NULL,null=True,blank=True)
-    sous_rubrique = models.ForeignKey(Sous_Rubrique,on_delete = models.SET_NULL,null=True,blank=True)
+    rubrique = models.ForeignKey(Rubrique,on_delete = models.SET_NULL,null=True,blank=True, related_name='rubrique')
+    sous_rubrique = models.ForeignKey(Sous_Rubrique,on_delete = models.SET_NULL,null=True,blank=True, related_name='sous_rubrique')
     date = models.DateField(null=True,blank=True)
     is_public = models.BooleanField(null=True)
 
@@ -171,7 +171,7 @@ class SousActualite(models.Model):
     description= models.TextField(null=True)
     photos = models.ImageField(upload_to="generate_filename", blank=True, null=True)
     documents = models.FileField(upload_to="generate_filename", blank=True, null=True)
-    actualite=models.ForeignKey(Actualite,null=True,on_delete = models.SET_NULL)
+    actualite=models.ForeignKey(Actualite,null=True,on_delete = models.SET_NULL, related_name='actualite')
     baniere= models.ForeignKey(Baniere,on_delete = models.SET_NULL,null=True)
   
     date = models.DateField(null=True,blank=True)
@@ -198,3 +198,6 @@ class OtpPersonnel(models.Model):
         return f"OTP pour {self.personnel} - Expire à {self.expires_at}"
 
 
+class ZoneINterventionPersonnel(models.Model):
+    country = models.CharField(max_length=128,blank=True,null=True)
+    personnel = models.ForeignKey(Personnel, on_delete=models.CASCADE)
