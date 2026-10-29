@@ -58,7 +58,7 @@ urlpatterns = [
 
     path('logout_admin/', views.logout_admin, name='logout_admin'),
 
-    path('zone-intervention/', views.zone_intervention, name='zone-intervention'),
+    path('zone-intervention/', views.zone_intervention, name='zone-intervention')
 
 
 ]
